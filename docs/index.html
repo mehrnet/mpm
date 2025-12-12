@@ -529,6 +529,10 @@
             }
             
             function setEarlyLanguage(lang) {
+                const htmlRoot = document.documentElement;
+                const dir = lang === 'fa' ? 'rtl' : 'ltr';
+                htmlRoot.setAttribute('lang', lang);
+                htmlRoot.setAttribute('dir', dir);
                 localStorage.setItem('mpm-docs-lang', lang);
                 // Hide all sections first
                 document.querySelectorAll('[data-lang]').forEach(el => el.hidden = true);
