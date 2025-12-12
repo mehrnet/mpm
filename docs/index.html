@@ -2,8 +2,31 @@
 <html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MPM - Mehr's Package Manager - Complete Documentation">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Complete documentation for MPM (Mehr's Package Manager). Learn installation, usage, package development, and advanced features.">
+    <meta name="keywords" content="MPM, package manager, documentation, installation, development guide">
+    <meta name="author" content="Mehr">
+    <meta name="theme-color" content="#171717">
+    <meta name="color-scheme" content="dark">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="MPM Documentation">
+    <meta property="og:description" content="Complete documentation for MPM (Mehr's Package Manager)">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mpm.mehrnet.com/">
+    <meta property="og:site_name" content="MPM Docs">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MPM Documentation">
+    <meta name="twitter:description" content="Complete documentation for MPM (Mehr's Package Manager)">
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://mpm.mehrnet.com/">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='3 1 18 22' fill='none' shape-rendering='geometricPrecision'%3E%3Cdefs%3E%3ClinearGradient id='gTop' x1='3' y1='1' x2='21' y2='11'%3E%3Cstop offset='0' stop-color='%23ffd1a1'/%3E%3Cstop offset='1' stop-color='%23ff8a2a'/%3E%3C/linearGradient%3E%3ClinearGradient id='gLeft' x1='3' y1='7' x2='12' y2='23'%3E%3Cstop offset='0' stop-color='%23ff9a3d'/%3E%3Cstop offset='1' stop-color='%23f97316'/%3E%3C/linearGradient%3E%3ClinearGradient id='gRight' x1='12' y1='12' x2='21' y2='23'%3E%3Cstop offset='0' stop-color='%23f97316'/%3E%3Cstop offset='1' stop-color='%23ea580c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon fill='url(%23gLeft)' points='3,7.3 11.1,12.2 11.1,23 3,18.1'/%3E%3Cpolygon fill='url(%23gRight)' points='21,7.3 12.9,12.2 12.9,23 21,18.1'/%3E%3Cpolygon fill='url(%23gTop)' points='12,1 20.4,6.2 12,10.8 3.6,6.2'/%3E%3C/svg%3E">
+    
     <title>MPM Documentation</title>
     <style>
         :root {
@@ -561,9 +584,24 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                <svg width="24" height="24" viewBox="3 1 18 22" fill="none" aria-hidden="true" shape-rendering="geometricPrecision">
+                    <defs>
+                        <linearGradient id="gTop" x1="3" y1="1" x2="21" y2="11">
+                            <stop offset="0" stop-color="#ffd1a1" />
+                            <stop offset="1" stop-color="#ff8a2a" />
+                        </linearGradient>
+                        <linearGradient id="gLeft" x1="3" y1="7" x2="12" y2="23">
+                            <stop offset="0" stop-color="#ff9a3d" />
+                            <stop offset="1" stop-color="#f97316" />
+                        </linearGradient>
+                        <linearGradient id="gRight" x1="12" y1="12" x2="21" y2="23">
+                            <stop offset="0" stop-color="#f97316" />
+                            <stop offset="1" stop-color="#ea580c" />
+                        </linearGradient>
+                    </defs>
+                    <polygon fill="url(#gLeft)" points="3,7.3 11.1,12.2 11.1,23 3,18.1" />
+                    <polygon fill="url(#gRight)" points="21,7.3 12.9,12.2 12.9,23 21,18.1" />
+                    <polygon fill="url(#gTop)" points="12,1 20.4,6.2 12,10.8 3.6,6.2" />
                 </svg>
                 <span>MPM Docs</span>
             </a>
@@ -6554,7 +6592,14 @@ return function(array $args): string {
                 });
 
                 links.forEach(link => link.classList.remove('active'));
-                if (closest) closest.classList.add('active');
+                if (closest) {
+                    closest.classList.add('active');
+                    // Update URL hash to match current section (without adding history entry)
+                    const newHash = closest.getAttribute('href');
+                    if (window.location.hash !== newHash) {
+                        history.replaceState(null, '', newHash);
+                    }
+                }
                 ticking = false;
             }
 
