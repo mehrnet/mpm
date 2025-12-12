@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Kaveh v0.3" />
+<meta name="description" content="Kaveh is a simple website generator, it aims to generate static html files from markdown files, no databases and bloat-web, just texts.">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAFxAAABcQG7iuH0AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAhVJREFUOI2FkU1IlHEQxn/z33fbJSIIDx0ioUChj0Mm7R7KNRc7SAUdyiDCDoqXCC9BeKpTHYRIyFMRBBWEUFCgh0rIbFM3lKAsSKJLEn2Z7Yfr7vvOdAjD6FXnNPA8/GaeGVilekZS7ReG9x9ZTnerAVSkLUC6ukaaq8N0b2K6tm12IRbJ+7FM3pfGQhCd7ExksgCXM+lNvgXbRfgW8e080P4fwIxzgnb7lAtYLA52v29039uyCmrBekzuOvEuQnAtdAPBvqR3vHkAcHsyOUggxwz6/6STaoQ4sfhP8oXQiB7A0NTOR3OVNRR9dSbulcGsAGBxjG4tFtLAdChgd837ppWO2PO88ThwCywapq/6BcOGxGyX4rJhuiw298YSVcWoNhUqUamok4q6M4G5kgI5dRRVbuR811wwV8j57lk+gLzKd28RoGs0iUqfc1wydQEic2f3Pj20dFrnk/S4mdzE6WsJJCniGv5GOFr3csBBB0ariwSjK2R6B2DiNqsj9c8NTtRnHwaqp0wjvcsCxFpN3ZaqwrqW7MGBzxLmuTqWqPI13m++dpSABeLMAfMlqn9Bx50Dj08uer0wwOnE+I/eTMMLdZEhD4ZLfjAvJntU3AxwZak3EgbY0JLcKM59UnN1anZ9Qdxw2WRrGRlcUD5sO1z/dap/ypbdwMOrr5hLgUyISEoCQYwZjNoIria3tvgRmAX4DdT85ywDHCURAAAAAElFTkSuQmCC">
+<title>Kaveh</title>
+<style>
+html{overflow-y:scroll;}body{background-color:#fafafa;color:#333;margin:0 auto;padding:1ex;max-width:80ex;font-family:sans-serif;line-height:1.6;}img{display:block;margin:0 auto;max-width:100%;height:auto;}.code-block{background-color:#f5f5f5;border:1px solid #d0d0d0;border-radius:4px;margin:1em 0;overflow:hidden;}.code-block pre{margin:0;padding:1em;overflow-x:auto;}.code-block code,pre{font-family:monospace;background-color:#f0f0f0;border:1px solid #ccc;border-radius:6px;padding:1em;margin:1em 0;font-size:1em;line-height:1.5;color:#222;white-space:pre-wrap;word-wrap:break-word;overflow-x:visible;}p code,li code,td code,blockquote code{display:inline;padding:2px 4px;border:1px solid #d0d0d0;background-color:#e8e8e8;border-radius:3px;}h1,h2,h3,h4,h5,h6,h7{line-height:1.2;margin-top:1.5em;margin-bottom:0.5em;}.heading-with-anchor{position:relative;}.heading-anchor{position:absolute;left:-1.5em;top:50%;transform:translateY(-50%);text-decoration:none;opacity:0;padding-right:0.5em;transition:opacity 0.2s ease;display:inline-flex;align-items:center;}.heading-anchor .octicon{fill:#ccc;display:block;}.heading-with-anchor:hover .heading-anchor{opacity:1;}.heading-anchor:hover .octicon{fill:#0066cc;}table{border-collapse:collapse;width:100%;margin:1em 0;table-layout:fixed;}table td,table th{border:1px solid #ccc;padding:8px 12px;text-align:center;vertical-align:center;}table tr:nth-child(even){background-color:#f9f9f9;}table td code,table th code{overflow-wrap:anywhere;word-break:break-all;white-space:normal;}blockquote{border-left:4px solid #d0d0d0;margin:1em 0;padding-left:1em;color:#555;}hr{border:none;border-top:2px solid #ccc;margin:2em 0;}ul.task-list{list-style:none;padding-left:0;}ul.task-list li.task-list-item{padding-left:1.5em;}ul.task-list input[type="checkbox"]{margin-left:-1.5em;margin-right:0.5em;}mark{background-color:#ffff00;padding:2px 0;}del{text-decoration:line-through;opacity:0.7;}sub,sup{font-size:0.75em;line-height:0;position:relative;vertical-align:baseline;}sup{top:-0.5em;}sub{bottom:-0.25em;}.footnotes{margin-top:2em;padding-top:1em;border-top:1px solid #ccc;font-size:0.9em;}.footnotes ol{padding-left:1.5em;}dl{margin:1em 0;}dt{font-weight:bold;margin-top:0.5em;}dd{margin-left:2em;margin-bottom:0.5em;}a{color:#0066cc;text-decoration:none;}a:hover{text-decoration:underline;color:#0052a3;}a:visited{color:#6b46c1;}ul ul,ol ol,ul ol,ol ul{margin:0.5em 0;}textarea,input,button{font-family:inherit;font-size:1em;border:1px solid #d0d0d0;border-radius:4px;padding:0.5em;}textarea,input[type="text"],input[type="password"],input[type="email"]{width:100%;background-color:#fff;color:#333;box-sizing:border-box;margin:0.5em 0;}textarea{resize:vertical;min-height:4em;}button{background-color:#0066cc;color:#fff;border:none;cursor:pointer;padding:0.6em 1.2em;margin:0.5em 0.5em 0.5em 0;transition:background-color 0.2s ease;}button:hover{background-color:#0052a3;}button:active{background-color:#003d7a;}.post-list{margin:2em 0;padding:1.5em;background-color:#f9f9f9;border:1px solid #e5e5e5;border-radius:6px;}.post-entry{margin-bottom:2em;padding-bottom:1.5em;border-bottom:1px solid #e0e0e0;}.post-entry:last-of-type{border-bottom:none;}.post-entry h3{margin-top:0;margin-bottom:0.5em;}.post-entry h3 a{color:#333;}.post-entry h3 a:hover{color:#0066cc;}.post-entry time{display:block;color:#666;font-size:0.9em;margin-bottom:0.5em;}.post-entry p{margin:0.5em 0 0 0;color:#555;}.post-entry .file-icon{display:inline-block;vertical-align:middle;margin-right:0.25em;fill:#666;}.pagination{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:2em 0 0 0;padding:1em 0 0 0;border-top:2px solid #d0d0d0;}.pagination .prev{grid-column:1;justify-self:start;}.pagination .page-info{grid-column:2;text-align:center;color:#666;font-size:0.9em;}.pagination .next{grid-column:3;justify-self:end;}.pagination a{padding:0.5em 1em;background-color:#0066cc;color:#fff;border-radius:4px;text-decoration:none;}.pagination a:hover{background-color:#0052a3;}@media print{body{max-width:none;}}@media (prefers-color-scheme:dark){body{color:#e0e0e0;background-color:#1a1a1a;}.code-block{background-color:#0d0d0d;border-color:#333;}.code-block pre{color:#e0e0e0;}pre{background-color:#1e1e1e;border-color:#333;color:#f2f2f2;white-space:pre-wrap;word-wrap:break-word;overflow-x:visible;}p code,li code,td code,blockquote code{background-color:#0d0d0d;border-color:#333;color:#e0e0e0;}table td,table th{border-color:#444;}table tr:nth-child(even){background-color:#111;}blockquote{border-left-color:#444;color:#aaa;}hr{border-top-color:#444;}mark{background-color:#666600;color:#fff;}a:link{color:#cdf;}a:hover,a:visited:hover{color:#def;}a:visited{color:#dcf;}.footnotes{border-top-color:#444;}.heading-anchor .octicon{fill:#555;}.heading-anchor:hover .octicon{fill:#cdf;}textarea,input[type="text"],input[type="password"],input[type="email"]{background-color:#0d0d0d;color:#e0e0e0;border-color:#444;}button{background-color:#0066cc;}button:hover{background-color:#3388dd;}button:active{background-color:#0052a3;}.post-list{background-color:#0d0d0d;border-color:#333;}.post-entry{border-bottom-color:#333;}.post-entry h3 a{color:#e0e0e0;}.post-entry h3 a:hover{color:#cdf;}.post-entry time{color:#999;}.post-entry p{color:#aaa;}.pagination{border-top-color:#444;}.pagination a{background-color:#0066cc;}.pagination a:hover{background-color:#3388dd;}.pagination .page-info{color:#999;}.post-entry .file-icon{fill:#999;}}
+</style>
+</head>
+<body>
+<div>
+
+<h1 id="package-development-guide" class="heading-with-anchor">Package Development Guide<a href="#package-development-guide" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h1>
+<p>Complete guide for creating, testing, and distributing MPM (Mehr's Package Manager) packages.
+</p>
+<p>For installation and setup instructions, see <a href="INSTALL.md">INSTALL.md</a> or <a href="USAGE.md">USAGE.md</a>.
+</p>
+<hr />
+<h2 id="table-of-contents" class="heading-with-anchor">Table of Contents<a href="#table-of-contents" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<ul>
+<li><a href="#quick-start">Quick Start</a>
+</li>
+<li><a href="#package-structure">Package Structure</a>
+</li>
+<li><a href="#handler-implementation">Handler Implementation</a>
+</li>
+<li><a href="#package-metadata">Package Metadata</a>
+</li>
+<li><a href="#testing-packages">Testing Packages</a>
+</li>
+<li><a href="#distribution">Distribution</a>
+</li>
+<li><a href="#best-practices">Best Practices</a>
+</li>
+<li><a href="#examples">Examples</a>
+</li></ul>
+<hr />
+<h2 id="quick-start" class="heading-with-anchor">Quick Start<a href="#quick-start" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<p>Create a minimal package in 3 steps:</p>
+<div class="code-block" data-lang="bash"><pre>
+# 1. Create package structure
+mkdir -p mypackage
+cd mypackage
+
+# 2. Create handler
+cat &gt; handler.php &lt;&lt; 'EOF'
+&lt;?php
+return function(array $args): string {
+    return &quot;Hello from mypackage!&quot;;
+};
+EOF
+
+# 3. Create metadata
+cat &gt; package.json &lt;&lt; 'EOF'
+{
+    &quot;id&quot;: &quot;mypackage&quot;,
+    &quot;name&quot;: &quot;My Package&quot;,
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;description&quot;: &quot;A simple package&quot;,
+    &quot;author&quot;: &quot;Your Name&quot;,
+    &quot;license&quot;: &quot;MIT&quot;,
+    &quot;dependencies&quot;: []
+}
+EOF
+
+# Test it
+cd ..
+mkdir -p app/packages/mypackage
+cp -r mypackage/* app/packages/mypackage/
+php shell.php mypackage
+</pre></div>
+<hr />
+<h2 id="package-structure" class="heading-with-anchor">Package Structure<a href="#package-structure" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<h3 id="required-files" class="heading-with-anchor">Required Files<a href="#required-files" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block"><pre>
+mypackage/
+├── handler.php       # REQUIRED: Entry point
+└── package.json      # REQUIRED: Metadata
+</pre></div>
+<h3 id="optional-structure" class="heading-with-anchor">Optional Structure<a href="#optional-structure" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block"><pre>
+mypackage/
+├── handler.php       # Entry point (required)
+├── package.json      # Metadata (required)
+├── lib/             # Library code
+│   ├── MyClass.php
+│   └── helpers.php
+├── data/            # Data files
+│   └── config.json
+├── views/           # Templates
+│   └── template.html
+└── README.md        # Package documentation
+</pre></div>
+<h3 id="file-extraction" class="heading-with-anchor">File Extraction<a href="#file-extraction" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<p>Packages extract to project root preserving paths:</p>
+<p><strong>Package contains:</strong></p>
+<div class="code-block"><pre>
+handler.php
+module.php
+lib/Database.php
+data/schema.json
+</pre></div>
+<p><strong>Extracts to:</strong></p>
+<div class="code-block"><pre>
+./handler.php
+./module.php
+./lib/Database.php
+./data/schema.json
+</pre></div>
+<p>For Mehr framework modules, use:</p>
+<div class="code-block"><pre>
+app/packages/[name]/handler.php
+app/packages/[name]/module.php
+</pre></div>
+<hr />
+<h2 id="handler-implementation" class="heading-with-anchor">Handler Implementation<a href="#handler-implementation" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<h3 id="basic-handler" class="heading-with-anchor">Basic Handler<a href="#basic-handler" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+&lt;?php
+return function(array $args): string {
+    // Single action
+    return &quot;Hello, World!&quot;;
+};
+</pre></div>
+<h3 id="multi-action-handler" class="heading-with-anchor">Multi-Action Handler<a href="#multi-action-handler" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+&lt;?php
+return function(array $args): string {
+    $action = $args[0] ?? 'help';
+
+    switch ($action) {
+        case 'list':
+            return handleList();
+
+        case 'get':
+            $id = $args[1] ?? null;
+            if (!$id) {
+                throw new \RuntimeException('ID required', 400);
+            }
+            return handleGet($id);
+
+        case 'create':
+            $name = $args[1] ?? null;
+            if (!$name) {
+                throw new \RuntimeException('Name required', 400);
+            }
+            return handleCreate($name);
+
+        case 'delete':
+            $id = $args[1] ?? null;
+            if (!$id) {
+                throw new \RuntimeException('ID required', 400);
+            }
+            return handleDelete($id);
+
+        case 'help':
+            return &lt;&lt;&lt;'EOF'
+Available actions:
+  list              - List all items
+  get &lt;id&gt;          - Get item by ID
+  create &lt;name&gt;     - Create new item
+  delete &lt;id&gt;       - Delete item
+EOF;
+
+        default:
+            throw new \RuntimeException(&quot;Unknown action: $action&quot;, 404);
+    }
+};
+
+function handleList(): string {
+    return &quot;item1\nitem2\nitem3&quot;;
+}
+
+function handleGet(string $id): string {
+    // Load from file, database, etc.
+    return &quot;Item data for: $id&quot;;
+}
+
+function handleCreate(string $name): string {
+    // Create and persist
+    return &quot;Created: $name&quot;;
+}
+
+function handleDelete(string $id): string {
+    // Remove item
+    return &quot;Deleted: $id&quot;;
+}
+</pre></div>
+<h3 id="argument-processing" class="heading-with-anchor">Argument Processing<a href="#argument-processing" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<p>Arguments are identical in both HTTP and CLI modes:</p>
+<p><strong>HTTP:</strong></p>
+<div class="code-block"><pre>
+GET /shell.php/KEY/users/create/alice/alice@example.com
+                    ↓      ↓      ↓         ↓
+                command args[0] args[1]  args[2]
+</pre></div>
+<p><strong>CLI:</strong></p>
+<div class="code-block" data-lang="bash"><pre>
+php shell.php users create alice alice@example.com
+               ↓      ↓      ↓         ↓
+           command args[0] args[1]  args[2]
+</pre></div>
+<p><strong>Handler:</strong></p>
+<div class="code-block" data-lang="php"><pre>
+function(array $args): string {
+    $action = $args[0];    // 'create'
+    $name = $args[1];      // 'alice'
+    $email = $args[2];     // 'alice@example.com'
+}
+</pre></div>
+<h3 id="file-operations" class="heading-with-anchor">File Operations<a href="#file-operations" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<p>Handlers execute in shell.php directory. Use relative paths:</p>
+<div class="code-block" data-lang="php"><pre>
+&lt;?php
+return function(array $args): string {
+    // Read data file
+    $data = json_decode(
+        file_get_contents('app/data/items.json'),
+        true
+    );
+
+    // Modify data
+    $data['new_item'] = $args[0] ?? 'default';
+
+    // Write back
+    file_put_contents(
+        'app/data/items.json',
+        json_encode($data, JSON_PRETTY_PRINT)
+    );
+
+    return &quot;Updated&quot;;
+};
+</pre></div>
+<h3 id="error-handling" class="heading-with-anchor">Error Handling<a href="#error-handling" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+&lt;?php
+return function(array $args): string {
+    $id = $args[0] ?? null;
+
+    // Validation
+    if (!$id) {
+        throw new \RuntimeException('ID required', 400);
+    }
+
+    if (!is_numeric($id)) {
+        throw new \RuntimeException('ID must be numeric', 400);
+    }
+
+    // File operations
+    $file = &quot;app/data/$id.json&quot;;
+    if (!file_exists($file)) {
+        throw new \RuntimeException('Item not found', 404);
+    }
+
+    try {
+        $content = file_get_contents($file);
+        $data = json_decode($content, true);
+
+        if (!$data) {
+            throw new \RuntimeException('Invalid JSON', 400);
+        }
+
+        return json_encode($data);
+    } catch (\Throwable $e) {
+        throw new \RuntimeException(
+            &quot;Failed to read item: {$e-&gt;getMessage()}&quot;,
+            400
+        );
+    }
+};
+</pre></div>
+<h3 id="response-formats" class="heading-with-anchor">Response Formats<a href="#response-formats" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<p><strong>Plain Text:</strong></p>
+<div class="code-block" data-lang="php"><pre>
+return &quot;item1\nitem2\nitem3&quot;;
+</pre></div>
+<p><strong>JSON:</strong></p>
+<div class="code-block" data-lang="php"><pre>
+return json_encode([
+    'status' =&gt; 'success',
+    'items' =&gt; ['item1', 'item2', 'item3']
+]);
+</pre></div>
+<p><strong>Empty (POSIX):</strong></p>
+<div class="code-block" data-lang="php"><pre>
+return '';  // Success with no output
+</pre></div>
+<hr />
+<h2 id="package-metadata" class="heading-with-anchor">Package Metadata<a href="#package-metadata" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<h3 id="package-json-format" class="heading-with-anchor">package.json Format<a href="#package-json-format" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="json"><pre>
+{
+    &quot;id&quot;: &quot;mypackage&quot;,
+    &quot;name&quot;: &quot;My Package&quot;,
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;description&quot;: &quot;Package description&quot;,
+    &quot;author&quot;: &quot;Your Name&quot;,
+    &quot;license&quot;: &quot;MIT&quot;,
+    &quot;dependencies&quot;: [&quot;dependency1&quot;, &quot;dependency2&quot;]
+}
+</pre></div>
+<h3 id="field-specifications" class="heading-with-anchor">Field Specifications<a href="#field-specifications" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<table>
+<tr><td>Field</td><td>Type</td><td>Required</td><td>Description</td></tr>
+<tr><td><code>id</code></td><td>string</td><td>Yes</td><td>Lowercase, no spaces, used in URLs</td></tr>
+<tr><td><code>name</code></td><td>string</td><td>Yes</td><td>Human-readable name</td></tr>
+<tr><td><code>version</code></td><td>string</td><td>Yes</td><td>Semantic versioning (X.Y.Z)</td></tr>
+<tr><td><code>description</code></td><td>string</td><td>Yes</td><td>Brief description</td></tr>
+<tr><td><code>author</code></td><td>string</td><td>No</td><td>Package author</td></tr>
+<tr><td><code>license</code></td><td>string</td><td>No</td><td>License identifier (MIT, Apache-2.0, etc.)</td></tr>
+<tr><td><code>dependencies</code></td><td>array</td><td>No</td><td>Array of package IDs</td></tr>
+</table>
+<h3 id="dependency-declaration" class="heading-with-anchor">Dependency Declaration<a href="#dependency-declaration" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="json"><pre>
+{
+    &quot;id&quot;: &quot;auth&quot;,
+    &quot;dependencies&quot;: [&quot;users&quot;, &quot;session&quot;]
+}
+</pre></div>
+<p>The package manager:</p>
+<ul>
+<li>Resolves transitive dependencies automatically
+</li>
+<li>Detects circular dependencies
+</li>
+<li>Installs in correct order (dependencies before dependents)
+</li>
+<li>Skips already-installed packages
+</li></ul>
+<hr />
+<h2 id="testing-packages" class="heading-with-anchor">Testing Packages<a href="#testing-packages" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<h3 id="manual-testing-cli" class="heading-with-anchor">Manual Testing (CLI)<a href="#manual-testing-cli" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="bash"><pre>
+# Install package manually
+mkdir -p app/packages/mypackage
+cp -r mypackage/* app/packages/mypackage/
+
+# Test commands
+php shell.php mypackage
+php shell.php mypackage list
+php shell.php mypackage get 123
+php shell.php mypackage create &quot;Test Item&quot;
+</pre></div>
+<h3 id="manual-testing-http" class="heading-with-anchor">Manual Testing (HTTP)<a href="#manual-testing-http" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="bash"><pre>
+# Start server
+php -S localhost:8000
+
+# Get API key
+KEY=$(cat .config/key)
+
+# Test commands
+curl &quot;http://localhost:8000/shell.php/$KEY/mypackage&quot;
+curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/list&quot;
+curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/get/123&quot;
+</pre></div>
+<h3 id="testing-checklist" class="heading-with-anchor">Testing Checklist<a href="#testing-checklist" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled  /> All actions work correctly
+</li>
+<li class="task-list-item"><input type="checkbox" disabled  /> Error handling works (invalid input)
+</li>
+<li class="task-list-item"><input type="checkbox" disabled  /> Required arguments are validated
+</li>
+<li class="task-list-item"><input type="checkbox" disabled  /> File operations succeed
+</li>
+<li class="task-list-item"><input type="checkbox" disabled  /> Both CLI and HTTP modes work identically
+</li>
+<li class="task-list-item"><input type="checkbox" disabled  /> Help action documents all commands
+</li>
+<li class="task-list-item"><input type="checkbox" disabled  /> Dependencies are declared in package.json
+</li></ul>
+<hr />
+<h2 id="distribution" class="heading-with-anchor">Distribution<a href="#distribution" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<h3 id="creating-package-zip" class="heading-with-anchor">Creating Package ZIP<a href="#creating-package-zip" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="bash"><pre>
+cd mypackage
+zip -r ../mypackage-1.0.0.zip .
+
+# Verify contents
+unzip -l ../mypackage-1.0.0.zip
+</pre></div>
+<h3 id="calculate-checksum" class="heading-with-anchor">Calculate Checksum<a href="#calculate-checksum" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="bash"><pre>
+sha256sum mypackage-1.0.0.zip
+# Output: abc123def456...  mypackage-1.0.0.zip
+</pre></div>
+<h3 id="repository-database-json" class="heading-with-anchor">Repository database.json<a href="#repository-database-json" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="json"><pre>
+{
+  &quot;version&quot;: 1,
+  &quot;packages&quot;: {
+    &quot;mypackage&quot;: {
+      &quot;name&quot;: &quot;My Package&quot;,
+      &quot;description&quot;: &quot;Package description&quot;,
+      &quot;author&quot;: &quot;Your Name&quot;,
+      &quot;license&quot;: &quot;MIT&quot;,
+      &quot;versions&quot;: {
+        &quot;1.0.0&quot;: {
+          &quot;version&quot;: &quot;1.0.0&quot;,
+          &quot;dependencies&quot;: [],
+          &quot;checksum&quot;: &quot;sha256:abc123def456...&quot;,
+          &quot;size&quot;: 2048,
+          &quot;download_url&quot;: &quot;mypackage-1.0.0.zip&quot;,
+          &quot;released_at&quot;: &quot;2025-01-15&quot;
+        }
+      },
+      &quot;latest&quot;: &quot;1.0.0&quot;
+    }
+  }
+}
+</pre></div>
+<h3 id="github-hosting" class="heading-with-anchor">GitHub Hosting<a href="#github-hosting" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="bash"><pre>
+# Create repository structure
+mkdir -p my-packages/main
+cd my-packages/main
+
+# Add package and database
+cp /path/to/mypackage-1.0.0.zip .
+cat &gt; database.json &lt;&lt; 'EOF'
+{
+  &quot;version&quot;: 1,
+  &quot;packages&quot;: { ... }
+}
+EOF
+
+# Push to GitHub
+cd ..
+git init
+git add .
+git commit -m &quot;Add mypackage&quot;
+git remote add origin https://github.com/user/my-packages.git
+git push -u origin main
+
+# Users configure:
+# &quot;main&quot;: [&quot;https://github.com/user/my-packages/raw/main/main&quot;]
+</pre></div>
+<hr />
+<h2 id="best-practices" class="heading-with-anchor">Best Practices<a href="#best-practices" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<h3 id="input-validation" class="heading-with-anchor">Input Validation<a href="#input-validation" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+// BAD: No validation
+$id = $args[0];
+return processId($id);
+
+// GOOD: Validate and sanitize
+$id = $args[0] ?? null;
+if (!$id || !is_numeric($id) || $id &lt; 1) {
+    throw new \RuntimeException('Invalid ID', 400);
+}
+return processId((int)$id);
+</pre></div>
+<h3 id="security" class="heading-with-anchor">Security<a href="#security" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+// BAD: Arbitrary file access
+$file = $args[0];
+return file_get_contents($file);  // Vulnerable to ../../../etc/passwd
+
+// GOOD: Restrict to safe directory
+$file = basename($args[0] ?? '');  // Remove path components
+$path = &quot;app/data/$file&quot;;
+
+if (!file_exists($path)) {
+    throw new \RuntimeException('File not found', 404);
+}
+
+return file_get_contents($path);
+</pre></div>
+<h3 id="error-messages" class="heading-with-anchor">Error Messages<a href="#error-messages" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+// BAD: Generic error
+throw new \RuntimeException('Error', 400);
+
+// GOOD: Descriptive error
+throw new \RuntimeException('User ID must be a positive integer', 400);
+</pre></div>
+<h3 id="code-organization" class="heading-with-anchor">Code Organization<a href="#code-organization" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+// BAD: Everything in handler
+return function(array $args): string {
+    // 500 lines of code...
+};
+
+// GOOD: Use lib/ directory
+return function(array $args): string {
+    require_once __DIR__ . '/lib/Manager.php';
+    $manager = new Manager();
+    return $manager-&gt;handle($args);
+};
+</pre></div>
+<h3 id="dependencies" class="heading-with-anchor">Dependencies<a href="#dependencies" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+// GOOD: Check if Composer libraries available
+if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
+    require_once __DIR__ . '/../../vendor/autoload.php';
+    // Use libraries
+} else {
+    throw new \RuntimeException('Composer dependencies missing', 500);
+}
+</pre></div>
+<hr />
+<h2 id="examples" class="heading-with-anchor">Examples<a href="#examples" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<h3 id="simple-counter" class="heading-with-anchor">Simple Counter<a href="#simple-counter" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+&lt;?php
+return function(array $args): string {
+    $file = 'app/data/counter.txt';
+
+    if (!file_exists($file)) {
+        file_put_contents($file, '0');
+    }
+
+    $count = (int)file_get_contents($file);
+    $count++;
+    file_put_contents($file, (string)$count);
+
+    return &quot;Count: $count&quot;;
+};
+</pre></div>
+<h3 id="json-crud" class="heading-with-anchor">JSON CRUD<a href="#json-crud" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block" data-lang="php"><pre>
+&lt;?php
+return function(array $args): string {
+    $action = $args[0] ?? 'list';
+    $file = 'app/data/items.json';
+
+    // Load data
+    $items = [];
+    if (file_exists($file)) {
+        $items = json_decode(file_get_contents($file), true) ?? [];
+    }
+
+    switch ($action) {
+        case 'list':
+            return json_encode($items);
+
+        case 'add':
+            $name = $args[1] ?? null;
+            if (!$name) {
+                throw new \RuntimeException('Name required', 400);
+            }
+            $items[] = [
+                'id' =&gt; count($items) + 1,
+                'name' =&gt; $name,
+                'created_at' =&gt; date('Y-m-d H:i:s')
+            ];
+            file_put_contents($file, json_encode($items, JSON_PRETTY_PRINT));
+            return &quot;Added: $name&quot;;
+
+        case 'get':
+            $id = (int)($args[1] ?? 0);
+            foreach ($items as $item) {
+                if ($item['id'] === $id) {
+                    return json_encode($item);
+                }
+            }
+            throw new \RuntimeException('Item not found', 404);
+
+        default:
+            throw new \RuntimeException('Unknown action', 404);
+    }
+};
+</pre></div>
+<h3 id="mehr-framework-module" class="heading-with-anchor">Mehr Framework Module<a href="#mehr-framework-module" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h3>
+<div class="code-block"><pre>
+mymodule/
+├── app/
+│   └── packages/
+│       └── mymodule/
+│           ├── handler.php       # Shell command handler
+│           ├── module.php        # Module implementation
+│           ├── manifest.json     # Mehr manifest
+│           └── migrations/       # Database migrations
+│               └── 001_create_table.php
+└── package.json                  # Distribution metadata
+</pre></div>
+<p><strong>handler.php:</strong></p>
+<div class="code-block" data-lang="php"><pre>
+&lt;?php
+return function(array $args): string {
+    require_once __DIR__ . '/module.php';
+    $module = new MyModule();
+    return $module-&gt;handleCommand($args);
+};
+</pre></div>
+<p><strong>package.json:</strong></p>
+<div class="code-block" data-lang="json"><pre>
+{
+    &quot;id&quot;: &quot;mymodule&quot;,
+    &quot;name&quot;: &quot;My Module&quot;,
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;description&quot;: &quot;Mehr framework module&quot;,
+    &quot;dependencies&quot;: [&quot;core&quot;]
+}
+</pre></div>
+<hr />
+<h2 id="see-also" class="heading-with-anchor">See Also<a href="#see-also" class="heading-anchor" aria-label="Permalink"><svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></h2>
+<ul>
+<li><strong><a href="INSTALL.md">Installation Guide</a></strong> - Setup and repository creation
+</li>
+<li><strong><a href="USAGE.md">Usage Reference</a></strong> - Command reference
+</li>
+<li><strong><a href="https://github.com/mehrnet/mpm-packages">Example Packages</a></strong> - Working examples
+</li></ul>
+<hr />
+<p>For questions or issues, please visit: https://github.com/mehrnet/mpm/issues</p>
+
+</div>
+</body>
+</html>
