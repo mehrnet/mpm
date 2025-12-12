@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MPM - Mehr's Package Manager - Complete Documentation">
+    <title>MPM Documentation</title>
+    <style>
+        :root {
+            --bg-primary: #171717;
+            --bg-secondary: #2a1f19;
+            --bg-tertiary: #1e2021;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a89280;
+            --text-tertiary: #c4b5a8;
+            --text-muted: #6b5a52;
+            --border: #3d2a23;
+            --border-secondary: #4d3a30;
+            --accent: #f34e3f;
+            --selection-bg: #4a3531;
+            --selection-text: #c4b5a8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        *::selection {
+            background-color: var(--selection-bg);
+            color: var(--selection-text);
+        }
+
+        *::-moz-selection {
+            background-color: var(--selection-bg);
+            color: var(--selection-text);
+        }
+
+        html[dir="rtl"] { direction: rtl; }
+        html[dir="ltr"] { direction: ltr; }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-y: scroll;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* Sidebar - LTR (left) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--bg-tertiary);
+            overflow-y: auto;
+            padding: 24px 0;
+            border-right: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        /* Sidebar - RTL (right) */
+        html[dir="rtl"] .sidebar {
+            left: auto;
+            right: 0;
+            border-right: none;
+            border-left: 1px solid var(--border);
+        }
+
+        .sidebar-header {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid var(--border-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        html[dir="rtl"] .sidebar-header {
+            flex-direction: row-reverse;
+        }
+
+        .sidebar-logo {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        html[dir="rtl"] .sidebar-logo {
+            flex-direction: row-reverse;
+        }
+
+        .lang-btn {
+            background: none;
+            border: 1px solid var(--border-secondary);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .lang-dropdown {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        html[dir="rtl"] .lang-dropdown {
+            right: auto;
+            left: 20px;
+        }
+
+        .lang-dropdown.show {
+            display: block;
+        }
+
+        .lang-option {
+            display: block;
+            width: 100%;
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+
+        html[dir="rtl"] .lang-option {
+            text-align: right;
+        }
+
+        .lang-option:hover,
+        .lang-option.active {
+            background-color: rgba(243, 78, 63, 0.1);
+            color: var(--accent);
+        }
+
+        .toc {
+            padding: 24px 0;
+        }
+
+        .toc-section {
+            padding: 0;
+        }
+
+        .toc-title {
+            padding: 8px 24px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .toc-link {
+            display: block;
+            padding: 10px 24px;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        html[dir="rtl"] .toc-link {
+            border-left: none;
+            border-right: 3px solid transparent;
+        }
+
+        .toc-link:hover {
+            color: var(--accent);
+            background-color: rgba(243, 78, 63, 0.1);
+            padding-left: 28px;
+        }
+
+        html[dir="rtl"] .toc-link:hover {
+            padding-left: 24px;
+            padding-right: 28px;
+        }
+
+        .toc-link:target,
+        .toc-link.active {
+            color: var(--accent);
+            background-color: rgba(243, 78, 63, 0.1);
+            border-left-color: var(--accent);
+            padding-left: 21px;
+        }
+
+        html[dir="rtl"] .toc-link:target,
+        html[dir="rtl"] .toc-link.active {
+            border-left: none;
+            border-right-color: var(--accent);
+            padding-left: 24px;
+            padding-right: 21px;
+        }
+
+        /* Highlight content section when targeted */
+        .content-section :target {
+            background-color: rgba(243, 78, 63, 0.05);
+            padding: 8px 16px;
+            border-radius: 4px;
+        }
+
+        .toc-sublink {
+            display: block;
+            padding: 8px 24px 8px 40px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9em;
+            border-left: 2px solid transparent;
+        }
+
+        html[dir="rtl"] .toc-sublink {
+            padding: 8px 40px 8px 24px;
+            border-left: none;
+            border-right: 2px solid transparent;
+        }
+
+        .toc-sublink:hover {
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        html[dir="rtl"] .toc-sublink:hover {
+            border-left: none;
+            border-right-color: var(--accent);
+        }
+
+        /* Main Content - LTR */
+        .main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        /* Main Content - RTL */
+        html[dir="rtl"] .main {
+            margin-left: 0;
+            margin-right: 280px;
+        }
+
+        .content-section {
+            max-width: 900px;
+            margin-bottom: 80px;
+            scroll-margin-top: 20px;
+        }
+
+        .content-section h1 {
+            color: var(--accent);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content-section h2 {
+            color: var(--accent);
+            margin-top: 32px;
+            margin-bottom: 16px;
+        }
+
+        .content-section h3,
+        .content-section h4,
+        .content-section h5,
+        .content-section h6 {
+            color: var(--text-primary);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .content-section p {
+            margin-bottom: 16px;
+            color: var(--text-tertiary);
+        }
+
+        .content-section a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .content-section a:hover {
+            text-decoration: underline;
+        }
+
+        .content-section code {
+            background-color: var(--bg-secondary);
+            color: #10b981;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        .content-section pre {
+            background-color: var(--bg-secondary);
+            color: #e0e0e0;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 16px 0;
+            border-left: 3px solid var(--accent);
+        }
+
+        html[dir="rtl"] .content-section pre {
+            border-left: none;
+            border-right: 3px solid var(--accent);
+        }
+
+        .content-section pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .content-section blockquote {
+            border-left: 4px solid var(--accent);
+            padding-left: 16px;
+            margin: 16px 0;
+            color: var(--text-secondary);
+        }
+
+        html[dir="rtl"] .content-section blockquote {
+            border-left: none;
+            border-right: 4px solid var(--accent);
+            padding-left: 0;
+            padding-right: 16px;
+        }
+
+        .content-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .content-section th,
+        .content-section td {
+            padding: 12px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        html[dir="rtl"] .content-section th,
+        html[dir="rtl"] .content-section td {
+            text-align: right;
+        }
+
+        .content-section th {
+            background-color: rgba(243, 78, 63, 0.1);
+            color: var(--accent);
+        }
+
+        .content-section tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .content-section ul,
+        .content-section ol {
+            margin: 16px 0 16px 24px;
+        }
+
+        html[dir="rtl"] .content-section ul,
+        html[dir="rtl"] .content-section ol {
+            margin: 16px 24px 16px 0;
+        }
+
+        .content-section li {
+            margin-bottom: 8px;
+        }
+
+        /* Mobile Menu Button - LTR */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 101;
+            background: none;
+            border: 1px solid var(--border-secondary);
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            color: var(--text-primary);
+        }
+
+        /* Mobile Menu Button - RTL */
+        html[dir="rtl"] .mobile-menu-btn {
+            left: auto;
+            right: 16px;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background-color: var(--text-primary);
+            margin: 4px 0;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Responsive - Tablet */
+        @media (max-width: 768px) {
+            /* LTR Layout */
+            .sidebar {
+                position: fixed;
+                left: 0;
+                width: 100%;
+                height: auto;
+                max-height: calc(100vh - 60px);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                border-right: 1px solid var(--border);
+                border-bottom: none;
+                top: 60px;
+            }
+
+            /* RTL Layout */
+            html[dir="rtl"] .sidebar {
+                left: auto;
+                right: 0;
+                transform: translateX(100%);
+                border-right: none;
+                border-left: 1px solid var(--border);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            html[dir="rtl"] .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 0;
+                margin-top: 60px;
+                padding: 24px;
+            }
+
+            html[dir="rtl"] .main {
+                margin-right: 0;
+                margin-top: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main {
+                padding: 16px;
+            }
+
+            body {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Early language detection from hash to avoid content flashing wrong language
+        (function() {
+            function detectLanguageFromHash() {
+                const hash = window.location.hash.slice(1);
+                if (hash) {
+                    // Decode URL-encoded hash (e.g., %C3%AA -> ê)
+                    const decodedHash = decodeURIComponent(hash);
+                    
+                    // Try to find which section would contain this ID
+                    const sections = document.querySelectorAll('[data-lang]');
+                    for (let section of sections) {
+                        if (section.querySelector('#' + CSS.escape(decodedHash))) {
+                            return section.getAttribute('data-lang');
+                        }
+                    }
+                }
+                return localStorage.getItem('mpm-docs-lang') || navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en';
+            }
+            
+            function setEarlyLanguage(lang) {
+                document.documentElement.setAttribute('data-current-lang', lang);
+                localStorage.setItem('mpm-docs-lang', lang);
+            }
+            
+            setEarlyLanguage(detectLanguageFromHash());
+        })();
+    </script>
+
+    <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span>MPM Docs</span>
+            </a>
+            <button class="lang-btn" id="lang-btn">EN</button>
+        </div>
+
+        <div class="lang-dropdown" id="lang-dropdown">
+            <button class="lang-option" data-lang="en">English</button>
+            <button class="lang-option" data-lang="fr">Français</button>
+            <button class="lang-option" data-lang="fa">فارسی</button>
+        </div>
+
+        <nav class="toc" id="toc-nav">
+            <!-- Navbar will be generated with data-lang wrappers -->
+            %NAVBAR_HTML%
+        </nav>
+    </aside>
+
+    <main class="main">
+        <!-- Content sections generated with data-lang wrappers -->
+        %ALL_HTML%
+    </main>
+
+    <script>
+        (function() {
+            // Language management
+            function detectLanguageFromHash() {
+                const hash = window.location.hash.slice(1);
+                if (hash) {
+                    const decodedHash = decodeURIComponent(hash);
+                    const element = document.getElementById(decodedHash);
+                    if (element) {
+                        const section = element.closest('[data-lang]');
+                        if (section) {
+                            return section.getAttribute('data-lang');
+                        }
+                    }
+                }
+                return localStorage.getItem('mpm-docs-lang') || navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en';
+            }
+
+            function setLanguage(lang) {
+                const htmlRoot = document.getElementById('html-root');
+                const dir = lang === 'fa' ? 'rtl' : 'ltr';
+                htmlRoot.setAttribute('lang', lang);
+                htmlRoot.setAttribute('dir', dir);
+                localStorage.setItem('mpm-docs-lang', lang);
+                
+                document.querySelectorAll('[data-lang]').forEach(el => {
+                    el.hidden = el.getAttribute('data-lang') !== lang;
+                });
+                
+                updateLangButton(lang);
+                updateActiveLink();
+                document.getElementById('lang-dropdown').classList.remove('show');
+            }
+
+            function updateLangButton(lang) {
+                const langLabels = { en: 'EN', fr: 'FR', fa: 'FA' };
+                document.getElementById('lang-btn').textContent = langLabels[lang];
+                document.querySelectorAll('.lang-option').forEach(opt => {
+                    opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
+                });
+            }
+
+            // Language dropdown
+            document.getElementById('lang-btn').addEventListener('click', () => {
+                document.getElementById('lang-dropdown').classList.toggle('show');
+            });
+
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    setLanguage(option.getAttribute('data-lang'));
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.sidebar-header') && !e.target.closest('.lang-dropdown')) {
+                    document.getElementById('lang-dropdown').classList.remove('show');
+                }
+            });
+
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenuBtn.classList.toggle('active');
+                sidebar.classList.toggle('mobile-open');
+            });
+
+            sidebar.addEventListener('click', (e) => {
+                if (e.target.classList.contains('toc-link')) {
+                    mobileMenuBtn.classList.remove('active');
+                    sidebar.classList.remove('mobile-open');
+                }
+            });
+
+            // Active link tracking
+            const links = document.querySelectorAll('.toc-link');
+            let ticking = false;
+
+            function updateActiveLink() {
+                let closest = null;
+                let closestDistance = Infinity;
+
+                links.forEach(function(link) {
+                    if (link.offsetParent === null) return; // Skip hidden links
+                    var href = link.getAttribute('href');
+                    if (href && href.indexOf('#') === 0) {
+                        var id = href.substring(1);
+                        var heading = document.getElementById(id);
+                        if (heading) {
+                            var distance = Math.abs(heading.getBoundingClientRect().top);
+                            if (distance < closestDistance) {
+                                closest = link;
+                                closestDistance = distance;
+                            }
+                        }
+                    }
+                });
+
+                links.forEach(function(link) {
+                    link.classList.remove('active');
+                });
+                if (closest) {
+                    closest.classList.add('active');
+                }
+                ticking = false;
+            }
+
+            function onScroll() {
+                if (!ticking) {
+                    requestAnimationFrame(updateActiveLink);
+                    ticking = true;
+                }
+            }
+
+            // Initialize (early script already set language, apply it here)
+            const savedLang = localStorage.getItem('mpm-docs-lang') || 'en';
+            setLanguage(savedLang);
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('hashchange', function() {
+                const newLang = detectLanguageFromHash();
+                setLanguage(newLang);
+            });
+        })();
+    </script>
+</body>
+</html>
