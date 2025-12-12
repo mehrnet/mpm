@@ -525,7 +525,8 @@
                         }
                     }
                 }
-                return localStorage.getItem('mpm-docs-lang') || navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en';
+                // Only use browser language as fallback if no saved preference exists
+                return localStorage.getItem('mpm-docs-lang') || (navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en');
             }
             
             function setEarlyLanguage(lang) {
