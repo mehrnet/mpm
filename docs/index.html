@@ -6494,7 +6494,16 @@ return function(array $args): string {
 
     <script>
         (function() {
-            // Language management
+            const langLabels = { en: 'EN', fr: 'FR', fa: 'FA' };
+            const links = document.querySelectorAll('.toc-link');
+            const langBtn = document.getElementById('lang-btn');
+            const langDropdown = document.getElementById('lang-dropdown');
+            const htmlRoot = document.getElementById('html-root');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            
+            let ticking = false;
+
             function detectLanguageFromHash() {
                 const hash = window.location.hash.slice(1);
                 if (hash) {
@@ -6502,87 +6511,40 @@ return function(array $args): string {
                     const element = document.getElementById(decodedHash);
                     if (element) {
                         const section = element.closest('[data-lang]');
-                        if (section) {
-                            return section.getAttribute('data-lang');
-                        }
+                        if (section) return section.getAttribute('data-lang');
                     }
                 }
-                return localStorage.getItem('mpm-docs-lang') || navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en';
+                return localStorage.getItem('mpm-docs-lang') || (navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en');
             }
 
             function setLanguage(lang) {
-                const htmlRoot = document.getElementById('html-root');
-                const dir = lang === 'fa' ? 'rtl' : 'ltr';
                 htmlRoot.setAttribute('lang', lang);
-                htmlRoot.setAttribute('dir', dir);
+                htmlRoot.setAttribute('dir', lang === 'fa' ? 'rtl' : 'ltr');
                 localStorage.setItem('mpm-docs-lang', lang);
                 
                 document.querySelectorAll('[data-lang]').forEach(el => {
                     el.hidden = el.getAttribute('data-lang') !== lang;
                 });
                 
-                updateLangButton(lang);
-                updateActiveLink();
-                document.getElementById('lang-dropdown').classList.remove('show');
-            }
-
-            function updateLangButton(lang) {
-                const langLabels = { en: 'EN', fr: 'FR', fa: 'FA' };
-                document.getElementById('lang-btn').textContent = langLabels[lang];
+                langBtn.textContent = langLabels[lang];
                 document.querySelectorAll('.lang-option').forEach(opt => {
-                    opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
+                    opt.classList[opt.getAttribute('data-lang') === lang ? 'add' : 'remove']('active');
                 });
+                langDropdown.classList.remove('show');
+                updateActiveLink();
             }
-
-            // Language dropdown
-            document.getElementById('lang-btn').addEventListener('click', () => {
-                document.getElementById('lang-dropdown').classList.toggle('show');
-            });
-
-            document.querySelectorAll('.lang-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    setLanguage(option.getAttribute('data-lang'));
-                });
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.sidebar-header') && !e.target.closest('.lang-dropdown')) {
-                    document.getElementById('lang-dropdown').classList.remove('show');
-                }
-            });
-
-            // Mobile menu
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const sidebar = document.getElementById('sidebar');
-
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenuBtn.classList.toggle('active');
-                sidebar.classList.toggle('mobile-open');
-            });
-
-            sidebar.addEventListener('click', (e) => {
-                if (e.target.classList.contains('toc-link')) {
-                    mobileMenuBtn.classList.remove('active');
-                    sidebar.classList.remove('mobile-open');
-                }
-            });
-
-            // Active link tracking
-            const links = document.querySelectorAll('.toc-link');
-            let ticking = false;
 
             function updateActiveLink() {
                 let closest = null;
                 let closestDistance = Infinity;
 
-                links.forEach(function(link) {
-                    if (link.offsetParent === null) return; // Skip hidden links
-                    var href = link.getAttribute('href');
-                    if (href && href.indexOf('#') === 0) {
-                        var id = href.substring(1);
-                        var heading = document.getElementById(id);
+                links.forEach(link => {
+                    if (link.offsetParent === null) return;
+                    const href = link.getAttribute('href');
+                    if (href?.startsWith('#')) {
+                        const heading = document.getElementById(href.substring(1));
                         if (heading) {
-                            var distance = Math.abs(heading.getBoundingClientRect().top);
+                            const distance = Math.abs(heading.getBoundingClientRect().top);
                             if (distance < closestDistance) {
                                 closest = link;
                                 closestDistance = distance;
@@ -6591,12 +6553,8 @@ return function(array $args): string {
                     }
                 });
 
-                links.forEach(function(link) {
-                    link.classList.remove('active');
-                });
-                if (closest) {
-                    closest.classList.add('active');
-                }
+                links.forEach(link => link.classList.remove('active'));
+                if (closest) closest.classList.add('active');
                 ticking = false;
             }
 
@@ -6607,14 +6565,43 @@ return function(array $args): string {
                 }
             }
 
-            // Initialize (early script already set language, apply it here)
+            // Language dropdown
+            langBtn.addEventListener('click', () => {
+                langDropdown.classList.toggle('show');
+            });
+
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    setLanguage(option.getAttribute('data-lang'));
+                });
+            });
+
+            document.addEventListener('click', e => {
+                if (!e.target.closest('.sidebar-header') && !e.target.closest('.lang-dropdown')) {
+                    langDropdown.classList.remove('show');
+                }
+            });
+
+            // Mobile menu
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenuBtn.classList.toggle('active');
+                sidebar.classList.toggle('mobile-open');
+            });
+
+            sidebar.addEventListener('click', e => {
+                if (e.target.classList.contains('toc-link')) {
+                    mobileMenuBtn.classList.remove('active');
+                    sidebar.classList.remove('mobile-open');
+                }
+            });
+
+            // Initialize
             const savedLang = localStorage.getItem('mpm-docs-lang') || 'en';
             setLanguage(savedLang);
 
             window.addEventListener('scroll', onScroll, { passive: true });
-            window.addEventListener('hashchange', function() {
-                const newLang = detectLanguageFromHash();
-                setLanguage(newLang);
+            window.addEventListener('hashchange', () => {
+                setLanguage(detectLanguageFromHash());
             });
         })();
     </script>
