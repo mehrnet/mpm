@@ -60,12 +60,17 @@
             color: var(--selection-text);
         }
 
-        html[dir="rtl"] { direction: rtl; }
-        html[dir="ltr"] { direction: ltr; }
-
         html {
             scroll-behavior: smooth;
             overflow-y: scroll;
+        }
+
+        html[dir="rtl"] {
+            direction: rtl;
+        }
+
+        html[dir="ltr"] {
+            direction: ltr;
         }
 
         body {
@@ -289,6 +294,7 @@
         html[dir="rtl"] .main {
             margin-left: 0;
             margin-right: 280px;
+            direction: rtl;
         }
 
         .content-section {
