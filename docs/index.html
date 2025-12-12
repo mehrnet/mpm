@@ -288,19 +288,24 @@
             margin-left: 280px;
             flex: 1;
             padding: 40px;
+            overflow-y: auto;
+            height: 100vh;
         }
 
         /* Main Content - RTL */
         html[dir="rtl"] .main {
             margin-left: 0;
             margin-right: 280px;
-            direction: rtl;
         }
 
         .content-section {
             max-width: 900px;
             margin-bottom: 80px;
             scroll-margin-top: 20px;
+        }
+
+        html[dir="rtl"] .content-section {
+            direction: rtl;
         }
 
         .content-section h1 {
