@@ -90,7 +90,6 @@
             height: 100vh;
             background-color: var(--bg-tertiary);
             overflow-y: auto;
-            padding: 24px 0;
             border-right: 1px solid var(--border);
             z-index: 100;
         }
@@ -104,31 +103,39 @@
         }
 
         .sidebar-header {
-            padding: 0 24px 24px;
+            padding: 24px 24px;
             border-bottom: 1px solid var(--border-secondary);
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
             align-items: center;
             gap: 12px;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-tertiary);
+            z-index: 50;
         }
 
-        html[dir="rtl"] .sidebar-header {
-            flex-direction: row-reverse;
+        .mobile-menu-btn {
+            display: none;
         }
 
         .sidebar-logo {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: var(--accent);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex: 1;
         }
 
-        html[dir="rtl"] .sidebar-logo {
-            flex-direction: row-reverse;
+        .logo-text {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: var(--accent);
+            flex: 1;
+            margin-left: 8px;
+        }
+
+        html[dir="rtl"] .logo-text {
+            margin-left: 0;
+            margin-right: 8px;
         }
 
         .lang-btn {
@@ -148,20 +155,30 @@
             color: var(--accent);
         }
 
+        .lang-btn-wrapper {
+            position: relative;
+        }
+
+        .lang-btn {
+            display: flex;
+            align-items: center;
+        }
+
         .lang-dropdown {
             display: none;
             position: absolute;
-            top: 70px;
-            right: 20px;
+            top: calc(100% + 4px);
+            right: 0;
             background: var(--bg-secondary);
             border: 1px solid var(--border-secondary);
             border-radius: 4px;
-            z-index: 1000;
+            z-index: 9999;
+            white-space: nowrap;
         }
 
         html[dir="rtl"] .lang-dropdown {
             right: auto;
-            left: 20px;
+            left: 0;
         }
 
         .lang-dropdown.show {
@@ -296,6 +313,7 @@
         html[dir="rtl"] .main {
             margin-left: 0;
             margin-right: 280px;
+            direction: rtl;
         }
 
         .content-section {
@@ -433,93 +451,155 @@
         /* Mobile Menu Button - LTR */
         .mobile-menu-btn {
             display: none;
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 101;
             background: none;
-            border: 1px solid var(--border-secondary);
-            padding: 8px;
+            border: none;
+            padding: 6px;
             cursor: pointer;
-            border-radius: 4px;
-            color: var(--text-primary);
+            color: var(--accent);
+            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        /* Mobile Menu Button - RTL */
-        html[dir="rtl"] .mobile-menu-btn {
-            left: auto;
-            right: 16px;
+        .mobile-menu-btn:hover {
+            opacity: 0.8;
         }
 
-        .mobile-menu-btn span {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background-color: var(--text-primary);
-            margin: 4px 0;
+        .mobile-menu-btn svg {
             transition: all 0.3s;
+            display: none;
         }
 
-        .mobile-menu-btn.active span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
+        .mobile-menu-btn .menu-icon {
+            display: block;
         }
 
-        .mobile-menu-btn.active span:nth-child(2) {
-            opacity: 0;
+        .mobile-menu-btn.active .menu-icon {
+            display: none;
         }
 
-        .mobile-menu-btn.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
+        .mobile-menu-btn.active .close-icon {
+            display: block !important;
         }
 
         /* Responsive - Tablet */
         @media (max-width: 768px) {
-            /* LTR Layout */
+            /* Fixed header bar on small screens */
             .sidebar {
                 position: fixed;
                 left: 0;
+                top: 0;
                 width: 100%;
                 height: auto;
-                max-height: calc(100vh - 60px);
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                border-right: 1px solid var(--border);
-                border-bottom: none;
-                top: 60px;
+                max-height: 100vh;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 0;
+                z-index: 100;
+                overflow: visible;
             }
 
             /* RTL Layout */
             html[dir="rtl"] .sidebar {
                 left: auto;
                 right: 0;
-                transform: translateX(100%);
-                border-right: none;
-                border-left: 1px solid var(--border);
+                border-left: none;
+                border-bottom: 1px solid var(--border);
             }
 
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            html[dir="rtl"] .sidebar.mobile-open {
-                transform: translateX(0);
+            .sidebar-header {
+                padding: 0 8px;
+                height: 60px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background-color: var(--bg-tertiary);
+                border-bottom: 1px solid var(--border-secondary);
+                z-index: 101;
+                display: grid;
+                grid-template-columns: auto auto minmax(0, 1fr) auto;
+                grid-template-rows: 60px;
+                align-items: center;
+                gap: 4px;
+                overflow: visible;
             }
 
             .mobile-menu-btn {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
+                align-items: center;
+                padding: 4px;
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            .sidebar-logo {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+            }
+
+            .logo-text {
+                margin-left: 6px;
+                font-size: 0.7em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                min-width: 0;
+                line-height: 1;
+            }
+
+            html[dir="rtl"] .logo-text {
+                margin-left: 0;
+                margin-right: 6px;
+            }
+
+            .lang-btn {
+                padding: 4px 8px;
+                font-size: 0.65em;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                white-space: nowrap;
+            }
+
+            /* Nav slides down from header */
+            .toc {
+                position: fixed;
+                left: 0;
+                right: 0;
+                top: 60px;
+                width: 100%;
+                max-height: calc(100vh - 60px);
+                background-color: var(--bg-tertiary);
+                padding: 16px 0;
+                overflow-y: auto;
+                transform: translateY(-100%);
+                transition: transform 0.3s ease;
+                border-bottom: 1px solid var(--border);
+            }
+
+            html[dir="rtl"] .toc {
+                left: auto;
+                right: 0;
+            }
+
+            .sidebar.mobile-open .toc {
+                transform: translateY(0);
             }
 
             .main {
                 margin-left: 0;
                 margin-top: 60px;
                 padding: 24px;
+                height: calc(100vh - 60px);
             }
 
             html[dir="rtl"] .main {
                 margin-right: 0;
                 margin-top: 60px;
+                direction: rtl;
             }
         }
 
@@ -536,93 +616,83 @@
 </head>
 <body>
     <script>
-        // Early language detection from hash to avoid content flashing wrong language
+        // Early language detection to prevent content flashing in wrong language
         (function() {
             function detectLanguageFromHash() {
                 const hash = window.location.hash.slice(1);
+
+                // If URL has a hash, prioritize finding the language it belongs to
                 if (hash) {
-                    // Decode URL-encoded hash (e.g., %C3%AA -> ê)
-                    const decodedHash = decodeURIComponent(hash);
-                    
-                    // Try to find which section would contain this ID
-                    const sections = document.querySelectorAll('[data-lang]');
-                    for (let section of sections) {
-                        try {
-                            if (section.querySelector('#' + CSS.escape(decodedHash))) {
-                                return section.getAttribute('data-lang');
-                            }
-                        } catch (e) {
-                            // CSS.escape might fail, try without it
-                            if (section.querySelector('#' + decodedHash)) {
+                    try {
+                        const decodedHash = decodeURIComponent(hash);
+                        const element = document.getElementById(decodedHash);
+                        if (element) {
+                            const section = element.closest('[data-lang]');
+                            if (section) {
                                 return section.getAttribute('data-lang');
                             }
                         }
+                    } catch (e) {
+                        // Continue to fallback
                     }
                 }
-                // Only use browser language as fallback if no saved preference exists
-                return localStorage.getItem('mpm-docs-lang') || (navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en');
+
+                // Fallback: saved preference, then browser language, then English
+                return localStorage.getItem('mpm-docs-lang') ||
+                       (navigator.language.startsWith('fa') ? 'fa' :
+                        navigator.language.startsWith('fr') ? 'fr' : 'en');
             }
-            
-            function setEarlyLanguage(lang) {
+
+            function applyLanguage(lang) {
                 const htmlRoot = document.documentElement;
-                const dir = lang === 'fa' ? 'rtl' : 'ltr';
                 htmlRoot.setAttribute('lang', lang);
-                htmlRoot.setAttribute('dir', dir);
+                htmlRoot.setAttribute('dir', lang === 'fa' ? 'rtl' : 'ltr');
                 localStorage.setItem('mpm-docs-lang', lang);
-                // Hide all sections first
-                document.querySelectorAll('[data-lang]').forEach(el => el.hidden = true);
-                // Show only the target language
-                document.querySelectorAll('[data-lang="' + lang + '"]').forEach(el => el.hidden = false);
+
+                // Show/hide content sections by language
+                document.querySelectorAll('[data-lang]').forEach(el => {
+                    el.hidden = el.getAttribute('data-lang') !== lang;
+                });
             }
-            
-            // Wait for DOM to be interactive before detecting language
+
+            // Apply language before main script runs (must wait for DOM)
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', () => {
-                    setEarlyLanguage(detectLanguageFromHash());
+                    const initialLang = detectLanguageFromHash();
+                    applyLanguage(initialLang);
                 });
             } else {
-                setEarlyLanguage(detectLanguageFromHash());
+                const initialLang = detectLanguageFromHash();
+                applyLanguage(initialLang);
             }
         })();
     </script>
 
-    <button class="mobile-menu-btn" id="mobile-menu-btn">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <a href="#" class="sidebar-logo">
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <svg class="close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <a href="#" class="sidebar-logo" aria-label="Home">
                 <svg width="24" height="24" viewBox="3 1 18 22" fill="none" aria-hidden="true" shape-rendering="geometricPrecision">
                     <defs>
-                        <linearGradient id="gTop" x1="3" y1="1" x2="21" y2="11">
-                            <stop offset="0" stop-color="#ffd1a1" />
-                            <stop offset="1" stop-color="#ff8a2a" />
-                        </linearGradient>
-                        <linearGradient id="gLeft" x1="3" y1="7" x2="12" y2="23">
-                            <stop offset="0" stop-color="#ff9a3d" />
-                            <stop offset="1" stop-color="#f97316" />
-                        </linearGradient>
-                        <linearGradient id="gRight" x1="12" y1="12" x2="21" y2="23">
-                            <stop offset="0" stop-color="#f97316" />
-                            <stop offset="1" stop-color="#ea580c" />
-                        </linearGradient>
+                        <linearGradient id="gTop" x1="3" y1="1" x2="21" y2="11"><stop offset="0" stop-color="#ffd1a1"/><stop offset="1" stop-color="#ff8a2a"/></linearGradient>
+                        <linearGradient id="gLeft" x1="3" y1="7" x2="12" y2="23"><stop offset="0" stop-color="#ff9a3d"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+                        <linearGradient id="gRight" x1="12" y1="12" x2="21" y2="23"><stop offset="0" stop-color="#f97316"/><stop offset="1" stop-color="#ea580c"/></linearGradient>
                     </defs>
-                    <polygon fill="url(#gLeft)" points="3,7.3 11.1,12.2 11.1,23 3,18.1" />
-                    <polygon fill="url(#gRight)" points="21,7.3 12.9,12.2 12.9,23 21,18.1" />
-                    <polygon fill="url(#gTop)" points="12,1 20.4,6.2 12,10.8 3.6,6.2" />
+                    <polygon fill="url(#gLeft)" points="3,7.3 11.1,12.2 11.1,23 3,18.1"/><polygon fill="url(#gRight)" points="21,7.3 12.9,12.2 12.9,23 21,18.1"/><polygon fill="url(#gTop)" points="12,1 20.4,6.2 12,10.8 3.6,6.2"/>
                 </svg>
-                <span>MPM Docs</span>
             </a>
-            <button class="lang-btn" id="lang-btn">EN</button>
-        </div>
-
-        <div class="lang-dropdown" id="lang-dropdown">
-            <button class="lang-option" data-lang="en">English</button>
-            <button class="lang-option" data-lang="fr">Français</button>
-            <button class="lang-option" data-lang="fa">فارسی</button>
+            <span id="logo-text" class="logo-text">Mehr's Package Manager</span>
+            <div class="lang-btn-wrapper">
+                <button class="lang-btn" id="lang-btn">EN</button>
+                <div class="lang-dropdown" id="lang-dropdown">
+                    <button class="lang-option" data-lang="en">English</button>
+                    <button class="lang-option" data-lang="fr">Français</button>
+                    <button class="lang-option" data-lang="fa">فارسی</button>
+                </div>
+            </div>
         </div>
 
         <nav class="toc" id="toc-nav">
@@ -6543,87 +6613,147 @@ return function(array $args): string {
 
     <script>
         (function() {
-            const langLabels = { en: 'EN', fr: 'FR', fa: 'FA' };
-            const links = document.querySelectorAll('.toc-link');
-            const langBtn = document.getElementById('lang-btn');
-            const langDropdown = document.getElementById('lang-dropdown');
-            const htmlRoot = document.getElementById('html-root');
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const sidebar = document.getElementById('sidebar');
-            
-            let ticking = false;
-
-            function detectLanguageFromHash() {
-                const hash = window.location.hash.slice(1);
-                if (hash) {
-                    const decodedHash = decodeURIComponent(hash);
-                    const element = document.getElementById(decodedHash);
-                    if (element) {
-                        const section = element.closest('[data-lang]');
-                        if (section) return section.getAttribute('data-lang');
+            // ========== CONFIGURATION ==========
+            const config = {
+                langLabels: { en: 'EN', fr: 'FR', fa: 'FA' },
+                translations: {
+                    'logo-text': {
+                        en: "Mehr's Package Manager",
+                        fa: "مدیر بسته مهر",
+                        fr: "Gestionnaire de Paquets Mehr"
                     }
                 }
-                return localStorage.getItem('mpm-docs-lang') || (navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en');
+            };
+
+            // ========== DOM ELEMENTS ==========
+            const dom = {
+                htmlRoot: document.getElementById('html-root'),
+                langBtn: document.getElementById('lang-btn'),
+                langDropdown: document.getElementById('lang-dropdown'),
+                mobileMenuBtn: document.getElementById('mobile-menu-btn'),
+                sidebar: document.getElementById('sidebar'),
+                navLinks: document.querySelectorAll('.toc-link')
+            };
+
+            // ========== STATE ==========
+            let scrollTicking = false;
+
+            // ========== LANGUAGE MANAGEMENT ==========
+            function detectLanguageFromHash() {
+                const hash = window.location.hash.slice(1);
+
+                // If URL has a hash, prioritize finding the language it belongs to
+                if (hash) {
+                    try {
+                        const decodedHash = decodeURIComponent(hash);
+                        const element = document.getElementById(decodedHash);
+                        if (element) {
+                            const section = element.closest('[data-lang]');
+                            if (section) {
+                                return section.getAttribute('data-lang');
+                            }
+                        }
+                    } catch (e) {
+                        // Continue to fallback
+                    }
+                }
+
+                // Fallback: saved preference, then browser language, then English
+                return localStorage.getItem('mpm-docs-lang') ||
+                       (navigator.language.startsWith('fa') ? 'fa' :
+                        navigator.language.startsWith('fr') ? 'fr' : 'en');
             }
 
-            function setLanguage(lang) {
-                htmlRoot.setAttribute('lang', lang);
-                htmlRoot.setAttribute('dir', lang === 'fa' ? 'rtl' : 'ltr');
+            function setLanguage(lang, skipActiveUpdate = false) {
+                // Update HTML attributes
+                dom.htmlRoot.setAttribute('lang', lang);
+                dom.htmlRoot.setAttribute('dir', lang === 'fa' ? 'rtl' : 'ltr');
                 localStorage.setItem('mpm-docs-lang', lang);
-                
+
+                // Show/hide language sections
                 document.querySelectorAll('[data-lang]').forEach(el => {
                     el.hidden = el.getAttribute('data-lang') !== lang;
                 });
-                
-                langBtn.textContent = langLabels[lang];
+
+                // Update language button
+                dom.langBtn.textContent = config.langLabels[lang];
+
+                // Update language dropdown active state
                 document.querySelectorAll('.lang-option').forEach(opt => {
-                    opt.classList[opt.getAttribute('data-lang') === lang ? 'add' : 'remove']('active');
+                    const isActive = opt.getAttribute('data-lang') === lang;
+                    opt.classList[isActive ? 'add' : 'remove']('active');
                 });
-                langDropdown.classList.remove('show');
-                updateActiveLink();
+
+                // Update UI text translations
+                Object.entries(config.translations).forEach(([elementId, texts]) => {
+                    const element = document.getElementById(elementId);
+                    if (element && texts[lang]) {
+                        element.textContent = texts[lang];
+                    }
+                });
+
+                dom.langDropdown.classList.remove('show');
+                // Only update active link if not during initialization
+                if (!skipActiveUpdate) {
+                    updateActiveLink();
+                }
             }
 
+            // ========== NAVIGATION HIGHLIGHTING ==========
             function updateActiveLink() {
                 let closest = null;
                 let closestDistance = Infinity;
 
-                links.forEach(link => {
+                dom.navLinks.forEach(link => {
+                    // Skip hidden links
                     if (link.offsetParent === null) return;
+
                     const href = link.getAttribute('href');
-                    if (href?.startsWith('#')) {
-                        const heading = document.getElementById(href.substring(1));
-                        if (heading) {
-                            const distance = Math.abs(heading.getBoundingClientRect().top);
-                            if (distance < closestDistance) {
-                                closest = link;
-                                closestDistance = distance;
-                            }
-                        }
+                    if (!href?.startsWith('#')) return;
+
+                    const heading = document.getElementById(href.substring(1));
+                    // Skip if heading not found or is hidden
+                    if (!heading || heading.offsetParent === null) return;
+
+                    // Find the link closest to viewport top
+                    const distance = Math.abs(heading.getBoundingClientRect().top);
+                    if (distance < closestDistance) {
+                        closest = link;
+                        closestDistance = distance;
                     }
                 });
 
-                links.forEach(link => link.classList.remove('active'));
+                // Remove active class from all links
+                dom.navLinks.forEach(link => link.classList.remove('active'));
+
+                // Add active class to closest link and update hash
                 if (closest) {
                     closest.classList.add('active');
-                    // Update URL hash to match current section (without adding history entry)
+
+                    // Update URL hash without history entry
                     const newHash = closest.getAttribute('href');
-                    if (window.location.hash !== newHash) {
-                        history.replaceState(null, '', newHash);
+                    if (newHash && window.location.hash !== newHash) {
+                        try {
+                            history.replaceState(null, '', newHash);
+                        } catch (e) {
+                            console.warn('Failed to update hash:', e);
+                        }
                     }
                 }
-                ticking = false;
+
+                scrollTicking = false;
             }
 
             function onScroll() {
-                if (!ticking) {
+                if (!scrollTicking) {
                     requestAnimationFrame(updateActiveLink);
-                    ticking = true;
+                    scrollTicking = true;
                 }
             }
 
-            // Language dropdown
-            langBtn.addEventListener('click', () => {
-                langDropdown.classList.toggle('show');
+            // ========== EVENT LISTENERS: LANGUAGE DROPDOWN ==========
+            dom.langBtn.addEventListener('click', () => {
+                dom.langDropdown.classList.toggle('show');
             });
 
             document.querySelectorAll('.lang-option').forEach(option => {
@@ -6632,33 +6762,59 @@ return function(array $args): string {
                 });
             });
 
-            document.addEventListener('click', e => {
-                if (!e.target.closest('.sidebar-header') && !e.target.closest('.lang-dropdown')) {
-                    langDropdown.classList.remove('show');
+            document.addEventListener('click', (e) => {
+                const isLanguageArea = e.target.closest('.sidebar-header') ||
+                                     e.target.closest('.lang-dropdown');
+                if (!isLanguageArea) {
+                    dom.langDropdown.classList.remove('show');
                 }
             });
 
-            // Mobile menu
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenuBtn.classList.toggle('active');
-                sidebar.classList.toggle('mobile-open');
+            // ========== EVENT LISTENERS: MOBILE MENU ==========
+            dom.mobileMenuBtn.addEventListener('click', () => {
+                const isOpen = dom.mobileMenuBtn.classList.toggle('active');
+                dom.sidebar.classList.toggle('mobile-open', isOpen);
             });
 
-            sidebar.addEventListener('click', e => {
+            dom.sidebar.addEventListener('click', (e) => {
                 if (e.target.classList.contains('toc-link')) {
-                    mobileMenuBtn.classList.remove('active');
-                    sidebar.classList.remove('mobile-open');
+                    dom.mobileMenuBtn.classList.remove('active');
+                    dom.sidebar.classList.remove('mobile-open');
                 }
             });
 
-            // Initialize
-            const savedLang = localStorage.getItem('mpm-docs-lang') || 'en';
-            setLanguage(savedLang);
-
-            window.addEventListener('scroll', onScroll, { passive: true });
+            // ========== EVENT LISTENERS: SCROLL & HASH ==========
+            const mainElement = document.querySelector('.main');
+            if (mainElement) {
+                mainElement.addEventListener('scroll', onScroll, { passive: true });
+            }
             window.addEventListener('hashchange', () => {
                 setLanguage(detectLanguageFromHash());
             });
+
+            // ========== INITIALIZATION ==========
+            // Prioritize language from URL hash over saved preference
+            const hashLang = detectLanguageFromHash();
+            // Skip active link update during initialization to let hash scroll happen first
+            setLanguage(hashLang, true);
+
+            // Scroll to hash after language is applied and DOM is settled
+            setTimeout(() => {
+                const hash = window.location.hash.slice(1);
+                if (hash) {
+                    try {
+                        const decodedHash = decodeURIComponent(hash);
+                        const element = document.getElementById(decodedHash);
+                        if (element) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            // Update active link after scrolling to hash
+                            updateActiveLink();
+                        }
+                    } catch (e) {
+                        console.warn('Failed to scroll to hash:', e);
+                    }
+                }
+            }, 0);
         })();
     </script>
 </body>
