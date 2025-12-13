@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
@@ -8,26 +7,50 @@
     <meta name="author" content="Mehr">
     <meta name="theme-color" content="#171717">
     <meta name="color-scheme" content="dark">
-    
+
     <!-- Open Graph -->
     <meta property="og:title" content="MPM Documentation">
     <meta property="og:description" content="Complete documentation for MPM (Mehr's Package Manager)">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://mpm.mehrnet.com/">
     <meta property="og:site_name" content="MPM Docs">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MPM Documentation">
     <meta name="twitter:description" content="Complete documentation for MPM (Mehr's Package Manager)">
-    
-    <!-- Canonical -->
+
+    <!-- SEO & Crawling -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Canonical & Language Alternates -->
     <link rel="canonical" href="https://mpm.mehrnet.com/">
-    
+    <link rel="alternate" hreflang="en" href="https://mpm.mehrnet.com/">
+    <link rel="alternate" hreflang="fa" href="https://mpm.mehrnet.com/#">
+    <link rel="alternate" hreflang="fr" href="https://mpm.mehrnet.com/#">
+    <link rel="alternate" hreflang="x-default" href="https://mpm.mehrnet.com/">
+
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='3 1 18 22' fill='none' shape-rendering='geometricPrecision'%3E%3Cdefs%3E%3ClinearGradient id='gTop' x1='3' y1='1' x2='21' y2='11'%3E%3Cstop offset='0' stop-color='%23ffd1a1'/%3E%3Cstop offset='1' stop-color='%23ff8a2a'/%3E%3C/linearGradient%3E%3ClinearGradient id='gLeft' x1='3' y1='7' x2='12' y2='23'%3E%3Cstop offset='0' stop-color='%23ff9a3d'/%3E%3Cstop offset='1' stop-color='%23f97316'/%3E%3C/linearGradient%3E%3ClinearGradient id='gRight' x1='12' y1='12' x2='21' y2='23'%3E%3Cstop offset='0' stop-color='%23f97316'/%3E%3Cstop offset='1' stop-color='%23ea580c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon fill='url(%23gLeft)' points='3,7.3 11.1,12.2 11.1,23 3,18.1'/%3E%3Cpolygon fill='url(%23gRight)' points='21,7.3 12.9,12.2 12.9,23 21,18.1'/%3E%3Cpolygon fill='url(%23gTop)' points='12,1 20.4,6.2 12,10.8 3.6,6.2'/%3E%3C/svg%3E">
-    
+
     <title>MPM Documentation</title>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "MPM Documentation",
+        "description": "Complete documentation for MPM (Mehr's Package Manager)",
+        "url": "https://mpm.mehrnet.com/",
+        "inLanguage": ["en", "fa", "fr"],
+        "creator": {
+            "@type": "Organization",
+            "name": "Mehr"
+        }
+    }
+    </script>
+
     <style>
         /* ========== CSS VARIABLES & RESET ========== */
         :root {
@@ -63,12 +86,36 @@
 
         /* ========== GLOBAL & BASE STYLES ========== */
         html {
+            height: 100%;
             scroll-behavior: smooth;
-            overflow-y: scroll;
+            overflow: hidden;
         }
 
         html[dir="rtl"] { direction: rtl; }
         html[dir="ltr"] { direction: ltr; }
+
+        /* ========== KEYBOARD FOCUS INDICATORS ========== */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
 
         body {
             background-color: var(--bg-primary);
@@ -76,19 +123,85 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ========== TOP HEADER ========== */
+        .top-header {
+            height: 60px;
+            background-color: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-secondary);
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 12px;
+            padding: 0 24px;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+
+        .header-center {
+            display: flex;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .top-header .mobile-menu-btn {
+            display: none;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .header-logo .logo-text {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: var(--accent);
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        html[dir="rtl"] .header-logo .logo-text {
+            margin-left: 0;
+            margin-right: 8px;
+        }
+
+        /* ========== CONTENT WRAPPER ========== */
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
         }
 
         /* ========== LAYOUT: SIDEBAR (DESKTOP) ========== */
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
             width: 280px;
-            height: 100vh;
             background-color: var(--bg-tertiary);
             overflow-y: auto;
             border-right: 1px solid var(--border);
-            z-index: 100;
+            flex-shrink: 0;
         }
 
         html[dir="rtl"] .sidebar {
@@ -98,37 +211,89 @@
             border-left: 1px solid var(--border);
         }
 
-        /* ========== SIDEBAR HEADER ========== */
-        .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border-secondary);
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-            background-color: var(--bg-tertiary);
-            z-index: 50;
+        /* ========== SIDEBAR MOBILE HEADER ========== */
+        .sidebar-mobile-header {
+            display: none;
         }
 
-        .sidebar-logo {
-            text-decoration: none;
+        /* ========== HEADER SEARCH BAR ========== */
+        .header-search-wrapper {
+            position: relative;
             display: flex;
             align-items: center;
+            width: 100%;
+            min-width: 0;
+            max-width: 350px;
         }
 
-        .logo-text {
-            font-size: 0.85em;
-            font-weight: 700;
-            color: var(--accent);
-            flex: 1;
-            margin-left: 8px;
+        .header-search-input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            padding-left: 32px;
+            padding-right: 80px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            outline: none;
+            transition: all 0.2s;
         }
 
-        html[dir="rtl"] .logo-text {
-            margin-left: 0;
-            margin-right: 8px;
+        .header-search-input:focus {
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .header-search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .header-search-icon {
+            position: absolute;
+            left: 12px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+
+        .search-shortcut {
+            position: absolute;
+            right: 8px;
+            background: var(--border-secondary);
+            color: var(--text-secondary);
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 0.75em;
+            font-weight: 500;
+            font-family: monospace;
+            white-space: nowrap;
+            pointer-events: none;
+            border: 1px solid var(--border);
+            opacity: 1;
+            transition: opacity 0.2s;
+        }
+
+        /* Hide shortcut when input is focused or has text */
+        .header-search-input:focus ~ .search-shortcut,
+        .header-search-input:not(:placeholder-shown) ~ .search-shortcut {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        html[dir="rtl"] .header-search-input {
+            padding-left: 12px;
+            padding-right: 32px;
+        }
+
+        html[dir="rtl"] .header-search-icon {
+            left: auto;
+            right: 12px;
+        }
+
+        html[dir="rtl"] .search-shortcut {
+            right: auto;
+            left: 8px;
         }
 
         /* ========== LANGUAGE SELECTOR ========== */
@@ -139,7 +304,7 @@
         .lang-btn {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
             background: none;
             border: 1px solid var(--border-secondary);
             color: var(--text-secondary);
@@ -263,16 +428,13 @@
 
         /* ========== LAYOUT: MAIN CONTENT (DESKTOP) ========== */
         .main {
-            margin-left: 280px;
             flex: 1;
             padding: 40px;
             overflow-y: auto;
-            height: 100vh;
+            direction: inherit;
         }
 
         html[dir="rtl"] .main {
-            margin-left: 0;
-            margin-right: 280px;
             direction: rtl;
         }
 
@@ -335,6 +497,7 @@
             border-radius: 3px;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 0.9em;
+            direction: ltr;
         }
 
         .content-section pre {
@@ -345,6 +508,13 @@
             overflow-x: auto;
             margin: 16px 0;
             border-left: 3px solid var(--accent);
+            direction: ltr;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-block {
+            position: relative;
         }
 
         html[dir="rtl"] .content-section pre {
@@ -357,7 +527,66 @@
             color: inherit;
             padding: 0;
             border-radius: 0;
+            direction: ltr;
         }
+
+        /* ========== COPY BUTTON ========== */
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.85em;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent);
+            background: rgba(243, 78, 63, 0.1);
+        }
+
+        .copy-btn svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .copy-btn .copy-icon {
+            display: block;
+        }
+
+        .copy-btn .checkmark-icon {
+            display: none;
+            color: #10b981;
+        }
+
+        .copy-btn.copied .copy-icon {
+            display: none;
+        }
+
+        .copy-btn.copied .checkmark-icon {
+            display: block;
+        }
+
+        .copy-btn .copied-text {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+	/*
+        html[dir="rtl"] .copy-btn {
+            left: 8px;
+            right: auto;
+        }
+	*/
 
         /* ========== CONTENT: BLOCKQUOTE ========== */
         .content-section blockquote {
@@ -417,6 +646,35 @@
             margin-bottom: 8px;
         }
 
+        /* ========== SKIP LINK ========== */
+        .skip-link {
+            position: absolute;
+            left: -10000px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            z-index: 10000;
+        }
+
+        .skip-link:focus {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: auto;
+            height: auto;
+            background: var(--accent);
+            color: var(--bg-primary);
+            padding: 8px 16px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        html[dir="rtl"] .skip-link:focus {
+            left: auto;
+            right: 0;
+        }
+
         /* ========== MOBILE MENU BUTTON ========== */
         .mobile-menu-btn {
             display: none;
@@ -452,115 +710,342 @@
 
         /* ========== RESPONSIVE: MOBILE (768px and below) ========== */
         @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-                padding: 0;
-                z-index: 100;
-                overflow: visible;
-            }
-
-            html[dir="rtl"] .sidebar {
-                left: auto;
-                right: 0;
-                border-left: none;
-                border-bottom: 1px solid var(--border);
-            }
-
-            .sidebar-header {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                padding: 0 8px;
-                height: 60px;
-                grid-template-columns: auto auto minmax(0, 1fr) auto;
-                grid-template-rows: 60px;
-                gap: 4px;
-                background-color: var(--bg-tertiary);
-                border-bottom: 1px solid var(--border-secondary);
-                z-index: 101;
-                overflow: visible;
-            }
-
-            .mobile-menu-btn {
+            /* Show mobile menu button */
+            .top-header .mobile-menu-btn {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 padding: 4px;
-                margin: 0;
+                background: none;
+                border: none;
+                color: var(--accent);
+                cursor: pointer;
             }
 
-            .sidebar-logo {
-                flex-shrink: 0;
+            .top-header {
+                grid-template-columns: auto 1fr;
+                gap: 8px;
+                padding: 0 12px;
             }
 
-            .logo-text {
-                margin-left: 6px;
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: flex-start;
+            }
+
+            .header-logo {
+                min-width: fit-content;
+                overflow: hidden;
+            }
+
+            .header-logo .logo-text {
                 font-size: 0.7em;
-                white-space: nowrap;
+                max-width: 80px;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                line-height: 1;
-                min-width: 0;
             }
 
-            html[dir="rtl"] .logo-text {
-                margin-left: 0;
-                margin-right: 6px;
+            .header-center {
+                display: none;
+            }
+
+            .header-search-wrapper {
+                display: none;
+            }
+
+            .header-right {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .lang-btn-wrapper {
+                position: relative;
+                z-index: 10;
             }
 
             .lang-btn {
                 padding: 4px 8px;
-                font-size: 0.65em;
-                white-space: nowrap;
+                font-size: 0.7em;
             }
 
-            .toc {
-                position: fixed;
-                left: 0;
+            .lang-dropdown {
+                position: absolute;
                 right: 0;
-                top: 60px;
+                top: calc(100% + 4px);
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-secondary);
+                border-radius: 4px;
+                z-index: 100;
+            }
+
+            /* Hide sidebar by default on mobile */
+            .sidebar {
+                display: none;
+                position: absolute;
+                left: 0;
+                top: 0;
                 width: 100%;
-                max-height: calc(100vh - 60px);
-                padding: 16px 0;
+                height: 100%;
+                z-index: 99;
                 background-color: var(--bg-tertiary);
                 overflow-y: auto;
-                border-bottom: 1px solid var(--border);
-                transform: translateY(-100%);
-                transition: transform 0.3s ease;
             }
 
-            html[dir="rtl"] .toc {
+            html[dir="rtl"] .sidebar {
                 left: auto;
                 right: 0;
             }
 
-            .sidebar.mobile-open .toc {
-                transform: translateY(0);
+            /* Show sidebar when mobile menu is open */
+            .sidebar.mobile-open {
+                display: block;
             }
 
             .main {
-                margin-left: 0;
-                margin-top: 60px;
                 padding: 16px;
-                height: calc(100vh - 60px);
+            }
+        }
+
+        /* ========== SEARCH MODAL (DROPDOWN) ========== */
+        .search-overlay {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: transparent;
+            z-index: 10001;
+            display: block;
+            max-width: 350px;
+            width: 100vw;
+            max-width: 350px;
+        }
+
+        .search-overlay[hidden] {
+            display: none;
+        }
+
+        .search-modal {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-width: 350px;
+            max-height: calc(100vh - 70px);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-results {
+            overflow-y: auto;
+            max-height: calc(100vh - 70px);
+            padding: 8px;
+        }
+
+        .search-hint {
+            padding: 40px 16px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .search-result {
+            padding: 12px 16px;
+            margin: 4px 0;
+            background: var(--bg-secondary);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-result:hover,
+        .search-result:focus {
+            border-color: var(--accent);
+            background: rgba(243, 78, 63, 0.1);
+        }
+
+        .search-result-title {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .search-result-snippet {
+            color: var(--text-tertiary);
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .search-result-snippet mark {
+            background: rgba(243, 78, 63, 0.3);
+            color: var(--text-primary);
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .search-no-results {
+            padding: 40px 16px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .search-overlay {
+                display: none;
+            }
+        }
+
+        /* ========== PRINT STYLES ========== */
+        @media print {
+            @page {
+                margin: 2cm;
             }
 
-            html[dir="rtl"] .main {
-                margin-right: 0;
-                margin-top: 60px;
+            * {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
+            /* Hide navigation and interactive elements */
+            .sidebar,
+            .skip-link,
+            .mobile-menu-btn,
+            .lang-btn-wrapper,
+            .search-overlay,
+            noscript {
+                display: none !important;
+            }
+
+            /* Full width content */
+            .main {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+
+            /* Page break handling */
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+            }
+
+            .content-section {
+                page-break-inside: avoid;
+            }
+
+            pre, blockquote, table {
+                page-break-inside: avoid;
+            }
+
+            /* Show URLs for links */
+            a[href]:after {
+                content: " (" attr(href) ")";
+                font-size: 0.8em;
+                font-weight: normal;
+            }
+
+            a[href^="#"]:after,
+            a[href^="javascript:"]:after {
+                content: "";
+            }
+
+            /* Optimize code blocks */
+            pre {
+                border: 1px solid #000;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+
+            /* Table styling */
+            table {
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid #000;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Skip to main content link for keyboard navigation -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Search Results Modal -->
+    <div class="search-overlay" id="search-overlay" hidden>
+        <div class="search-modal">
+            <div class="search-results" id="search-results">
+                <div class="search-hint" id="search-hint-text">Type to search...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full-width top header with search -->
+    <header class="top-header" id="top-header">
+        <div class="header-left">
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="toc-nav">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <svg class="close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <a href="/" class="header-logo" aria-label="Home">
+                <svg width="24" height="24" viewBox="3 1 18 22" fill="none" aria-hidden="true" shape-rendering="geometricPrecision">
+                    <defs>
+                        <linearGradient id="gTop" x1="3" y1="1" x2="21" y2="11"><stop offset="0" stop-color="#ffd1a1"/><stop offset="1" stop-color="#ff8a2a"/></linearGradient>
+                        <linearGradient id="gLeft" x1="3" y1="7" x2="12" y2="23"><stop offset="0" stop-color="#ff9a3d"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+                        <linearGradient id="gRight" x1="12" y1="12" x2="21" y2="23"><stop offset="0" stop-color="#f97316"/><stop offset="1" stop-color="#ea580c"/></linearGradient>
+                    </defs>
+                    <polygon fill="url(#gLeft)" points="3,7.3 11.1,12.2 11.1,23 3,18.1"/><polygon fill="url(#gRight)" points="21,7.3 12.9,12.2 12.9,23 21,18.1"/><polygon fill="url(#gTop)" points="12,1 20.4,6.2 12,10.8 3.6,6.2"/>
+                </svg>
+                <span id="logo-text" class="logo-text">Mehr's Package Manager</span>
+            </a>
+        </div>
+
+        <div class="header-center">
+            <div class="header-search-wrapper">
+                <svg class="header-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input
+                    type="search"
+                    class="header-search-input"
+                    id="search-input"
+                    placeholder="Search documentation..."
+                    aria-label="Search documentation"
+                    autocomplete="off"
+                />
+                <kbd class="search-shortcut" aria-label="Press Ctrl K or Cmd K to search">
+                    <span class="shortcut-key">Ctrl</span> K
+                </kbd>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="lang-btn-wrapper">
+                <button class="lang-btn" id="lang-btn" aria-label="Select language" aria-expanded="false" aria-haspopup="true" aria-controls="lang-dropdown">
+                    <svg class="header-lang-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        <path d="M2 12h20"/>
+                    </svg>
+                    <span>EN</span>
+                </button>
+                <div class="lang-dropdown" id="lang-dropdown" role="menu" aria-label="Language options">
+                    <button class="lang-option" data-lang="en" role="menuitem">English</button>
+                    <button class="lang-option" data-lang="fr" role="menuitem">Français</button>
+                    <button class="lang-option" data-lang="fa" role="menuitem">فارسی</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <script>
         // Early language detection to prevent content flashing in wrong language
         (function() {
@@ -614,35 +1099,10 @@
         })();
     </script>
 
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
-                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                <svg class="close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-            <a href="/" class="sidebar-logo" aria-label="Home">
-                <svg width="24" height="24" viewBox="3 1 18 22" fill="none" aria-hidden="true" shape-rendering="geometricPrecision">
-                    <defs>
-                        <linearGradient id="gTop" x1="3" y1="1" x2="21" y2="11"><stop offset="0" stop-color="#ffd1a1"/><stop offset="1" stop-color="#ff8a2a"/></linearGradient>
-                        <linearGradient id="gLeft" x1="3" y1="7" x2="12" y2="23"><stop offset="0" stop-color="#ff9a3d"/><stop offset="1" stop-color="#f97316"/></linearGradient>
-                        <linearGradient id="gRight" x1="12" y1="12" x2="21" y2="23"><stop offset="0" stop-color="#f97316"/><stop offset="1" stop-color="#ea580c"/></linearGradient>
-                    </defs>
-                    <polygon fill="url(#gLeft)" points="3,7.3 11.1,12.2 11.1,23 3,18.1"/><polygon fill="url(#gRight)" points="21,7.3 12.9,12.2 12.9,23 21,18.1"/><polygon fill="url(#gTop)" points="12,1 20.4,6.2 12,10.8 3.6,6.2"/>
-                </svg>
-            </a>
-            <span id="logo-text" class="logo-text">Mehr's Package Manager</span>
-            <div class="lang-btn-wrapper">
-                <button class="lang-btn" id="lang-btn">EN</button>
-                <div class="lang-dropdown" id="lang-dropdown">
-                    <button class="lang-option" data-lang="en">English</button>
-                    <button class="lang-option" data-lang="fr">Français</button>
-                    <button class="lang-option" data-lang="fa">فارسی</button>
-                </div>
-            </div>
-        </div>
-
-        <nav class="toc" id="toc-nav">
-            <!-- Navbar will be generated with data-lang wrappers -->
+    <div class="content-wrapper">
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Documentation navigation">
+            <nav class="toc" id="toc-nav">
+                <!-- Navbar will be generated with data-lang wrappers -->
     <div data-lang="en">
         <div class="toc-section">
             <div class="toc-title">Installation &amp; Setup Guide</div>
@@ -654,7 +1114,6 @@
             <a href="#repository-setup" class="toc-link" data-section="repository-setup">Repository Setup</a>
             <a href="#deployment" class="toc-link" data-section="deployment">Deployment</a>
             <a href="#troubleshooting" class="toc-link" data-section="troubleshooting">Troubleshooting</a>
-            <a href="#next-steps" class="toc-link" data-section="next-steps">Next Steps</a>
         </div>
         <div class="toc-section">
             <div class="toc-title">Usage Reference</div>
@@ -667,7 +1126,6 @@
             <a href="#architecture" class="toc-link" data-section="architecture">Architecture</a>
             <a href="#performance" class="toc-link" data-section="performance">Performance</a>
             <a href="#troubleshooting-1" class="toc-link" data-section="troubleshooting-1">Troubleshooting</a>
-            <a href="#see-also" class="toc-link" data-section="see-also">See Also</a>
         </div>
         <div class="toc-section">
             <div class="toc-title">Package Development Guide</div>
@@ -679,13 +1137,11 @@
             <a href="#distribution" class="toc-link" data-section="distribution">Distribution</a>
             <a href="#best-practices-1" class="toc-link" data-section="best-practices-1">Best Practices</a>
             <a href="#examples" class="toc-link" data-section="examples">Examples</a>
-            <a href="#see-also-1" class="toc-link" data-section="see-also-1">See Also</a>
         </div>
     </div>
     <div data-lang="fa" hidden>
         <div class="toc-section">
             <div class="toc-title">راهنمای نصب و تنظیمات</div>
-            <a href="#فهرست-مطالب" class="toc-link" data-section="فهرست-مطالب">فهرست مطالب</a>
             <a href="#نصب" class="toc-link" data-section="نصب">نصب</a>
             <a href="#اولین-اجرا" class="toc-link" data-section="اولین-اجرا">اولین اجرا</a>
             <a href="#پیکربندی" class="toc-link" data-section="پیکربندی">پیکربندی</a>
@@ -694,11 +1150,9 @@
             <a href="#تنظیم-مخزن" class="toc-link" data-section="تنظیم-مخزن">تنظیم مخزن</a>
             <a href="#استقرار" class="toc-link" data-section="استقرار">استقرار</a>
             <a href="#حل-مسائل" class="toc-link" data-section="حل-مسائل">حل مسائل</a>
-            <a href="#مراحل-بعدی" class="toc-link" data-section="مراحل-بعدی">مراحل بعدی</a>
         </div>
         <div class="toc-section">
             <div class="toc-title">راهنمای مرجع استفاده</div>
-            <a href="#فهرست-مطالب-1" class="toc-link" data-section="فهرست-مطالب-1">فهرست مطالب</a>
             <a href="#فرمت-های-درخواست" class="toc-link" data-section="فرمت-های-درخواست">فرمت های درخواست</a>
             <a href="#فرماندهای-درون-ساخت" class="toc-link" data-section="فرماندهای-درون-ساخت">فرماندهای درون ساخت</a>
             <a href="#مدیریت-بسته" class="toc-link" data-section="مدیریت-بسته">مدیریت بسته</a>
@@ -708,11 +1162,9 @@
             <a href="#معماری" class="toc-link" data-section="معماری">معماری</a>
             <a href="#کارایی" class="toc-link" data-section="کارایی">کارایی</a>
             <a href="#حل-مسائل-1" class="toc-link" data-section="حل-مسائل-1">حل مسائل</a>
-            <a href="#همچنین-ببینید" class="toc-link" data-section="همچنین-ببینید">همچنین ببینید</a>
         </div>
         <div class="toc-section">
             <div class="toc-title">راهنمای توسعه بسته</div>
-            <a href="#فهرست-مطالب-2" class="toc-link" data-section="فهرست-مطالب-2">فهرست مطالب</a>
             <a href="#شروع-سریع" class="toc-link" data-section="شروع-سریع">شروع سریع</a>
             <a href="#ساختار-بسته" class="toc-link" data-section="ساختار-بسته">ساختار بسته</a>
             <a href="#پیاده-سازی-کننده" class="toc-link" data-section="پیاده-سازی-کننده">پیاده سازی کننده</a>
@@ -721,13 +1173,11 @@
             <a href="#توزیع" class="toc-link" data-section="توزیع">توزیع</a>
             <a href="#بهترین-عملکردها-1" class="toc-link" data-section="بهترین-عملکردها-1">بهترین عملکردها</a>
             <a href="#مثال-ها" class="toc-link" data-section="مثال-ها">مثال ها</a>
-            <a href="#همچنین-ببینید-1" class="toc-link" data-section="همچنین-ببینید-1">همچنین ببینید</a>
         </div>
     </div>
     <div data-lang="fr" hidden>
         <div class="toc-section">
             <div class="toc-title">Référence d&#39;utilisation</div>
-            <a href="#table-des-matières" class="toc-link" data-section="table-des-matières">Table des matières</a>
             <a href="#formats-de-requête" class="toc-link" data-section="formats-de-requête">Formats de requête</a>
             <a href="#commandes-intégrées" class="toc-link" data-section="commandes-intégrées">Commandes intégrées</a>
             <a href="#gestionnaire-de-paquets" class="toc-link" data-section="gestionnaire-de-paquets">Gestionnaire de paquets</a>
@@ -737,11 +1187,9 @@
             <a href="#architecture-1" class="toc-link" data-section="architecture-1">Architecture</a>
             <a href="#performance-1" class="toc-link" data-section="performance-1">Performance</a>
             <a href="#dépannage" class="toc-link" data-section="dépannage">Dépannage</a>
-            <a href="#voir-aussi" class="toc-link" data-section="voir-aussi">Voir aussi</a>
         </div>
         <div class="toc-section">
             <div class="toc-title">Guide d&#39;installation et de configuration</div>
-            <a href="#table-des-matières-1" class="toc-link" data-section="table-des-matières-1">Table des matières</a>
             <a href="#installation-1" class="toc-link" data-section="installation-1">Installation</a>
             <a href="#première-exécution" class="toc-link" data-section="première-exécution">Première exécution</a>
             <a href="#configuration-1" class="toc-link" data-section="configuration-1">Configuration</a>
@@ -750,11 +1198,9 @@
             <a href="#configuration-du-référentiel" class="toc-link" data-section="configuration-du-référentiel">Configuration du référentiel</a>
             <a href="#déploiement" class="toc-link" data-section="déploiement">Déploiement</a>
             <a href="#dépannage-1" class="toc-link" data-section="dépannage-1">Dépannage</a>
-            <a href="#étapes-suivantes" class="toc-link" data-section="étapes-suivantes">Étapes suivantes</a>
         </div>
         <div class="toc-section">
             <div class="toc-title">Guide de développement des paquets</div>
-            <a href="#table-des-matières-2" class="toc-link" data-section="table-des-matières-2">Table des matières</a>
             <a href="#démarrage-rapide" class="toc-link" data-section="démarrage-rapide">Démarrage rapide</a>
             <a href="#structure-du-paquet" class="toc-link" data-section="structure-du-paquet">Structure du paquet</a>
             <a href="#implémentation-du-gestionnaire" class="toc-link" data-section="implémentation-du-gestionnaire">Implémentation du gestionnaire</a>
@@ -763,30 +1209,18 @@
             <a href="#distribution-1" class="toc-link" data-section="distribution-1">Distribution</a>
             <a href="#bonnes-pratiques-1" class="toc-link" data-section="bonnes-pratiques-1">Bonnes pratiques</a>
             <a href="#exemples" class="toc-link" data-section="exemples">Exemples</a>
-            <a href="#voir-aussi-1" class="toc-link" data-section="voir-aussi-1">Voir aussi</a>
         </div>
     </div>
 
 
-        </nav>
-    </aside>
+            </nav>
+        </aside>
 
-    <main class="main">
-        <!-- Content sections generated with data-lang wrappers -->
+        <main class="main" id="main-content" role="main">
+            <!-- Content sections generated with data-lang wrappers -->
     <section class="content-section" data-lang="en">
-<!-- LANG:en -->
 <h1 id="installation--setup-guide">Installation &amp; Setup Guide</h1>
 <p>Complete guide for installing, configuring, and getting started with MPM - Mehr&#39;s Package Manager.</p>
-<h2 id="table-of-contents">Table of Contents</h2>
-<ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#first-run">First Run</a></li>
-<li><a href="#configuration">Configuration</a></li>
-<li><a href="#getting-started">Getting Started</a></li>
-<li><a href="#package-development">Package Development</a></li>
-<li><a href="#repository-setup">Repository Setup</a></li>
-<li><a href="#deployment">Deployment</a></li>
-</ul>
 <hr>
 <h2 id="installation">Installation</h2>
 <h3 id="quick-install">Quick Install</h3>
@@ -1253,29 +1687,8 @@ php shell.php ls  # This creates .config/key
 <pre><code class="language-bash"># Force unlock if stuck
 php shell.php pkg unlock
 </code></pre>
-<h2 id="next-steps">Next Steps</h2>
-<ul>
-<li>Read the <a href="USAGE.md">Usage Reference</a> for complete command documentation</li>
-<li>See <a href="PACKAGES.md">Package Development</a> for advanced package creation</li>
-<li>Check out <a href="https://github.com/mehrnet/mpm-packages">example packages</a></li>
-</ul>
-<hr>
-<p>For questions or issues, please visit: <a href="https://github.com/mehrnet/mpm">https://github.com/mehrnet/mpm</a></p>
-<!-- LANG:en -->
 <h1 id="usage-reference">Usage Reference</h1>
 <p>Complete command reference and API documentation for MPM - Mehr&#39;s Package Manager.</p>
-<h2 id="table-of-contents-1">Table of Contents</h2>
-<ul>
-<li><a href="#request-formats">Request Formats</a></li>
-<li><a href="#built-in-commands">Built-in Commands</a></li>
-<li><a href="#package-manager">Package Manager</a></li>
-<li><a href="#response-protocol">Response Protocol</a></li>
-<li><a href="#configuration-files">Configuration Files</a></li>
-<li><a href="#custom-commands">Custom Commands</a></li>
-<li><a href="#architecture">Architecture</a></li>
-<li><a href="#performance">Performance</a></li>
-<li><a href="#troubleshooting">Troubleshooting</a></li>
-</ul>
 <hr>
 <h2 id="request-formats">Request Formats</h2>
 <h3 id="http-mode">HTTP Mode</h3>
@@ -2116,31 +2529,8 @@ chmod 644 .config/*
 chmod 755 .cache
 </code></pre>
 <hr>
-<h2 id="see-also">See Also</h2>
-<ul>
-<li><strong><a href="INSTALL.md">Installation Guide</a></strong> - Setup and configuration</li>
-<li><strong><a href="PACKAGES.md">Package Development</a></strong> - Creating packages</li>
-<li><strong><a href="https://github.com/mehrnet/mpm">GitHub Repository</a></strong> - Source code</li>
-</ul>
-<hr>
-<p>For questions or issues, please visit: <a href="https://github.com/mehrnet/mpm/issues">https://github.com/mehrnet/mpm/issues</a></p>
-<!-- LANG:en -->
 <h1 id="package-development-guide">Package Development Guide</h1>
 <p>Complete guide for creating, testing, and distributing MPM (Mehr&#39;s Package Manager) packages.</p>
-<p>For installation and setup instructions, see <a href="INSTALL.md">INSTALL.md</a> or <a href="USAGE.md">USAGE.md</a>.</p>
-<hr>
-<h2 id="table-of-contents-2">Table of Contents</h2>
-<ul>
-<li><a href="#quick-start">Quick Start</a></li>
-<li><a href="#package-structure">Package Structure</a></li>
-<li><a href="#handler-implementation">Handler Implementation</a></li>
-<li><a href="#package-metadata">Package Metadata</a></li>
-<li><a href="#testing-packages">Testing Packages</a></li>
-<li><a href="#distribution">Distribution</a></li>
-<li><a href="#best-practices">Best Practices</a></li>
-<li><a href="#examples">Examples</a></li>
-</ul>
-<hr>
 <h2 id="quick-start">Quick Start</h2>
 <p>Create a minimal package in 3 steps:</p>
 <pre><code class="language-bash"># 1. Create package structure
@@ -2700,29 +3090,10 @@ return function(array $args): string {
 }
 </code></pre>
 <hr>
-<h2 id="see-also-1">See Also</h2>
-<ul>
-<li><strong><a href="INSTALL.md">Installation Guide</a></strong> - Setup and repository creation</li>
-<li><strong><a href="USAGE.md">Usage Reference</a></strong> - Command reference</li>
-<li><strong><a href="https://github.com/mehrnet/mpm-packages">Example Packages</a></strong> - Working examples</li>
-</ul>
-<hr>
-<p>For questions or issues, please visit: <a href="https://github.com/mehrnet/mpm/issues">https://github.com/mehrnet/mpm/issues</a></p>
     </section>
     <section class="content-section" data-lang="fa" hidden>
-<!-- LANG:fa -->
 <h1 id="راهنمای-نصب-و-تنظیمات">راهنمای نصب و تنظیمات</h1>
 <p>راهنمای کامل برای نصب، تنظیم و شروع استفاده از MPM - مدیریت بسته های Mehr.</p>
-<h2 id="فهرست-مطالب">فهرست مطالب</h2>
-<ul>
-<li><a href="#%D9%86%D8%B5%D8%A8">نصب</a></li>
-<li><a href="#%D8%A7%D9%88%D9%84%DB%8C%D9%86-%D8%A7%D8%AC%D8%B1%D8%A7">اولین اجرا</a></li>
-<li><a href="#%D9%BE%DB%8C%DA%A9%D8%B1%D8%A8%D9%86%D8%AF%DB%8C">پیکربندی</a></li>
-<li><a href="#%D8%B4%D8%B1%D9%88%D8%B9-%DA%A9%D8%A7%D8%B1">شروع کار</a></li>
-<li><a href="#%D8%AA%D9%88%D8%B3%D8%B9%D9%87-%D8%A8%D8%B3%D8%AA%D9%87">توسعه بسته</a></li>
-<li><a href="#%D8%AA%D9%86%D8%B8%DB%8C%D9%85-%D9%85%D8%AE%D8%B2%D9%86">تنظیم مخزن</a></li>
-<li><a href="#%D8%A7%D8%B3%D8%AA%D9%82%D8%B1%D8%A7%D8%B1">استقرار</a></li>
-</ul>
 <hr>
 <h2 id="نصب">نصب</h2>
 <h3 id="نصب-سریع">نصب سریع</h3>
@@ -3189,29 +3560,8 @@ php shell.php ls  # این .config/key را ایجاد می کند
 <pre><code class="language-bash"># اگر گیر کرد قفل اجباری باز کنید
 php shell.php pkg unlock
 </code></pre>
-<h2 id="مراحل-بعدی">مراحل بعدی</h2>
-<ul>
-<li><a href="USAGE_FA.md">راهنمای مرجع استفاده</a> را برای مستندات فرماند کامل بخوانید</li>
-<li><a href="PACKAGES_FA.md">توسعه بسته</a> را برای ایجاد بسته پیشرفته ببینید</li>
-<li><a href="https://github.com/mehrnet/mpm-packages">بسته های نمونه</a> را بررسی کنید</li>
-</ul>
-<hr>
-<p>برای پرسش ها یا مسائل، لطفا بازدید کنید: <a href="https://github.com/mehrnet/mpm">https://github.com/mehrnet/mpm</a></p>
-<!-- LANG:fa -->
 <h1 id="راهنمای-مرجع-استفاده">راهنمای مرجع استفاده</h1>
 <p>مرجع فرماند کامل و مستندات API برای MPM - مدیریت بسته های Mehr.</p>
-<h2 id="فهرست-مطالب-1">فهرست مطالب</h2>
-<ul>
-<li><a href="#%D9%81%D8%B1%D9%85%D8%AA-%D9%87%D8%A7%DB%8C-%D8%AF%D8%B1%D8%AE%D9%88%D8%A7%D8%B3%D8%AA">فرمت های درخواست</a></li>
-<li><a href="#%D9%81%D8%B1%D9%85%D8%A7%D9%86%D8%AF%D9%87%D8%A7%DB%8C-%D8%AF%D8%B1%D9%88%D9%86-%D8%B3%D8%A7%D8%AE%D8%AA">فرماندهای درون ساخت</a></li>
-<li><a href="#%D9%85%D8%AF%DB%8C%D8%B1%DB%8C%D8%AA-%D8%A8%D8%B3%D8%AA%D9%87">مدیریت بسته</a></li>
-<li><a href="#%D9%BE%D8%B1%D9%88%D8%AA%DA%A9%D9%84-%D9%BE%D8%A7%D8%B3%D8%AE">پروتکل پاسخ</a></li>
-<li><a href="#%D9%81%D8%A7%DB%8C%D9%84-%D9%87%D8%A7%DB%8C-%D8%AA%D9%86%D8%B8%DB%8C%D9%85%D8%A7%D8%AA">فایل های تنظیمات</a></li>
-<li><a href="#%D9%81%D8%B1%D9%85%D8%A7%D9%86%D8%AF%D9%87%D8%A7%DB%8C-%D8%B3%D9%81%D8%A7%D8%B1%D8%B4%DB%8C">فرماندهای سفارشی</a></li>
-<li><a href="#%D9%85%D8%B9%D9%85%D8%A7%D8%B1%DB%8C">معماری</a></li>
-<li><a href="#%DA%A9%D8%A7%D8%B1%D8%A7%DB%8C%DB%8C">کارایی</a></li>
-<li><a href="#%D8%AD%D9%84-%D9%85%D8%B3%D8%A7%D8%A6%D9%84">حل مسائل</a></li>
-</ul>
 <hr>
 <h2 id="فرمت-های-درخواست">فرمت های درخواست</h2>
 <h3 id="حالت-http">حالت HTTP</h3>
@@ -4038,31 +4388,8 @@ chmod 644 .config/*
 chmod 755 .cache
 </code></pre>
 <hr>
-<h2 id="همچنین-ببینید">همچنین ببینید</h2>
-<ul>
-<li><strong><a href="INSTALL_FA.md">راهنمای نصب</a></strong> - تنظیمات و پیکربندی</li>
-<li><strong><a href="PACKAGES_FA.md">توسعه بسته</a></strong> - ایجاد بسته</li>
-<li><strong><a href="https://github.com/mehrnet/mpm">مخزن GitHub</a></strong> - کد منبع</li>
-</ul>
-<hr>
-<p>برای پرسش ها یا مسائل، لطفا بازدید کنید: <a href="https://github.com/mehrnet/mpm/issues">https://github.com/mehrnet/mpm/issues</a></p>
-<!-- LANG:fa -->
 <h1 id="راهنمای-توسعه-بسته">راهنمای توسعه بسته</h1>
 <p>راهنمای کامل برای ایجاد، تست و توزیع بسته های MPM (مدیریت بسته های Mehr).</p>
-<p>برای دستورالعمل های نصب و تنظیمات، ببینید <a href="INSTALL_FA.md">INSTALL_FA.md</a> یا <a href="USAGE_FA.md">USAGE_FA.md</a>.</p>
-<hr>
-<h2 id="فهرست-مطالب-2">فهرست مطالب</h2>
-<ul>
-<li><a href="#%D8%B4%D8%B1%D9%88%D8%B9-%D8%B3%D8%B1%DB%8C%D8%B9">شروع سریع</a></li>
-<li><a href="#%D8%B3%D8%A7%D8%AE%D8%AA%D8%A7%D8%B1-%D8%A8%D8%B3%D8%AA%D9%87">ساختار بسته</a></li>
-<li><a href="#%D9%BE%DB%8C%D8%A7%D8%AF%D9%87-%D8%B3%D8%A7%D8%B2%DB%8C-%DA%A9%D9%86%D9%86%D8%AF%D9%87">پیاده سازی کننده</a></li>
-<li><a href="#%D9%81%D8%B1%D8%A7%D8%AF%D8%A7%D8%AF%D9%87%D8%A7%DB%8C-%D8%A8%D8%B3%D8%AA%D9%87">فرادادهای بسته</a></li>
-<li><a href="#%D8%AA%D8%B3%D8%AA-%D8%A8%D8%B3%D8%AA%D9%87-%D9%87%D8%A7">تست بسته ها</a></li>
-<li><a href="#%D8%AA%D9%88%D8%B2%DB%8C%D8%B9">توزیع</a></li>
-<li><a href="#%D8%A8%D9%87%D8%AA%D8%B1%DB%8C%D9%86-%D8%B9%D9%85%D9%84%DA%A9%D8%B1%D8%AF%D9%87%D8%A7">بهترین عملکردها</a></li>
-<li><a href="#%D9%85%D8%AB%D8%A7%D9%84-%D9%87%D8%A7">مثال ها</a></li>
-</ul>
-<hr>
 <h2 id="شروع-سریع">شروع سریع</h2>
 <p>بسته حداقل را در 3 مرحله ایجاد کنید:</p>
 <pre><code class="language-bash"># 1. ساختار بسته ایجاد کنید
@@ -4622,31 +4949,10 @@ return function(array $args): string {
 }
 </code></pre>
 <hr>
-<h2 id="همچنین-ببینید-1">همچنین ببینید</h2>
-<ul>
-<li><strong><a href="INSTALL_FA.md">راهنمای نصب</a></strong> - تنظیم و ایجاد مخزن</li>
-<li><strong><a href="USAGE_FA.md">مرجع استفاده</a></strong> - مرجع فرماند</li>
-<li><strong><a href="https://github.com/mehrnet/mpm-packages">بسته های نمونه</a></strong> - مثال های کاری</li>
-</ul>
-<hr>
-<p>برای پرسش ها یا مسائل، لطفا بازدید کنید: <a href="https://github.com/mehrnet/mpm/issues">https://github.com/mehrnet/mpm/issues</a></p>
     </section>
     <section class="content-section" data-lang="fr" hidden>
-<!-- LANG:fr -->
 <h1 id="référence-dutilisation">Référence d&#39;utilisation</h1>
 <p>Référence de commande complète et documentation de l&#39;API pour MPM - Gestionnaire de paquets Mehr.</p>
-<h2 id="table-des-matières">Table des matières</h2>
-<ul>
-<li><a href="#formats-de-requ%C3%AAte">Formats de requête</a></li>
-<li><a href="#commandes-int%C3%A9gr%C3%A9es">Commandes intégrées</a></li>
-<li><a href="#gestionnaire-de-paquets">Gestionnaire de paquets</a></li>
-<li><a href="#protocole-de-r%C3%A9ponse">Protocole de réponse</a></li>
-<li><a href="#fichiers-de-configuration">Fichiers de configuration</a></li>
-<li><a href="#commandes-personnalis%C3%A9es">Commandes personnalisées</a></li>
-<li><a href="#architecture">Architecture</a></li>
-<li><a href="#performance">Performance</a></li>
-<li><a href="#d%C3%A9pannage">Dépannage</a></li>
-</ul>
 <hr>
 <h2 id="formats-de-requête">Formats de requête</h2>
 <h3 id="mode-http">Mode HTTP</h3>
@@ -5473,27 +5779,8 @@ chmod 644 .config/*
 chmod 755 .cache
 </code></pre>
 <hr>
-<h2 id="voir-aussi">Voir aussi</h2>
-<ul>
-<li><strong><a href="INSTALL_FR.md">Guide d&#39;installation</a></strong> - Configuration et installation</li>
-<li><strong><a href="PACKAGES_FR.md">Développement de paquets</a></strong> - Création de paquets</li>
-<li><strong><a href="https://github.com/mehrnet/mpm">Dépôt GitHub</a></strong> - Code source</li>
-</ul>
-<hr>
-<p>Pour les questions ou les problèmes, veuillez visiter: <a href="https://github.com/mehrnet/mpm/issues">https://github.com/mehrnet/mpm/issues</a></p>
-<!-- LANG:fr -->
 <h1 id="guide-dinstallation-et-de-configuration">Guide d&#39;installation et de configuration</h1>
 <p>Guide complet pour installer, configurer et commencer avec MPM - Gestionnaire de paquets Mehr.</p>
-<h2 id="table-des-matières-1">Table des matières</h2>
-<ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#premi%C3%A8re-ex%C3%A9cution">Première exécution</a></li>
-<li><a href="#configuration">Configuration</a></li>
-<li><a href="#commencer">Commencer</a></li>
-<li><a href="#d%C3%A9veloppement-de-paquets">Développement de paquets</a></li>
-<li><a href="#configuration-du-r%C3%A9f%C3%A9rentiel">Configuration du référentiel</a></li>
-<li><a href="#d%C3%A9ploiement">Déploiement</a></li>
-</ul>
 <hr>
 <h2 id="installation-1">Installation</h2>
 <h3 id="installation-rapide">Installation rapide</h3>
@@ -5960,31 +6247,8 @@ php shell.php ls  # Cela crée .config/key
 <pre><code class="language-bash"># Forcer le déverrouillage s&#39;il est bloqué
 php shell.php pkg unlock
 </code></pre>
-<h2 id="étapes-suivantes">Étapes suivantes</h2>
-<ul>
-<li>Lire la <a href="USAGE_FR.md">Référence d&#39;utilisation</a> pour la documentation complète des commandes</li>
-<li>Voir <a href="PACKAGES_FR.md">Développement de paquets</a> pour la création avancée de paquets</li>
-<li>Consulter <a href="https://github.com/mehrnet/mpm-packages">les paquets d&#39;exemple</a></li>
-</ul>
-<hr>
-<p>Pour les questions ou les problèmes, veuillez visiter: <a href="https://github.com/mehrnet/mpm">https://github.com/mehrnet/mpm</a></p>
-<!-- LANG:fr -->
 <h1 id="guide-de-développement-des-paquets">Guide de développement des paquets</h1>
 <p>Guide complet pour créer, tester et distribuer les paquets MPM (Gestionnaire de paquets Mehr).</p>
-<p>Pour les instructions d&#39;installation et de configuration, voir <a href="INSTALL_FR.md">INSTALL_FR.md</a> ou <a href="USAGE_FR.md">USAGE_FR.md</a>.</p>
-<hr>
-<h2 id="table-des-matières-2">Table des matières</h2>
-<ul>
-<li><a href="#d%C3%A9marrage-rapide">Démarrage rapide</a></li>
-<li><a href="#structure-du-paquet">Structure du paquet</a></li>
-<li><a href="#impl%C3%A9mentation-du-gestionnaire">Implémentation du gestionnaire</a></li>
-<li><a href="#m%C3%A9tadonn%C3%A9es-du-paquet">Métadonnées du paquet</a></li>
-<li><a href="#tests-des-paquets">Tests des paquets</a></li>
-<li><a href="#distribution">Distribution</a></li>
-<li><a href="#bonnes-pratiques">Bonnes pratiques</a></li>
-<li><a href="#exemples">Exemples</a></li>
-</ul>
-<hr>
 <h2 id="démarrage-rapide">Démarrage rapide</h2>
 <p>Créez un paquet minimal en 3 étapes:</p>
 <pre><code class="language-bash"># 1. Créer la structure du paquet
@@ -6544,18 +6808,19 @@ return function(array $args): string {
 }
 </code></pre>
 <hr>
-<h2 id="voir-aussi-1">Voir aussi</h2>
-<ul>
-<li><strong><a href="INSTALL_FR.md">Guide d&#39;installation</a></strong> - Configuration et création de référentiel</li>
-<li><strong><a href="USAGE_FR.md">Référence d&#39;utilisation</a></strong> - Référence des commandes</li>
-<li><strong><a href="https://github.com/mehrnet/mpm-packages">Paquets d&#39;exemple</a></strong> - Exemples fonctionnels</li>
-</ul>
-<hr>
-<p>Pour les questions ou les problèmes, veuillez visiter: <a href="https://github.com/mehrnet/mpm/issues">https://github.com/mehrnet/mpm/issues</a></p>
 
     </section>
 
-    </main>
+        </main>
+    </div>
+
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+        <div style="padding: 40px; text-align: center; color: #e2e8f0;">
+            <h1>JavaScript is required</h1>
+            <p>This documentation site requires JavaScript to display content in your preferred language and format. Please enable JavaScript in your browser settings.</p>
+        </div>
+    </noscript>
 
     <script>
         (function() {
@@ -6567,6 +6832,26 @@ return function(array $args): string {
                         en: "Mehr's Package Manager",
                         fa: "مدیر بسته مهر",
                         fr: "Gestionnaire de Paquets Mehr"
+                    },
+                    'search-placeholder': {
+                        en: "Search documentation...",
+                        fa: "جستجو در مستندات...",
+                        fr: "Rechercher la documentation..."
+                    },
+                    'search-hint': {
+                        en: "Type to search...",
+                        fa: "برای جستجو تایپ کنید...",
+                        fr: "Tapez pour rechercher..."
+                    },
+                    'search-min-chars': {
+                        en: "Type at least 2 characters...",
+                        fa: "حداقل 2 کاراکتر تایپ کنید...",
+                        fr: "Tapez au moins 2 caractères..."
+                    },
+                    'search-no-results': {
+                        en: "No results found",
+                        fa: "نتایجی یافت نشد",
+                        fr: "Aucun résultat trouvé"
                     }
                 }
             };
@@ -6621,8 +6906,11 @@ return function(array $args): string {
                     el.hidden = el.getAttribute('data-lang') !== lang;
                 });
 
-                // Update language button
-                dom.langBtn.textContent = config.langLabels[lang];
+                // Update language button (update only the text span, preserve SVG)
+                const langSpan = dom.langBtn.querySelector('span');
+                if (langSpan) {
+                    langSpan.textContent = config.langLabels[lang];
+                }
 
                 // Update language dropdown active state
                 document.querySelectorAll('.lang-option').forEach(opt => {
@@ -6638,51 +6926,111 @@ return function(array $args): string {
                     }
                 });
 
+                // Update search placeholder
+                search.input.placeholder = config.translations['search-placeholder'][lang];
+
+                // Update search hint text
+                const hintElement = document.getElementById('search-hint-text');
+                if (hintElement) {
+                    hintElement.textContent = config.translations['search-hint'][lang];
+                }
+
                 dom.langDropdown.classList.remove('show');
+
+                // Set up intersection observers for headings in the new language
+                setupHeadingObservers();
+
+                // Setup copy buttons for code blocks in new language
+                setupCodeBlockCopyButtons();
+
                 // Only update active link if not during initialization
                 if (!skipActiveUpdate) {
                     updateActiveLink();
                 }
             }
 
+            function setupHeadingObservers() {
+                // Clear previous observers
+                visibleHeadings.clear();
+                activeHeadingId = null;
+
+                // Observe all headings in current language
+                const currentLang = dom.htmlRoot.getAttribute('lang');
+                const visibleSection = document.querySelector(`.content-section[data-lang="${currentLang}"]:not([hidden])`);
+
+                if (visibleSection) {
+                    const headings = visibleSection.querySelectorAll('h1[id], h2[id]');
+                    headings.forEach(heading => {
+                        headingObserver.observe(heading);
+                    });
+                }
+            }
+
             // ========== NAVIGATION HIGHLIGHTING ==========
-            function updateActiveLink() {
-                let closest = null;
-                let closestDistance = Infinity;
+            // Use IntersectionObserver to track visible headings
+            const visibleHeadings = new Set();
+            let activeHeadingId = null;
 
-                dom.navLinks.forEach(link => {
-                    // Skip hidden links
-                    if (link.offsetParent === null) return;
-
-                    const href = link.getAttribute('href');
-                    if (!href?.startsWith('#')) return;
-
-                    const heading = document.getElementById(href.substring(1));
-                    // Skip if heading not found or is hidden
-                    if (!heading || heading.offsetParent === null) return;
-
-                    // Find the link closest to viewport top
-                    const distance = Math.abs(heading.getBoundingClientRect().top);
-                    if (distance < closestDistance) {
-                        closest = link;
-                        closestDistance = distance;
+            const headingObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        visibleHeadings.add(entry.target.id);
+                    } else {
+                        visibleHeadings.delete(entry.target.id);
                     }
                 });
 
+                // Find the first visible heading (top of viewport)
+                const currentLang = dom.htmlRoot.getAttribute('lang');
+                const visibleSection = document.querySelector(`.content-section[data-lang="${currentLang}"]:not([hidden])`);
+
+                if (visibleSection) {
+                    const headings = visibleSection.querySelectorAll('h1[id], h2[id]');
+                    activeHeadingId = null;
+
+                    for (const heading of headings) {
+                        if (visibleHeadings.has(heading.id)) {
+                            activeHeadingId = heading.id;
+                            break;
+                        }
+                    }
+
+                    // If no heading is visible, find the closest one below viewport
+                    if (!activeHeadingId) {
+                        for (const heading of headings) {
+                            const rect = heading.getBoundingClientRect();
+                            if (rect.top >= 60) { // Below header
+                                activeHeadingId = heading.id;
+                                break;
+                            }
+                        }
+                    }
+
+                    updateActiveLink();
+                }
+            }, { threshold: 0 });
+
+            function updateActiveLink() {
                 // Remove active class from all links
-                dom.navLinks.forEach(link => link.classList.remove('active'));
+                dom.navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    link.removeAttribute('aria-current');
+                });
 
-                // Add active class to closest link and update hash
-                if (closest) {
-                    closest.classList.add('active');
+                // Find and highlight the nav link for the active heading
+                if (activeHeadingId) {
+                    const activeLink = document.querySelector(`.toc-link[href="#${activeHeadingId}"]`);
+                    if (activeLink && activeLink.offsetParent !== null) {
+                        activeLink.classList.add('active');
+                        activeLink.setAttribute('aria-current', 'page');
 
-                    // Update URL hash without history entry
-                    const newHash = closest.getAttribute('href');
-                    if (newHash && window.location.hash !== newHash) {
-                        try {
-                            history.replaceState(null, '', newHash);
-                        } catch (e) {
-                            console.warn('Failed to update hash:', e);
+                        // Update URL hash
+                        if (window.location.hash !== `#${activeHeadingId}`) {
+                            try {
+                                history.replaceState(null, '', `#${activeHeadingId}`);
+                            } catch (e) {
+                                // Silently fail - hash update not critical
+                            }
                         }
                     }
                 }
@@ -6697,22 +7045,161 @@ return function(array $args): string {
                 }
             }
 
+            // ========== SEARCH FUNCTIONALITY ==========
+            const search = {
+                overlay: document.getElementById('search-overlay'),
+                input: document.getElementById('search-input'),
+                results: document.getElementById('search-results'),
+                isOpen: false
+            };
+
+            function openSearch() {
+                search.overlay.hidden = false;
+                search.isOpen = true;
+            }
+
+            function closeSearch() {
+                const currentLang = dom.htmlRoot.getAttribute('lang');
+                search.overlay.hidden = true;
+                search.isOpen = false;
+                search.input.value = '';
+                search.results.innerHTML = `<div class="search-hint" id="search-hint-text">${config.translations['search-hint'][currentLang]}</div>`;
+            }
+
+            function performSearch(query) {
+                const currentLang = dom.htmlRoot.getAttribute('lang');
+
+                if (query.length < 2) {
+                    search.results.innerHTML = `<div class="search-hint">${config.translations['search-min-chars'][currentLang]}</div>`;
+                    return;
+                }
+
+                // Get all content sections in current language
+                const sections = document.querySelectorAll(`.content-section[data-lang="${currentLang}"]:not([hidden])`);
+                const results = [];
+
+                sections.forEach(section => {
+                    const headings = section.querySelectorAll('h1, h2, h3');
+
+                    headings.forEach(heading => {
+                        const id = heading.id;
+                        const title = heading.textContent;
+
+                        // Get next sibling paragraphs for context
+                        let snippet = '';
+                        let sibling = heading.nextElementSibling;
+                        let charCount = 0;
+
+                        while (sibling && charCount < 200) {
+                            if (sibling.tagName === 'P') {
+                                snippet += sibling.textContent + ' ';
+                                charCount += sibling.textContent.length;
+                            }
+                            if (sibling.tagName?.match(/^H[1-6]$/)) break;
+                            sibling = sibling.nextElementSibling;
+                        }
+
+                        // Check if query matches title or snippet
+                        const titleLower = title.toLowerCase();
+                        const snippetLower = snippet.toLowerCase();
+                        const queryLower = query.toLowerCase();
+
+                        if (titleLower.includes(queryLower) || snippetLower.includes(queryLower)) {
+                            results.push({
+                                id,
+                                title,
+                                snippet: snippet.substring(0, 200).trim(),
+                                relevance: titleLower.includes(queryLower) ? 2 : 1
+                            });
+                        }
+                    });
+                });
+
+                // Sort by relevance
+                results.sort((a, b) => b.relevance - a.relevance);
+
+                // Render results
+                if (results.length === 0) {
+                    search.results.innerHTML = `<div class="search-no-results">${config.translations['search-no-results'][currentLang]}</div>`;
+                    return;
+                }
+
+                const queryRegex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+
+                search.results.innerHTML = results.map(result => {
+                    const highlightedSnippet = result.snippet.replace(queryRegex, '<mark>$1</mark>');
+
+                    return `
+                        <div class="search-result" data-target="${result.id}" tabindex="0">
+                            <div class="search-result-title">${result.title}</div>
+                            <div class="search-result-snippet">${highlightedSnippet}...</div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Add click handlers to results
+                document.querySelectorAll('.search-result').forEach(result => {
+                    result.addEventListener('click', () => {
+                        const targetId = result.getAttribute('data-target');
+                        window.location.hash = targetId;
+                        closeSearch();
+                    });
+                });
+            }
+
+            // Debounce search input
+            let searchTimeout;
+            search.input.addEventListener('input', (e) => {
+                const query = e.target.value;
+
+                // Show/hide modal based on input
+                if (query.length > 0) {
+                    openSearch();
+                }
+
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 300);
+            });
+
+            // Focus on header search input with Ctrl+K / Cmd+K
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+K or Cmd+K to focus search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    search.input.focus();
+                }
+
+                // Escape to close search modal
+                if (e.key === 'Escape' && search.isOpen) {
+                    closeSearch();
+                }
+            });
+
+            // Close search when clicking outside the modal
+            search.overlay.addEventListener('click', (e) => {
+                if (e.target === search.overlay) closeSearch();
+            });
+
             // ========== EVENT LISTENERS: LANGUAGE DROPDOWN ==========
             dom.langBtn.addEventListener('click', () => {
-                dom.langDropdown.classList.toggle('show');
+                const isOpen = dom.langDropdown.classList.toggle('show');
+                dom.langBtn.setAttribute('aria-expanded', isOpen);
             });
 
             document.querySelectorAll('.lang-option').forEach(option => {
                 option.addEventListener('click', () => {
                     setLanguage(option.getAttribute('data-lang'));
+                    dom.langBtn.setAttribute('aria-expanded', 'false');
                 });
             });
 
             document.addEventListener('click', (e) => {
-                const isLanguageArea = e.target.closest('.sidebar-header') ||
-                                     e.target.closest('.lang-dropdown');
+                const isLanguageArea = e.target.closest('.lang-btn-wrapper');
                 if (!isLanguageArea) {
                     dom.langDropdown.classList.remove('show');
+                    dom.langBtn.setAttribute('aria-expanded', 'false');
                 }
             });
 
@@ -6720,12 +7207,14 @@ return function(array $args): string {
             dom.mobileMenuBtn.addEventListener('click', () => {
                 const isOpen = dom.mobileMenuBtn.classList.toggle('active');
                 dom.sidebar.classList.toggle('mobile-open', isOpen);
+                dom.mobileMenuBtn.setAttribute('aria-expanded', isOpen);
             });
 
             dom.sidebar.addEventListener('click', (e) => {
                 if (e.target.classList.contains('toc-link')) {
                     dom.mobileMenuBtn.classList.remove('active');
                     dom.sidebar.classList.remove('mobile-open');
+                    dom.mobileMenuBtn.setAttribute('aria-expanded', 'false');
                 }
             });
 
@@ -6738,11 +7227,101 @@ return function(array $args): string {
                 setLanguage(detectLanguageFromHash());
             });
 
+            // ========== CODE BLOCK COPY FUNCTIONALITY ==========
+            function setupCodeBlockCopyButtons() {
+                document.querySelectorAll('pre').forEach((preBlock) => {
+                    // Skip if button already exists
+                    if (preBlock.querySelector('.copy-btn')) {
+                        return;
+                    }
+
+                    // Add code-block class for positioning context
+                    preBlock.classList.add('code-block');
+
+                    // Create copy button
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.setAttribute('aria-label', 'Copy code');
+
+                    // Copy icon (clipboard)
+                    const copyIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    copyIcon.classList.add('copy-icon');
+                    copyIcon.setAttribute('viewBox', '0 0 24 24');
+                    copyIcon.setAttribute('fill', 'none');
+                    copyIcon.setAttribute('stroke', 'currentColor');
+                    copyIcon.setAttribute('stroke-width', '2');
+                    copyIcon.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+
+                    // Checkmark icon
+                    const checkmarkIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    checkmarkIcon.classList.add('checkmark-icon');
+                    checkmarkIcon.setAttribute('viewBox', '0 0 24 24');
+                    checkmarkIcon.setAttribute('fill', 'none');
+                    checkmarkIcon.setAttribute('stroke', 'currentColor');
+                    checkmarkIcon.setAttribute('stroke-width', '2');
+                    checkmarkIcon.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+
+                    copyBtn.appendChild(copyIcon);
+                    copyBtn.appendChild(checkmarkIcon);
+
+                    // Create text node for "Copied!" message
+                    const copiedText = document.createElement('span');
+                    copiedText.className = 'copied-text';
+                    copiedText.textContent = 'Copied!';
+                    copiedText.style.display = 'none';
+                    copyBtn.appendChild(copiedText);
+
+                    // Insert button at the beginning of pre
+                    preBlock.insertBefore(copyBtn, preBlock.firstChild);
+
+                    // Add click handler
+                    copyBtn.addEventListener('click', async () => {
+                        // Get code content from the code block
+                        const codeBlock = preBlock.querySelector('code');
+                        if (!codeBlock) return;
+
+                        const text = codeBlock.textContent;
+
+                        try {
+                            // Copy to clipboard
+                            await navigator.clipboard.writeText(text);
+
+                            // Show feedback
+                            copyBtn.classList.add('copied');
+                            copiedText.style.display = 'inline';
+
+                            // Restore after 2 seconds
+                            setTimeout(() => {
+                                copyBtn.classList.remove('copied');
+                                copiedText.style.display = 'none';
+                            }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy:', err);
+                        }
+                    });
+                });
+            }
+
+            // ========== KEYBOARD SHORTCUT DISPLAY ==========
+            function setupKeyboardShortcutDisplay() {
+                const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+                const shortcutKeyElement = document.querySelector('.shortcut-key');
+                if (shortcutKeyElement && isMac) {
+                    shortcutKeyElement.textContent = 'Cmd';
+                }
+            }
+
             // ========== INITIALIZATION ==========
             // Prioritize language from URL hash over saved preference
             const hashLang = detectLanguageFromHash();
             // Skip active link update during initialization to let hash scroll happen first
             setLanguage(hashLang, true);
+
+            // Setup copy buttons for code blocks
+            setupCodeBlockCopyButtons();
+
+            // Setup keyboard shortcut display (Ctrl vs Cmd)
+            setupKeyboardShortcutDisplay();
 
             // Scroll to hash after language is applied and DOM is settled
             setTimeout(() => {
@@ -6757,7 +7336,7 @@ return function(array $args): string {
                             updateActiveLink();
                         }
                     } catch (e) {
-                        console.warn('Failed to scroll to hash:', e);
+                        // Silently fail - hash scroll not critical
                     }
                 }
             }, 0);
