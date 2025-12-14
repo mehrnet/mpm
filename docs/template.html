@@ -1,11 +1,143 @@
 <!DOCTYPE html>
+<!--
+################################################################################
+# MPM Documentation Template (template.html)
+#
+# PURPOSE:
+#   Master template for the multilingual documentation site. This file contains
+#   the complete HTML structure, CSS styling, and JavaScript functionality for
+#   a dynamic documentation portal that supports English, French, and Persian.
+#
+# WORKFLOW:
+#   1. This template is processed by gen.sh during the build
+#   2. Placeholder %ALL_HTML% is replaced with generated content sections
+#   3. Placeholder %NAVBAR_HTML% is replaced with generated table of contents
+#   4. Final output becomes index.html, the single-page documentation site
+#
+# KEY FEATURES:
+#   - Multilingual support (EN, FR, FA) with seamless language switching
+#   - Responsive design with sidebar navigation (desktop) and mobile menu
+#   - Full-text search with language filtering (Ctrl+K/Cmd+K shortcut, icon in header)
+#   - Language selector with globe icon in header
+#   - Code block copy buttons with visual feedback (checkmark + "Copied!" message)
+#   - Print-optimized styles for PDF exports
+#   - Keyboard navigation and screen reader accessibility (WCAG compliance)
+#   - RTL/LTR layout support for Persian documentation
+#   - Sticky header with centered search bar and language selector
+#   - Smooth scrolling with active navigation highlighting
+#   - JSON-LD structured data for SEO
+#
+# STRUCTURE:
+#   <head>
+#     - Meta tags (viewport, description, OG, Twitter, SEO)
+#     - Structured data (JSON-LD)
+#     - Inline CSS (organized into logical sections, all styles here)
+#   <body> (flex column, 100vh)
+#     - Skip-link (screen reader accessibility)
+#     - Search overlay (dropdown below header)
+#     - Top header (flex-shrink: 0, 60px height)
+#     - Content wrapper (flex-row, flex: 1)
+#       - Sidebar (280px width on desktop, hidden on mobile)
+#       - Main content (flex: 1, scrollable)
+#     - Inline JavaScript (all functionality here)
+#
+# CONTENT INJECTION:
+#   %ALL_HTML%     → Main documentation content (from markdown files)
+#   %NAVBAR_HTML%  → Table of contents navigation (from markdown headings)
+#
+# STYLING:
+#   - CSS Variables for theming (--bg-primary, --text-primary, --accent, etc.)
+#   - Flexbox layout: body (column) → header + content-wrapper (row)
+#   - Header: 60px sticky with 3-column grid (left logo, center search, right language)
+#   - Search bar with icon on left, keyboard shortcut on right (hidden while typing)
+#   - Language selector with globe icon
+#   - Code block copy buttons positioned absolutely (top-right of <pre>)
+#   - Organized into logical sections (comments separate each section)
+#   - Mobile-first responsive design with 768px breakpoint
+#   - Dark theme with warm brown/orange accents
+#   - Sidebar 280px wide on desktop, overlays on mobile when menu opened
+#   - RTL support with flexbox auto-reversal and dir-specific selectors
+#
+# JAVASCRIPT:
+#   - Early language detection (prevents content flash)
+#   - Language management (localStorage, URL hash, browser detection)
+#   - Search functionality with debouncing and language filtering
+#   - Keyboard shortcuts (Ctrl+K/Cmd+K for search, Escape to close)
+#   - Code block copy buttons dynamically added to all <pre> elements
+#   - Keyboard shortcut label detection (shows "Ctrl" or "Cmd" based on platform)
+#   - Mobile menu toggle
+#   - Navigation highlighting during scroll
+#   - Event delegation for language switching and dropdown menus
+#
+# BUILD PROCESS:
+#   1. Author writes markdown: INSTALL.md, USAGE.md, PACKAGES.md, etc.
+#   2. Run: ./gen.sh
+#   3. Script generates: index.html (from template.html + markdown)
+#   4. Deploy: index.html to web server
+#
+# NOTES:
+#   - Do NOT edit index.html directly; edit template.html and markdown files
+#   - Run ./gen.sh after ANY changes to markdown or template.html
+#   - CSS and JS are inlined for single-file deployment (no external deps)
+#   - No build tools required beyond standard Unix utilities (sh, marked, awk)
+#
+################################################################################
+-->
 <html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MPM - Mehr's Package Manager - Complete Documentation">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Complete documentation for MPM (Mehr's Package Manager). Learn installation, usage, package development, and advanced features.">
+    <meta name="keywords" content="MPM, package manager, documentation, installation, development guide">
+    <meta name="author" content="Mehr">
+    <meta name="theme-color" content="#171717">
+    <meta name="color-scheme" content="dark">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="MPM Documentation">
+    <meta property="og:description" content="Complete documentation for MPM (Mehr's Package Manager)">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mpm.mehrnet.com/">
+    <meta property="og:site_name" content="MPM Docs">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MPM Documentation">
+    <meta name="twitter:description" content="Complete documentation for MPM (Mehr's Package Manager)">
+
+    <!-- SEO & Crawling -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Canonical & Language Alternates -->
+    <link rel="canonical" href="https://mpm.mehrnet.com/">
+    <link rel="alternate" hreflang="en" href="https://mpm.mehrnet.com/">
+    <link rel="alternate" hreflang="fa" href="https://mpm.mehrnet.com/#">
+    <link rel="alternate" hreflang="fr" href="https://mpm.mehrnet.com/#">
+    <link rel="alternate" hreflang="x-default" href="https://mpm.mehrnet.com/">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='3 1 18 22' fill='none' shape-rendering='geometricPrecision'%3E%3Cdefs%3E%3ClinearGradient id='gTop' x1='3' y1='1' x2='21' y2='11'%3E%3Cstop offset='0' stop-color='%23ffd1a1'/%3E%3Cstop offset='1' stop-color='%23ff8a2a'/%3E%3C/linearGradient%3E%3ClinearGradient id='gLeft' x1='3' y1='7' x2='12' y2='23'%3E%3Cstop offset='0' stop-color='%23ff9a3d'/%3E%3Cstop offset='1' stop-color='%23f97316'/%3E%3C/linearGradient%3E%3ClinearGradient id='gRight' x1='12' y1='12' x2='21' y2='23'%3E%3Cstop offset='0' stop-color='%23f97316'/%3E%3Cstop offset='1' stop-color='%23ea580c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon fill='url(%23gLeft)' points='3,7.3 11.1,12.2 11.1,23 3,18.1'/%3E%3Cpolygon fill='url(%23gRight)' points='21,7.3 12.9,12.2 12.9,23 21,18.1'/%3E%3Cpolygon fill='url(%23gTop)' points='12,1 20.4,6.2 12,10.8 3.6,6.2'/%3E%3C/svg%3E">
+
     <title>MPM Documentation</title>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "MPM Documentation",
+        "description": "Complete documentation for MPM (Mehr's Package Manager)",
+        "url": "https://mpm.mehrnet.com/",
+        "inLanguage": ["en", "fa", "fr"],
+        "creator": {
+            "@type": "Organization",
+            "name": "Mehr"
+        }
+    }
+    </script>
+
     <style>
+        /* ========== CSS VARIABLES & RESET ========== */
         :root {
             --bg-primary: #171717;
             --bg-secondary: #2a1f19;
@@ -37,12 +169,37 @@
             color: var(--selection-text);
         }
 
+        /* ========== GLOBAL & BASE STYLES ========== */
+        html {
+            height: 100%;
+            scroll-behavior: smooth;
+            overflow: hidden;
+        }
+
         html[dir="rtl"] { direction: rtl; }
         html[dir="ltr"] { direction: ltr; }
 
-        html {
-            scroll-behavior: smooth;
-            overflow-y: scroll;
+        /* ========== KEYBOARD FOCUS INDICATORS ========== */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
         }
 
         body {
@@ -51,23 +208,87 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Sidebar - LTR (left) */
+        /* ========== TOP HEADER ========== */
+        .top-header {
+            height: 60px;
+            background-color: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-secondary);
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 12px;
+            padding: 0 24px;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+
+        .header-center {
+            display: flex;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .top-header .mobile-menu-btn {
+            display: none;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .header-logo .logo-text {
+            font-size: 1em;
+            font-weight: 800;
+            color: var(--accent);
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        html[dir="rtl"] .header-logo .logo-text {
+            margin-left: 0;
+            margin-right: 8px;
+        }
+
+        /* ========== CONTENT WRAPPER ========== */
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ========== LAYOUT: SIDEBAR (DESKTOP) ========== */
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
             width: 280px;
-            height: 100vh;
             background-color: var(--bg-tertiary);
             overflow-y: auto;
-            padding: 24px 0;
             border-right: 1px solid var(--border);
-            z-index: 100;
+            flex-shrink: 0;
         }
 
-        /* Sidebar - RTL (right) */
         html[dir="rtl"] .sidebar {
             left: auto;
             right: 0;
@@ -75,35 +296,100 @@
             border-left: 1px solid var(--border);
         }
 
-        .sidebar-header {
-            padding: 0 24px 24px;
-            border-bottom: 1px solid var(--border-secondary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
+        /* ========== SIDEBAR MOBILE HEADER ========== */
+        .sidebar-mobile-header {
+            display: none;
         }
 
-        html[dir="rtl"] .sidebar-header {
-            flex-direction: row-reverse;
-        }
-
-        .sidebar-logo {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: var(--accent);
-            text-decoration: none;
+        /* ========== HEADER SEARCH BAR ========== */
+        .header-search-wrapper {
+            position: relative;
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex: 1;
+            width: 100%;
+            min-width: 0;
+            max-width: 350px;
         }
 
-        html[dir="rtl"] .sidebar-logo {
-            flex-direction: row-reverse;
+        .header-search-input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            padding-left: 32px;
+            padding-right: 80px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .header-search-input:focus {
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .header-search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .header-search-icon {
+            position: absolute;
+            left: 12px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+
+        .search-shortcut {
+            position: absolute;
+            right: 8px;
+            background: var(--border-secondary);
+            color: var(--text-secondary);
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 0.75em;
+            font-weight: 500;
+            font-family: monospace;
+            white-space: nowrap;
+            pointer-events: none;
+            border: 1px solid var(--border);
+            opacity: 1;
+            transition: opacity 0.2s;
+        }
+
+        /* Hide shortcut when input is focused or has text */
+        .header-search-input:focus ~ .search-shortcut,
+        .header-search-input:not(:placeholder-shown) ~ .search-shortcut {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        html[dir="rtl"] .header-search-input {
+            padding-left: 12px;
+            padding-right: 32px;
+        }
+
+        html[dir="rtl"] .header-search-icon {
+            left: auto;
+            right: 12px;
+        }
+
+        html[dir="rtl"] .search-shortcut {
+            right: auto;
+            left: 8px;
+        }
+
+        /* ========== LANGUAGE SELECTOR ========== */
+        .lang-btn-wrapper {
+            position: relative;
         }
 
         .lang-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             background: none;
             border: 1px solid var(--border-secondary);
             color: var(--text-secondary);
@@ -123,17 +409,19 @@
         .lang-dropdown {
             display: none;
             position: absolute;
-            top: 70px;
-            right: 20px;
+            top: calc(100% + 4px);
+            right: 0;
             background: var(--bg-secondary);
             border: 1px solid var(--border-secondary);
             border-radius: 4px;
-            z-index: 1000;
+            z-index: 9999;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         html[dir="rtl"] .lang-dropdown {
             right: auto;
-            left: 20px;
+            left: 0;
         }
 
         .lang-dropdown.show {
@@ -148,9 +436,9 @@
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
             font-size: 0.9em;
+            transition: all 0.2s;
+            text-align: left;
         }
 
         html[dir="rtl"] .lang-option {
@@ -163,6 +451,7 @@
             color: var(--accent);
         }
 
+        /* ========== TABLE OF CONTENTS (NAVIGATION) ========== */
         .toc {
             padding: 24px 0;
         }
@@ -185,9 +474,9 @@
             padding: 10px 24px;
             color: var(--text-tertiary);
             text-decoration: none;
-            transition: all 0.2s;
             cursor: pointer;
             border-left: 3px solid transparent;
+            transition: all 0.2s;
         }
 
         html[dir="rtl"] .toc-link {
@@ -195,12 +484,14 @@
             border-right: 3px solid transparent;
         }
 
-        .toc-link:hover {
+        .toc-link:hover,
+        .toc-link:target,
+        .toc-link.active {
             color: var(--accent);
             background-color: rgba(243, 78, 63, 0.1);
-            padding-left: 28px;
         }
 
+        .toc-link:hover { padding-left: 28px; }
         html[dir="rtl"] .toc-link:hover {
             padding-left: 24px;
             padding-right: 28px;
@@ -208,8 +499,6 @@
 
         .toc-link:target,
         .toc-link.active {
-            color: var(--accent);
-            background-color: rgba(243, 78, 63, 0.1);
             border-left-color: var(--accent);
             padding-left: 21px;
         }
@@ -222,58 +511,32 @@
             padding-right: 21px;
         }
 
-        /* Highlight content section when targeted */
-        .content-section :target {
-            background-color: rgba(243, 78, 63, 0.05);
-            padding: 8px 16px;
-            border-radius: 4px;
-        }
-
-        .toc-sublink {
-            display: block;
-            padding: 8px 24px 8px 40px;
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: all 0.2s;
-            font-size: 0.9em;
-            border-left: 2px solid transparent;
-        }
-
-        html[dir="rtl"] .toc-sublink {
-            padding: 8px 40px 8px 24px;
-            border-left: none;
-            border-right: 2px solid transparent;
-        }
-
-        .toc-sublink:hover {
-            color: var(--accent);
-            border-left-color: var(--accent);
-        }
-
-        html[dir="rtl"] .toc-sublink:hover {
-            border-left: none;
-            border-right-color: var(--accent);
-        }
-
-        /* Main Content - LTR */
+        /* ========== LAYOUT: MAIN CONTENT (DESKTOP) ========== */
         .main {
-            margin-left: 280px;
             flex: 1;
             padding: 40px;
+            overflow-y: auto;
+            direction: inherit;
         }
 
-        /* Main Content - RTL */
         html[dir="rtl"] .main {
-            margin-left: 0;
-            margin-right: 280px;
+            direction: rtl;
         }
 
         .content-section {
             max-width: 900px;
             margin-bottom: 80px;
             scroll-margin-top: 20px;
+            direction: inherit;
         }
 
+        .content-section :target {
+            background-color: rgba(243, 78, 63, 0.05);
+            padding: 8px 16px;
+            border-radius: 4px;
+        }
+
+        /* ========== CONTENT: TYPOGRAPHY ========== */
         .content-section h1 {
             color: var(--accent);
             margin-bottom: 24px;
@@ -301,6 +564,7 @@
             color: var(--text-tertiary);
         }
 
+        /* ========== CONTENT: LINKS ========== */
         .content-section a {
             color: var(--accent);
             text-decoration: none;
@@ -310,6 +574,7 @@
             text-decoration: underline;
         }
 
+        /* ========== CONTENT: CODE & PRE ========== */
         .content-section code {
             background-color: var(--bg-secondary);
             color: #10b981;
@@ -317,6 +582,7 @@
             border-radius: 3px;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 0.9em;
+            direction: ltr;
         }
 
         .content-section pre {
@@ -327,6 +593,13 @@
             overflow-x: auto;
             margin: 16px 0;
             border-left: 3px solid var(--accent);
+            direction: ltr;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-block {
+            position: relative;
         }
 
         html[dir="rtl"] .content-section pre {
@@ -339,8 +612,68 @@
             color: inherit;
             padding: 0;
             border-radius: 0;
+            direction: ltr;
         }
 
+        /* ========== COPY BUTTON ========== */
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.85em;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent);
+            background: rgba(243, 78, 63, 0.1);
+        }
+
+        .copy-btn svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .copy-btn .copy-icon {
+            display: block;
+        }
+
+        .copy-btn .checkmark-icon {
+            display: none;
+            color: #10b981;
+        }
+
+        .copy-btn.copied .copy-icon {
+            display: none;
+        }
+
+        .copy-btn.copied .checkmark-icon {
+            display: block;
+        }
+
+        .copy-btn .copied-text {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+	/*
+        html[dir="rtl"] .copy-btn {
+            left: 8px;
+            right: auto;
+        }
+	*/
+
+        /* ========== CONTENT: BLOCKQUOTE ========== */
         .content-section blockquote {
             border-left: 4px solid var(--accent);
             padding-left: 16px;
@@ -355,6 +688,7 @@
             padding-right: 16px;
         }
 
+        /* ========== CONTENT: TABLES ========== */
         .content-section table {
             width: 100%;
             border-collapse: collapse;
@@ -382,6 +716,7 @@
             background-color: rgba(0, 0, 0, 0.2);
         }
 
+        /* ========== CONTENT: LISTS ========== */
         .content-section ul,
         .content-section ol {
             margin: 16px 0 16px 24px;
@@ -396,299 +731,999 @@
             margin-bottom: 8px;
         }
 
-        /* Mobile Menu Button - LTR */
+        /* ========== SKIP LINK ========== */
+        .skip-link {
+            position: absolute;
+            left: -10000px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            z-index: 10000;
+        }
+
+        .skip-link:focus {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: auto;
+            height: auto;
+            background: var(--accent);
+            color: var(--bg-primary);
+            padding: 8px 16px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        html[dir="rtl"] .skip-link:focus {
+            left: auto;
+            right: 0;
+        }
+
+        /* ========== MOBILE MENU BUTTON ========== */
         .mobile-menu-btn {
             display: none;
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 101;
             background: none;
-            border: 1px solid var(--border-secondary);
-            padding: 8px;
+            border: none;
+            padding: 6px;
             cursor: pointer;
-            border-radius: 4px;
-            color: var(--text-primary);
+            color: var(--accent);
+            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        /* Mobile Menu Button - RTL */
-        html[dir="rtl"] .mobile-menu-btn {
-            left: auto;
-            right: 16px;
+        .mobile-menu-btn:hover {
+            opacity: 0.8;
         }
 
-        .mobile-menu-btn span {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background-color: var(--text-primary);
-            margin: 4px 0;
+        .mobile-menu-btn svg {
+            display: none;
             transition: all 0.3s;
         }
 
-        .mobile-menu-btn.active span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
+        .mobile-menu-btn .menu-icon {
+            display: block;
         }
 
-        .mobile-menu-btn.active span:nth-child(2) {
-            opacity: 0;
+        .mobile-menu-btn.active .menu-icon {
+            display: none;
         }
 
-        .mobile-menu-btn.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
+        .mobile-menu-btn.active .close-icon {
+            display: block;
         }
 
-        /* Responsive - Tablet */
+        /* ========== RESPONSIVE: MOBILE (768px and below) ========== */
         @media (max-width: 768px) {
-            /* LTR Layout */
-            .sidebar {
-                position: fixed;
-                left: 0;
-                width: 100%;
-                height: auto;
-                max-height: calc(100vh - 60px);
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                border-right: 1px solid var(--border);
-                border-bottom: none;
-                top: 60px;
-            }
-
-            /* RTL Layout */
-            html[dir="rtl"] .sidebar {
-                left: auto;
-                right: 0;
-                transform: translateX(100%);
-                border-right: none;
-                border-left: 1px solid var(--border);
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            html[dir="rtl"] .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .mobile-menu-btn {
+            /* Show mobile menu button */
+            .top-header .mobile-menu-btn {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
+                align-items: center;
+                padding: 4px;
+                background: none;
+                border: none;
+                color: var(--accent);
+                cursor: pointer;
             }
 
-            .main {
-                margin-left: 0;
-                margin-top: 60px;
-                padding: 24px;
+            .top-header {
+                grid-template-columns: auto 1fr;
+                gap: 8px;
+                padding: 0 12px;
             }
 
-            html[dir="rtl"] .main {
-                margin-right: 0;
-                margin-top: 60px;
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: flex-start;
             }
-        }
 
-        @media (max-width: 480px) {
+            .header-logo {
+                min-width: fit-content;
+                overflow: hidden;
+            }
+
+            .header-logo .logo-text {
+                font-size: 0.7em;
+                max-width: 80px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .header-center {
+                display: none;
+            }
+
+            .header-search-wrapper {
+                display: none;
+            }
+
+            .header-right {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .lang-btn-wrapper {
+                position: relative;
+                z-index: 10;
+            }
+
+            .lang-btn {
+                padding: 4px 8px;
+                font-size: 0.7em;
+            }
+
+            .lang-dropdown {
+                position: absolute;
+                right: 0;
+                top: calc(100% + 4px);
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-secondary);
+                border-radius: 4px;
+                z-index: 100;
+            }
+
+            /* Hide sidebar by default on mobile */
+            .sidebar {
+                display: none;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 99;
+                background-color: var(--bg-tertiary);
+                overflow-y: auto;
+            }
+
+            html[dir="rtl"] .sidebar {
+                left: auto;
+                right: 0;
+            }
+
+            /* Show sidebar when mobile menu is open */
+            .sidebar.mobile-open {
+                display: block;
+            }
+
             .main {
                 padding: 16px;
             }
+        }
 
-            body {
-                font-size: 14px;
+        /* ========== SEARCH MODAL (DROPDOWN) ========== */
+        .search-overlay {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: transparent;
+            z-index: 10001;
+            display: block;
+            max-width: 350px;
+            width: 100vw;
+            max-width: 350px;
+        }
+
+        .search-overlay[hidden] {
+            display: none;
+        }
+
+        .search-modal {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-width: 350px;
+            max-height: calc(100vh - 70px);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-results {
+            overflow-y: auto;
+            max-height: calc(100vh - 70px);
+            padding: 8px;
+        }
+
+        .search-hint {
+            padding: 40px 16px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .search-result {
+            padding: 12px 16px;
+            margin: 4px 0;
+            background: var(--bg-secondary);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-result:hover,
+        .search-result:focus {
+            border-color: var(--accent);
+            background: rgba(243, 78, 63, 0.1);
+        }
+
+        .search-result-title {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .search-result-snippet {
+            color: var(--text-tertiary);
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .search-result-snippet mark {
+            background: rgba(243, 78, 63, 0.3);
+            color: var(--text-primary);
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .search-no-results {
+            padding: 40px 16px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .search-overlay {
+                display: none;
+            }
+        }
+
+        /* ========== PRINT STYLES ========== */
+        @media print {
+            @page {
+                margin: 2cm;
+            }
+
+            * {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
+            /* Hide navigation and interactive elements */
+            .sidebar,
+            .skip-link,
+            .mobile-menu-btn,
+            .lang-btn-wrapper,
+            .search-overlay,
+            noscript {
+                display: none !important;
+            }
+
+            /* Full width content */
+            .main {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+
+            /* Page break handling */
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                page-break-inside: avoid;
+            }
+
+            .content-section {
+                page-break-inside: avoid;
+            }
+
+            pre, blockquote, table {
+                page-break-inside: avoid;
+            }
+
+            /* Show URLs for links */
+            a[href]:after {
+                content: " (" attr(href) ")";
+                font-size: 0.8em;
+                font-weight: normal;
+            }
+
+            a[href^="#"]:after,
+            a[href^="javascript:"]:after {
+                content: "";
+            }
+
+            /* Optimize code blocks */
+            pre {
+                border: 1px solid #000;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+
+            /* Table styling */
+            table {
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid #000;
             }
         }
     </style>
 </head>
 <body>
-    <script>
-        // Early language detection from hash to avoid content flashing wrong language
-        (function() {
-            function detectLanguageFromHash() {
-                const hash = window.location.hash.slice(1);
-                if (hash) {
-                    // Decode URL-encoded hash (e.g., %C3%AA -> ê)
-                    const decodedHash = decodeURIComponent(hash);
-                    
-                    // Try to find which section would contain this ID
-                    const sections = document.querySelectorAll('[data-lang]');
-                    for (let section of sections) {
-                        if (section.querySelector('#' + CSS.escape(decodedHash))) {
-                            return section.getAttribute('data-lang');
-                        }
-                    }
-                }
-                return localStorage.getItem('mpm-docs-lang') || navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en';
-            }
-            
-            function setEarlyLanguage(lang) {
-                document.documentElement.setAttribute('data-current-lang', lang);
-                localStorage.setItem('mpm-docs-lang', lang);
-            }
-            
-            setEarlyLanguage(detectLanguageFromHash());
-        })();
-    </script>
+    <!-- Skip to main content link for keyboard navigation -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <button class="mobile-menu-btn" id="mobile-menu-btn">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
+    <!-- Search Results Modal -->
+    <div class="search-overlay" id="search-overlay" hidden>
+        <div class="search-modal">
+            <div class="search-results" id="search-results">
+                <div class="search-hint" id="search-hint-text">Type to search...</div>
+            </div>
+        </div>
+    </div>
 
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="#" class="sidebar-logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+    <!-- Full-width top header with search -->
+    <header class="top-header" id="top-header">
+        <div class="header-left">
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="toc-nav">
+                <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <svg class="close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <a href="/" class="header-logo" aria-label="Home">
+                <svg width="24" height="24" viewBox="3 1 18 22" fill="none" aria-hidden="true" shape-rendering="geometricPrecision">
+                    <defs>
+                        <linearGradient id="gTop" x1="3" y1="1" x2="21" y2="11"><stop offset="0" stop-color="#ffd1a1"/><stop offset="1" stop-color="#ff8a2a"/></linearGradient>
+                        <linearGradient id="gLeft" x1="3" y1="7" x2="12" y2="23"><stop offset="0" stop-color="#ff9a3d"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+                        <linearGradient id="gRight" x1="12" y1="12" x2="21" y2="23"><stop offset="0" stop-color="#f97316"/><stop offset="1" stop-color="#ea580c"/></linearGradient>
+                    </defs>
+                    <polygon fill="url(#gLeft)" points="3,7.3 11.1,12.2 11.1,23 3,18.1"/><polygon fill="url(#gRight)" points="21,7.3 12.9,12.2 12.9,23 21,18.1"/><polygon fill="url(#gTop)" points="12,1 20.4,6.2 12,10.8 3.6,6.2"/>
                 </svg>
-                <span>MPM Docs</span>
+                <span id="logo-text" class="logo-text">Mehr's Package Manager</span>
             </a>
-            <button class="lang-btn" id="lang-btn">EN</button>
         </div>
 
-        <div class="lang-dropdown" id="lang-dropdown">
-            <button class="lang-option" data-lang="en">English</button>
-            <button class="lang-option" data-lang="fr">Français</button>
-            <button class="lang-option" data-lang="fa">فارسی</button>
+        <div class="header-center">
+            <div class="header-search-wrapper">
+                <svg class="header-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input
+                    type="search"
+                    class="header-search-input"
+                    id="search-input"
+                    placeholder="Search documentation..."
+                    aria-label="Search documentation"
+                    autocomplete="off"
+                />
+                <kbd class="search-shortcut" aria-label="Press Ctrl K or Cmd K to search">
+                    <span class="shortcut-key">Ctrl</span> K
+                </kbd>
+            </div>
         </div>
 
-        <nav class="toc" id="toc-nav">
-            <!-- Navbar will be generated with data-lang wrappers -->
-            %NAVBAR_HTML%
-        </nav>
-    </aside>
-
-    <main class="main">
-        <!-- Content sections generated with data-lang wrappers -->
-        %ALL_HTML%
-    </main>
+        <div class="header-right">
+            <div class="lang-btn-wrapper">
+                <button class="lang-btn" id="lang-btn" aria-label="Select language" aria-expanded="false" aria-haspopup="true" aria-controls="lang-dropdown">
+                    <svg class="header-lang-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        <path d="M2 12h20"/>
+                    </svg>
+                    <span>EN</span>
+                </button>
+                <div class="lang-dropdown" id="lang-dropdown" role="menu" aria-label="Language options">
+                    <button class="lang-option" data-lang="en" role="menuitem">English</button>
+                    <button class="lang-option" data-lang="fr" role="menuitem">Français</button>
+                    <button class="lang-option" data-lang="fa" role="menuitem">فارسی</button>
+                </div>
+            </div>
+        </div>
+    </header>
 
     <script>
+        // Early language detection to prevent content flashing in wrong language
         (function() {
-            // Language management
             function detectLanguageFromHash() {
                 const hash = window.location.hash.slice(1);
+
+                // If URL has a hash, prioritize finding the language it belongs to
                 if (hash) {
-                    const decodedHash = decodeURIComponent(hash);
-                    const element = document.getElementById(decodedHash);
-                    if (element) {
-                        const section = element.closest('[data-lang]');
-                        if (section) {
-                            return section.getAttribute('data-lang');
+                    try {
+                        const decodedHash = decodeURIComponent(hash);
+                        const element = document.getElementById(decodedHash);
+                        if (element) {
+                            const section = element.closest('[data-lang]');
+                            if (section) {
+                                return section.getAttribute('data-lang');
+                            }
                         }
+                    } catch (e) {
+                        // Continue to fallback
                     }
                 }
-                return localStorage.getItem('mpm-docs-lang') || navigator.language.startsWith('fa') ? 'fa' : navigator.language.startsWith('fr') ? 'fr' : 'en';
+
+                // Fallback: saved preference, then browser language, then English
+                return localStorage.getItem('mpm-docs-lang') ||
+                       (navigator.language.startsWith('fa') ? 'fa' :
+                        navigator.language.startsWith('fr') ? 'fr' : 'en');
             }
 
-            function setLanguage(lang) {
-                const htmlRoot = document.getElementById('html-root');
-                const dir = lang === 'fa' ? 'rtl' : 'ltr';
+            function applyLanguage(lang) {
+                const htmlRoot = document.documentElement;
                 htmlRoot.setAttribute('lang', lang);
-                htmlRoot.setAttribute('dir', dir);
+                htmlRoot.setAttribute('dir', lang === 'fa' ? 'rtl' : 'ltr');
                 localStorage.setItem('mpm-docs-lang', lang);
-                
+
+                // Show/hide content sections by language
                 document.querySelectorAll('[data-lang]').forEach(el => {
                     el.hidden = el.getAttribute('data-lang') !== lang;
                 });
-                
-                updateLangButton(lang);
-                updateActiveLink();
-                document.getElementById('lang-dropdown').classList.remove('show');
             }
 
-            function updateLangButton(lang) {
-                const langLabels = { en: 'EN', fr: 'FR', fa: 'FA' };
-                document.getElementById('lang-btn').textContent = langLabels[lang];
+            // Apply language before main script runs (must wait for DOM)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    const initialLang = detectLanguageFromHash();
+                    applyLanguage(initialLang);
+                });
+            } else {
+                const initialLang = detectLanguageFromHash();
+                applyLanguage(initialLang);
+            }
+        })();
+    </script>
+
+    <div class="content-wrapper">
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Documentation navigation">
+            <nav class="toc" id="toc-nav">
+                <!-- Navbar will be generated with data-lang wrappers -->
+                %NAVBAR_HTML%
+            </nav>
+        </aside>
+
+        <main class="main" id="main-content" role="main">
+            <!-- Content sections generated with data-lang wrappers -->
+            %ALL_HTML%
+        </main>
+    </div>
+
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+        <div style="padding: 40px; text-align: center; color: #e2e8f0;">
+            <h1>JavaScript is required</h1>
+            <p>This documentation site requires JavaScript to display content in your preferred language and format. Please enable JavaScript in your browser settings.</p>
+        </div>
+    </noscript>
+
+    <script>
+        (function() {
+            // ========== CONFIGURATION ==========
+            const config = {
+                langLabels: { en: 'EN', fr: 'FR', fa: 'FA' },
+                translations: {
+                    'logo-text': {
+                        en: "Mehr's Package Manager",
+                        fa: "مدیر بسته مهر",
+                        fr: "Gestionnaire de Paquets Mehr"
+                    },
+                    'search-placeholder': {
+                        en: "Search documentation...",
+                        fa: "جستجو در مستندات...",
+                        fr: "Rechercher la documentation..."
+                    },
+                    'search-hint': {
+                        en: "Type to search...",
+                        fa: "برای جستجو تایپ کنید...",
+                        fr: "Tapez pour rechercher..."
+                    },
+                    'search-min-chars': {
+                        en: "Type at least 2 characters...",
+                        fa: "حداقل 2 کاراکتر تایپ کنید...",
+                        fr: "Tapez au moins 2 caractères..."
+                    },
+                    'search-no-results': {
+                        en: "No results found",
+                        fa: "نتایجی یافت نشد",
+                        fr: "Aucun résultat trouvé"
+                    }
+                }
+            };
+
+            // ========== DOM ELEMENTS ==========
+            const dom = {
+                htmlRoot: document.getElementById('html-root'),
+                langBtn: document.getElementById('lang-btn'),
+                langDropdown: document.getElementById('lang-dropdown'),
+                mobileMenuBtn: document.getElementById('mobile-menu-btn'),
+                sidebar: document.getElementById('sidebar'),
+                navLinks: document.querySelectorAll('.toc-link')
+            };
+
+            // ========== STATE ==========
+            let scrollTicking = false;
+
+            // ========== LANGUAGE MANAGEMENT ==========
+            function detectLanguageFromHash() {
+                const hash = window.location.hash.slice(1);
+
+                // If URL has a hash, prioritize finding the language it belongs to
+                if (hash) {
+                    try {
+                        const decodedHash = decodeURIComponent(hash);
+                        const element = document.getElementById(decodedHash);
+                        if (element) {
+                            const section = element.closest('[data-lang]');
+                            if (section) {
+                                return section.getAttribute('data-lang');
+                            }
+                        }
+                    } catch (e) {
+                        // Continue to fallback
+                    }
+                }
+
+                // Fallback: saved preference, then browser language, then English
+                return localStorage.getItem('mpm-docs-lang') ||
+                       (navigator.language.startsWith('fa') ? 'fa' :
+                        navigator.language.startsWith('fr') ? 'fr' : 'en');
+            }
+
+            function setLanguage(lang, skipActiveUpdate = false) {
+                // Update HTML attributes
+                dom.htmlRoot.setAttribute('lang', lang);
+                dom.htmlRoot.setAttribute('dir', lang === 'fa' ? 'rtl' : 'ltr');
+                localStorage.setItem('mpm-docs-lang', lang);
+
+                // Show/hide language sections
+                document.querySelectorAll('[data-lang]').forEach(el => {
+                    el.hidden = el.getAttribute('data-lang') !== lang;
+                });
+
+                // Update language button (update only the text span, preserve SVG)
+                const langSpan = dom.langBtn.querySelector('span');
+                if (langSpan) {
+                    langSpan.textContent = config.langLabels[lang];
+                }
+
+                // Update language dropdown active state
                 document.querySelectorAll('.lang-option').forEach(opt => {
-                    opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
+                    const isActive = opt.getAttribute('data-lang') === lang;
+                    opt.classList[isActive ? 'add' : 'remove']('active');
+                });
+
+                // Update UI text translations
+                Object.entries(config.translations).forEach(([elementId, texts]) => {
+                    const element = document.getElementById(elementId);
+                    if (element && texts[lang]) {
+                        element.textContent = texts[lang];
+                    }
+                });
+
+                // Update search placeholder
+                search.input.placeholder = config.translations['search-placeholder'][lang];
+
+                // Update search hint text
+                const hintElement = document.getElementById('search-hint-text');
+                if (hintElement) {
+                    hintElement.textContent = config.translations['search-hint'][lang];
+                }
+
+                dom.langDropdown.classList.remove('show');
+
+                // Set up intersection observers for headings in the new language
+                setupHeadingObservers();
+
+                // Setup copy buttons for code blocks in new language
+                setupCodeBlockCopyButtons();
+
+                // Only update active link if not during initialization
+                if (!skipActiveUpdate) {
+                    updateActiveLink();
+                }
+            }
+
+            function setupHeadingObservers() {
+                // Clear previous observers
+                visibleHeadings.clear();
+                activeHeadingId = null;
+
+                // Observe all headings in current language
+                const currentLang = dom.htmlRoot.getAttribute('lang');
+                const visibleSection = document.querySelector(`.content-section[data-lang="${currentLang}"]:not([hidden])`);
+
+                if (visibleSection) {
+                    const headings = visibleSection.querySelectorAll('h1[id], h2[id]');
+                    headings.forEach(heading => {
+                        headingObserver.observe(heading);
+                    });
+                }
+            }
+
+            // ========== NAVIGATION HIGHLIGHTING ==========
+            // Use IntersectionObserver to track visible headings
+            const visibleHeadings = new Set();
+            let activeHeadingId = null;
+
+            const headingObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        visibleHeadings.add(entry.target.id);
+                    } else {
+                        visibleHeadings.delete(entry.target.id);
+                    }
+                });
+
+                // Find the first visible heading (top of viewport)
+                const currentLang = dom.htmlRoot.getAttribute('lang');
+                const visibleSection = document.querySelector(`.content-section[data-lang="${currentLang}"]:not([hidden])`);
+
+                if (visibleSection) {
+                    const headings = visibleSection.querySelectorAll('h1[id], h2[id]');
+                    activeHeadingId = null;
+
+                    for (const heading of headings) {
+                        if (visibleHeadings.has(heading.id)) {
+                            activeHeadingId = heading.id;
+                            break;
+                        }
+                    }
+
+                    // If no heading is visible, find the closest one below viewport
+                    if (!activeHeadingId) {
+                        for (const heading of headings) {
+                            const rect = heading.getBoundingClientRect();
+                            if (rect.top >= 60) { // Below header
+                                activeHeadingId = heading.id;
+                                break;
+                            }
+                        }
+                    }
+
+                    updateActiveLink();
+                }
+            }, { threshold: 0 });
+
+            function updateActiveLink() {
+                // Remove active class from all links
+                dom.navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    link.removeAttribute('aria-current');
+                });
+
+                // Find and highlight the nav link for the active heading
+                if (activeHeadingId) {
+                    const activeLink = document.querySelector(`.toc-link[href="#${activeHeadingId}"]`);
+                    if (activeLink && activeLink.offsetParent !== null) {
+                        activeLink.classList.add('active');
+                        activeLink.setAttribute('aria-current', 'page');
+
+                        // Update URL hash
+                        if (window.location.hash !== `#${activeHeadingId}`) {
+                            try {
+                                history.replaceState(null, '', `#${activeHeadingId}`);
+                            } catch (e) {
+                                // Silently fail - hash update not critical
+                            }
+                        }
+                    }
+                }
+
+                scrollTicking = false;
+            }
+
+            function onScroll() {
+                if (!scrollTicking) {
+                    requestAnimationFrame(updateActiveLink);
+                    scrollTicking = true;
+                }
+            }
+
+            // ========== SEARCH FUNCTIONALITY ==========
+            const search = {
+                overlay: document.getElementById('search-overlay'),
+                input: document.getElementById('search-input'),
+                results: document.getElementById('search-results'),
+                isOpen: false
+            };
+
+            function openSearch() {
+                search.overlay.hidden = false;
+                search.isOpen = true;
+            }
+
+            function closeSearch() {
+                const currentLang = dom.htmlRoot.getAttribute('lang');
+                search.overlay.hidden = true;
+                search.isOpen = false;
+                search.input.value = '';
+                search.results.innerHTML = `<div class="search-hint" id="search-hint-text">${config.translations['search-hint'][currentLang]}</div>`;
+            }
+
+            function performSearch(query) {
+                const currentLang = dom.htmlRoot.getAttribute('lang');
+
+                if (query.length < 2) {
+                    search.results.innerHTML = `<div class="search-hint">${config.translations['search-min-chars'][currentLang]}</div>`;
+                    return;
+                }
+
+                // Get all content sections in current language
+                const sections = document.querySelectorAll(`.content-section[data-lang="${currentLang}"]:not([hidden])`);
+                const results = [];
+
+                sections.forEach(section => {
+                    const headings = section.querySelectorAll('h1, h2, h3');
+
+                    headings.forEach(heading => {
+                        const id = heading.id;
+                        const title = heading.textContent;
+
+                        // Get next sibling paragraphs for context
+                        let snippet = '';
+                        let sibling = heading.nextElementSibling;
+                        let charCount = 0;
+
+                        while (sibling && charCount < 200) {
+                            if (sibling.tagName === 'P') {
+                                snippet += sibling.textContent + ' ';
+                                charCount += sibling.textContent.length;
+                            }
+                            if (sibling.tagName?.match(/^H[1-6]$/)) break;
+                            sibling = sibling.nextElementSibling;
+                        }
+
+                        // Check if query matches title or snippet
+                        const titleLower = title.toLowerCase();
+                        const snippetLower = snippet.toLowerCase();
+                        const queryLower = query.toLowerCase();
+
+                        if (titleLower.includes(queryLower) || snippetLower.includes(queryLower)) {
+                            results.push({
+                                id,
+                                title,
+                                snippet: snippet.substring(0, 200).trim(),
+                                relevance: titleLower.includes(queryLower) ? 2 : 1
+                            });
+                        }
+                    });
+                });
+
+                // Sort by relevance
+                results.sort((a, b) => b.relevance - a.relevance);
+
+                // Render results
+                if (results.length === 0) {
+                    search.results.innerHTML = `<div class="search-no-results">${config.translations['search-no-results'][currentLang]}</div>`;
+                    return;
+                }
+
+                const queryRegex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+
+                search.results.innerHTML = results.map(result => {
+                    const highlightedSnippet = result.snippet.replace(queryRegex, '<mark>$1</mark>');
+
+                    return `
+                        <div class="search-result" data-target="${result.id}" tabindex="0">
+                            <div class="search-result-title">${result.title}</div>
+                            <div class="search-result-snippet">${highlightedSnippet}...</div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Add click handlers to results
+                document.querySelectorAll('.search-result').forEach(result => {
+                    result.addEventListener('click', () => {
+                        const targetId = result.getAttribute('data-target');
+                        window.location.hash = targetId;
+                        closeSearch();
+                    });
                 });
             }
 
-            // Language dropdown
-            document.getElementById('lang-btn').addEventListener('click', () => {
-                document.getElementById('lang-dropdown').classList.toggle('show');
+            // Debounce search input
+            let searchTimeout;
+            search.input.addEventListener('input', (e) => {
+                const query = e.target.value;
+
+                // Show/hide modal based on input
+                if (query.length > 0) {
+                    openSearch();
+                }
+
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    performSearch(query);
+                }, 300);
+            });
+
+            // Focus on header search input with Ctrl+K / Cmd+K
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+K or Cmd+K to focus search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    search.input.focus();
+                }
+
+                // Escape to close search modal
+                if (e.key === 'Escape' && search.isOpen) {
+                    closeSearch();
+                }
+            });
+
+            // Close search when clicking outside the modal
+            search.overlay.addEventListener('click', (e) => {
+                if (e.target === search.overlay) closeSearch();
+            });
+
+            // ========== EVENT LISTENERS: LANGUAGE DROPDOWN ==========
+            dom.langBtn.addEventListener('click', () => {
+                const isOpen = dom.langDropdown.classList.toggle('show');
+                dom.langBtn.setAttribute('aria-expanded', isOpen);
             });
 
             document.querySelectorAll('.lang-option').forEach(option => {
                 option.addEventListener('click', () => {
                     setLanguage(option.getAttribute('data-lang'));
+                    dom.langBtn.setAttribute('aria-expanded', 'false');
                 });
             });
 
             document.addEventListener('click', (e) => {
-                if (!e.target.closest('.sidebar-header') && !e.target.closest('.lang-dropdown')) {
-                    document.getElementById('lang-dropdown').classList.remove('show');
+                const isLanguageArea = e.target.closest('.lang-btn-wrapper');
+                if (!isLanguageArea) {
+                    dom.langDropdown.classList.remove('show');
+                    dom.langBtn.setAttribute('aria-expanded', 'false');
                 }
             });
 
-            // Mobile menu
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const sidebar = document.getElementById('sidebar');
-
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenuBtn.classList.toggle('active');
-                sidebar.classList.toggle('mobile-open');
+            // ========== EVENT LISTENERS: MOBILE MENU ==========
+            dom.mobileMenuBtn.addEventListener('click', () => {
+                const isOpen = dom.mobileMenuBtn.classList.toggle('active');
+                dom.sidebar.classList.toggle('mobile-open', isOpen);
+                dom.mobileMenuBtn.setAttribute('aria-expanded', isOpen);
             });
 
-            sidebar.addEventListener('click', (e) => {
+            dom.sidebar.addEventListener('click', (e) => {
                 if (e.target.classList.contains('toc-link')) {
-                    mobileMenuBtn.classList.remove('active');
-                    sidebar.classList.remove('mobile-open');
+                    dom.mobileMenuBtn.classList.remove('active');
+                    dom.sidebar.classList.remove('mobile-open');
+                    dom.mobileMenuBtn.setAttribute('aria-expanded', 'false');
                 }
             });
 
-            // Active link tracking
-            const links = document.querySelectorAll('.toc-link');
-            let ticking = false;
+            // ========== EVENT LISTENERS: SCROLL & HASH ==========
+            const mainElement = document.querySelector('.main');
+            if (mainElement) {
+                mainElement.addEventListener('scroll', onScroll, { passive: true });
+            }
+            window.addEventListener('hashchange', () => {
+                setLanguage(detectLanguageFromHash());
+            });
 
-            function updateActiveLink() {
-                let closest = null;
-                let closestDistance = Infinity;
-
-                links.forEach(function(link) {
-                    if (link.offsetParent === null) return; // Skip hidden links
-                    var href = link.getAttribute('href');
-                    if (href && href.indexOf('#') === 0) {
-                        var id = href.substring(1);
-                        var heading = document.getElementById(id);
-                        if (heading) {
-                            var distance = Math.abs(heading.getBoundingClientRect().top);
-                            if (distance < closestDistance) {
-                                closest = link;
-                                closestDistance = distance;
-                            }
-                        }
+            // ========== CODE BLOCK COPY FUNCTIONALITY ==========
+            function setupCodeBlockCopyButtons() {
+                document.querySelectorAll('pre').forEach((preBlock) => {
+                    // Skip if button already exists
+                    if (preBlock.querySelector('.copy-btn')) {
+                        return;
                     }
-                });
 
-                links.forEach(function(link) {
-                    link.classList.remove('active');
+                    // Add code-block class for positioning context
+                    preBlock.classList.add('code-block');
+
+                    // Create copy button
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.setAttribute('aria-label', 'Copy code');
+
+                    // Copy icon (clipboard)
+                    const copyIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    copyIcon.classList.add('copy-icon');
+                    copyIcon.setAttribute('viewBox', '0 0 24 24');
+                    copyIcon.setAttribute('fill', 'none');
+                    copyIcon.setAttribute('stroke', 'currentColor');
+                    copyIcon.setAttribute('stroke-width', '2');
+                    copyIcon.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+
+                    // Checkmark icon
+                    const checkmarkIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    checkmarkIcon.classList.add('checkmark-icon');
+                    checkmarkIcon.setAttribute('viewBox', '0 0 24 24');
+                    checkmarkIcon.setAttribute('fill', 'none');
+                    checkmarkIcon.setAttribute('stroke', 'currentColor');
+                    checkmarkIcon.setAttribute('stroke-width', '2');
+                    checkmarkIcon.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+
+                    copyBtn.appendChild(copyIcon);
+                    copyBtn.appendChild(checkmarkIcon);
+
+                    // Create text node for "Copied!" message
+                    const copiedText = document.createElement('span');
+                    copiedText.className = 'copied-text';
+                    copiedText.textContent = 'Copied!';
+                    copiedText.style.display = 'none';
+                    copyBtn.appendChild(copiedText);
+
+                    // Insert button at the beginning of pre
+                    preBlock.insertBefore(copyBtn, preBlock.firstChild);
+
+                    // Add click handler
+                    copyBtn.addEventListener('click', async () => {
+                        // Get code content from the code block
+                        const codeBlock = preBlock.querySelector('code');
+                        if (!codeBlock) return;
+
+                        const text = codeBlock.textContent;
+
+                        try {
+                            // Copy to clipboard
+                            await navigator.clipboard.writeText(text);
+
+                            // Show feedback
+                            copyBtn.classList.add('copied');
+                            copiedText.style.display = 'inline';
+
+                            // Restore after 2 seconds
+                            setTimeout(() => {
+                                copyBtn.classList.remove('copied');
+                                copiedText.style.display = 'none';
+                            }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy:', err);
+                        }
+                    });
                 });
-                if (closest) {
-                    closest.classList.add('active');
-                }
-                ticking = false;
             }
 
-            function onScroll() {
-                if (!ticking) {
-                    requestAnimationFrame(updateActiveLink);
-                    ticking = true;
+            // ========== KEYBOARD SHORTCUT DISPLAY ==========
+            function setupKeyboardShortcutDisplay() {
+                const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+                const shortcutKeyElement = document.querySelector('.shortcut-key');
+                if (shortcutKeyElement && isMac) {
+                    shortcutKeyElement.textContent = 'Cmd';
                 }
             }
 
-            // Initialize (early script already set language, apply it here)
-            const savedLang = localStorage.getItem('mpm-docs-lang') || 'en';
-            setLanguage(savedLang);
+            // ========== INITIALIZATION ==========
+            // Prioritize language from URL hash over saved preference
+            const hashLang = detectLanguageFromHash();
+            // Skip active link update during initialization to let hash scroll happen first
+            setLanguage(hashLang, true);
 
-            window.addEventListener('scroll', onScroll, { passive: true });
-            window.addEventListener('hashchange', function() {
-                const newLang = detectLanguageFromHash();
-                setLanguage(newLang);
-            });
+            // Setup copy buttons for code blocks
+            setupCodeBlockCopyButtons();
+
+            // Setup keyboard shortcut display (Ctrl vs Cmd)
+            setupKeyboardShortcutDisplay();
+
+            // Scroll to hash after language is applied and DOM is settled
+            setTimeout(() => {
+                const hash = window.location.hash.slice(1);
+                if (hash) {
+                    try {
+                        const decodedHash = decodeURIComponent(hash);
+                        const element = document.getElementById(decodedHash);
+                        if (element) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            // Update active link after scrolling to hash
+                            updateActiveLink();
+                        }
+                    } catch (e) {
+                        // Silently fail - hash scroll not critical
+                    }
+                }
+            }, 0);
         })();
     </script>
 </body>

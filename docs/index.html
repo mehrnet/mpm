@@ -1225,32 +1225,32 @@
 <hr>
 <h2 id="installation">Installation</h2>
 <h3 id="quick-install">Quick Install</h3>
-<pre><code class="language-bash"># Download shell.php
-wget https://raw.githubusercontent.com/mehrnet/mpm/main/shell.php
+<pre><code class="language-bash"># Download mpm.php
+wget https://raw.githubusercontent.com/mehrnet/mpm/main/mpm.php
 
 # Set permissions
-chmod 644 shell.php
+chmod 644 mpm.php
 
 # Test installation
-php shell.php echo &quot;Hello, World!&quot;
+php mpm.php echo &quot;Hello, World!&quot;
 </code></pre>
 <h3 id="manual-install">Manual Install</h3>
 <ol>
-<li>Download <code>shell.php</code> from the repository</li>
+<li>Download <code>mpm.php</code> from the repository</li>
 <li>Place it in your project root or web server directory</li>
-<li>Ensure PHP 8.1+ is installed</li>
+<li>Ensure PHP 7.0+ is installed</li>
 <li>Verify <code>ZipArchive</code> extension is enabled (for package management)</li>
 </ol>
 <h3 id="requirements">Requirements</h3>
 <ul>
-<li><strong>PHP</strong>: 8.1 or higher</li>
+<li><strong>PHP</strong>: 7.0 or higher</li>
 <li><strong>Extensions</strong>: <code>ZipArchive</code> (for package management)</li>
 <li><strong>Permissions</strong>: Read/write access to project directory</li>
 </ul>
 <h2 id="first-run">First Run</h2>
 <p>On first execution, MPM automatically generates configuration files:</p>
 <pre><code class="language-bash"># Run any command to initialize
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <p>This creates:</p>
 <pre><code>.config/
@@ -1270,16 +1270,11 @@ cat .config/key
 <p>Edit <code>.config/repos.json</code> to customize package repositories:</p>
 <pre><code class="language-json">{
   &quot;main&quot;: [
-    &quot;https://repo.example.com&quot;,
-    &quot;https://mirror1.example.com&quot;,
-    &quot;https://mirror2.example.com&quot;
-  ],
-  &quot;extra&quot;: [
-    &quot;https://extra-repo.example.com&quot;
+    &quot;https://raw.githubusercontent.com/mehrnet/mpm-repo/refs/heads/main/main&quot;
   ]
 }
 </code></pre>
-<p>Mirrors are tried sequentially on failure with no backoff delay.</p>
+<p>Each entry is a full URL to a repository directory containing <code>database.json</code> and package ZIP files. Mirrors are tried sequentially on failure.</p>
 <h3 id="command-handler-patterns">Command Handler Patterns</h3>
 <p>Edit <code>.config/path.json</code> to customize where the shell looks for custom commands:</p>
 <pre><code class="language-json">[
@@ -1293,7 +1288,7 @@ cat .config/key
 <p>For different environments, you can:</p>
 <ol>
 <li><p><strong>Use different config directories:</strong></p>
-<pre><code class="language-php">// Modify constants in shell.php (not recommended)
+<pre><code class="language-php">// Modify constants in mpm.php (not recommended)
 const DIR_CONFIG = &#39;.config&#39;;
 </code></pre>
 </li>
@@ -1302,28 +1297,28 @@ const DIR_CONFIG = &#39;.config&#39;;
 </code></pre>
 </li>
 <li><p><strong>Environment variables:</strong>
-Access via <code>php shell.php env list</code></p>
+Access via <code>php mpm.php env list</code></p>
 </li>
 </ol>
 <h2 id="getting-started">Getting Started</h2>
 <h3 id="cli-mode-recommended-for-development">CLI Mode (Recommended for Development)</h3>
 <pre><code class="language-bash"># List files
-php shell.php ls
+php mpm.php ls
 
 # Read file contents
-php shell.php cat shell.php | head -20
+php mpm.php cat mpm.php | head -20
 
 # Create directory
-php shell.php mkdir tmp
+php mpm.php mkdir tmp
 
 # Copy files
-php shell.php cp shell.php shell.backup.php
+php mpm.php cp mpm.php shell.backup.php
 
 # Package management
-php shell.php pkg search database
-php shell.php pkg add users
-php shell.php pkg list
-php shell.php pkg upgrade
+php mpm.php pkg search database
+php mpm.php pkg add users
+php mpm.php pkg list
+php mpm.php pkg upgrade
 </code></pre>
 <h3 id="http-mode-production">HTTP Mode (Production)</h3>
 <ol>
@@ -1337,14 +1332,14 @@ php shell.php pkg upgrade
 </li>
 <li><p><strong>Execute commands:</strong></p>
 <pre><code class="language-bash"># List files
-curl &quot;http://localhost:8000/shell.php/$KEY/ls&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/ls&quot;
 
 # Read file
-curl &quot;http://localhost:8000/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/cat/README.md&quot;
 
 # Package management
-curl &quot;http://localhost:8000/shell.php/$KEY/pkg/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/pkg/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/pkg/add/users&quot;
 </code></pre>
 </li>
 </ol>
@@ -1355,15 +1350,15 @@ curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
     listen 80;
     server_name your-domain.com;
     root /var/www/shell;
-    index shell.php;
+    index mpm.php;
 
     location / {
-        try_files $uri $uri/ /shell.php$is_args$args;
+        try_files $uri $uri/ /mpm.php$is_args$args;
     }
 
     location ~ \.php$ {
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
-        fastcgi_index shell.php;
+        fastcgi_index mpm.php;
         include fastcgi_params;
     }
 }
@@ -1372,7 +1367,7 @@ curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
 <pre><code class="language-apache">RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ shell.php/$1 [L,QSA]
+RewriteRule ^(.*)$ mpm.php/$1 [L,QSA]
 </code></pre>
 <h2 id="package-development">Package Development</h2>
 <h3 id="creating-a-package">Creating a Package</h3>
@@ -1480,13 +1475,13 @@ mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
 
 # Test commands
-php shell.php mypackage list
-php shell.php mypackage create item-name
+php mpm.php mypackage list
+php mpm.php mypackage create item-name
 </code></pre>
 <p><strong>HTTP Mode:</strong></p>
 <pre><code class="language-bash">KEY=$(cat .config/key)
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/create/item-name&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/create/item-name&quot;
 </code></pre>
 <h3 id="best-practices">Best Practices</h3>
 <ol>
@@ -1613,8 +1608,8 @@ git push -u origin main
 php -S localhost:8000
 
 # Test commands
-php shell.php pkg list
-curl &quot;http://localhost:8000/shell.php/$(cat .config/key)/pkg/list&quot;
+php mpm.php pkg list
+curl &quot;http://localhost:8000/mpm.php/$(cat .config/key)/pkg/list&quot;
 </code></pre>
 <h3 id="stagingproduction">Staging/Production</h3>
 <ol>
@@ -1623,7 +1618,7 @@ curl &quot;http://localhost:8000/shell.php/$(cat .config/key)/pkg/list&quot;
 <li><p><strong>Enable HTTPS</strong> for API key security</p>
 </li>
 <li><p><strong>Set restrictive permissions:</strong></p>
-<pre><code class="language-bash">chmod 644 shell.php
+<pre><code class="language-bash">chmod 644 mpm.php
 chmod 700 .config
 chmod 600 .config/key
 </code></pre>
@@ -1642,7 +1637,7 @@ chmod 600 .config/key
 RUN docker-php-ext-install zip
 
 # Copy shell
-COPY shell.php /var/www/html/
+COPY mpm.php /var/www/html/
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
@@ -1672,7 +1667,7 @@ chown www-data:www-data .config/key
 <p><strong>&quot;Permission denied&quot; errors:</strong></p>
 <pre><code class="language-bash"># Fix permissions
 chmod 755 .
-chmod 644 shell.php
+chmod 644 mpm.php
 chmod -R 755 .config
 </code></pre>
 <p><strong>&quot;ZipArchive not found&quot;:</strong></p>
@@ -1682,11 +1677,11 @@ sudo yum install php-zip       # CentOS/RHEL
 </code></pre>
 <p><strong>&quot;API key not found&quot; (CLI mode):</strong></p>
 <pre><code class="language-bash"># Generate key manually
-php shell.php ls  # This creates .config/key
+php mpm.php ls  # This creates .config/key
 </code></pre>
 <p><strong>Lock file issues:</strong></p>
 <pre><code class="language-bash"># Force unlock if stuck
-php shell.php pkg unlock
+php mpm.php pkg unlock
 </code></pre>
 <h1 id="usage-reference">Usage Reference</h1>
 <p>Complete command reference and API documentation for MPM - Mehr&#39;s Package Manager.</p>
@@ -1694,24 +1689,24 @@ php shell.php pkg unlock
 <h2 id="request-formats">Request Formats</h2>
 <h3 id="http-mode">HTTP Mode</h3>
 <p><strong>Format:</strong></p>
-<pre><code>GET /shell.php/API_KEY/COMMAND/ARG0/ARG1/ARG2/...
+<pre><code>GET /mpm.php/API_KEY/COMMAND/ARG0/ARG1/ARG2/...
 </code></pre>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># Get API key
 KEY=$(cat .config/key)
 
 # List files
-curl &quot;http://localhost/shell.php/$KEY/ls&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls&quot;
 
 # Read file
-curl &quot;http://localhost/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cat/README.md&quot;
 
 # Echo with multiple arguments
-curl &quot;http://localhost/shell.php/$KEY/echo/hello/world&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello/world&quot;
 
 # Package management
-curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/search/database&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users&quot;
 </code></pre>
 <p><strong>Response:</strong></p>
 <ul>
@@ -1720,21 +1715,21 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
 </ul>
 <h3 id="cli-mode">CLI Mode</h3>
 <p><strong>Format:</strong></p>
-<pre><code class="language-bash">php shell.php COMMAND ARG0 ARG1 ARG2 ...
+<pre><code class="language-bash">php mpm.php COMMAND ARG0 ARG1 ARG2 ...
 </code></pre>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># List files
-php shell.php ls
+php mpm.php ls
 
 # Read file
-php shell.php cat README.md
+php mpm.php cat README.md
 
 # Echo with multiple arguments
-php shell.php echo hello world
+php mpm.php echo hello world
 
 # Package management
-php shell.php pkg search database
-php shell.php pkg add users
+php mpm.php pkg search database
+php mpm.php pkg add users
 </code></pre>
 <p><strong>Response:</strong></p>
 <ul>
@@ -1751,13 +1746,13 @@ php shell.php pkg add users
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php ls
-php shell.php ls app
-php shell.php ls app/packages
+php mpm.php ls
+php mpm.php ls app
+php mpm.php ls app/packages
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/ls&quot;
-curl &quot;http://localhost/shell.php/$KEY/ls/app&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls/app&quot;
 </code></pre>
 <p><strong>Output:</strong>
 Space-separated filenames (excludes <code>.</code> and <code>..</code>)</p>
@@ -1776,11 +1771,11 @@ Space-separated filenames (excludes <code>.</code> and <code>..</code>)</p>
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php cat README.md
-php shell.php cat .config/key
+php mpm.php cat README.md
+php mpm.php cat .config/key
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cat/README.md&quot;
 </code></pre>
 <p><strong>Output:</strong>
 File contents (preserves formatting and newlines)</p>
@@ -1799,11 +1794,11 @@ File contents (preserves formatting and newlines)</p>
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php rm temp.txt
-php shell.php rm logs/old.log
+php mpm.php rm temp.txt
+php mpm.php rm logs/old.log
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/rm/temp.txt&quot;
+curl &quot;http://localhost/mpm.php/$KEY/rm/temp.txt&quot;
 </code></pre>
 <p><strong>Output:</strong>
 Empty string on success (POSIX behavior)</p>
@@ -1822,11 +1817,11 @@ Empty string on success (POSIX behavior)</p>
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php mkdir uploads
-php shell.php mkdir app/data/cache
+php mpm.php mkdir uploads
+php mpm.php mkdir app/data/cache
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/mkdir/uploads&quot;
+curl &quot;http://localhost/mpm.php/$KEY/mkdir/uploads&quot;
 </code></pre>
 <p><strong>Output:</strong>
 Empty string on success</p>
@@ -1845,11 +1840,11 @@ Empty string on success</p>
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php cp config.json config.backup.json
-php shell.php cp README.md docs/README.md
+php mpm.php cp config.json config.backup.json
+php mpm.php cp README.md docs/README.md
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/cp/config.json/config.backup.json&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cp/config.json/config.backup.json&quot;
 </code></pre>
 <p><strong>Output:</strong>
 Empty string on success</p>
@@ -1868,12 +1863,12 @@ Empty string on success</p>
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php echo hello
-php shell.php echo hello world &quot;from shell&quot;
+php mpm.php echo hello
+php mpm.php echo hello world &quot;from shell&quot;
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/echo/hello&quot;
-curl &quot;http://localhost/shell.php/$KEY/echo/hello/world&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello/world&quot;
 </code></pre>
 <p><strong>Output:</strong>
 Space-separated arguments</p>
@@ -1887,13 +1882,13 @@ Space-separated arguments</p>
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php env list
-php shell.php env get PATH
-php shell.php env get HOME
+php mpm.php env list
+php mpm.php env get PATH
+php mpm.php env get HOME
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/env/list&quot;
-curl &quot;http://localhost/shell.php/$KEY/env/get/PATH&quot;
+curl &quot;http://localhost/mpm.php/$KEY/env/list&quot;
+curl &quot;http://localhost/mpm.php/$KEY/env/get/PATH&quot;
 </code></pre>
 <p><strong>Output:</strong></p>
 <ul>
@@ -1915,12 +1910,12 @@ curl &quot;http://localhost/shell.php/$KEY/env/get/PATH&quot;
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg add users
-php shell.php pkg add users auth database
+php mpm.php pkg add users
+php mpm.php pkg add users auth database
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users/auth&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users/auth&quot;
 </code></pre>
 <p><strong>Process:</strong></p>
 <ol>
@@ -1960,10 +1955,10 @@ Successfully installed 3 package(s): dependency1, dependency2, users
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg del users
+php mpm.php pkg del users
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/del/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/del/users&quot;
 </code></pre>
 <p><strong>Output:</strong></p>
 <pre><code>Removed package: users (version 1.0.0) - 15 files deleted, 3 empty directories removed
@@ -1983,12 +1978,12 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/del/users&quot;
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg upgrade           # Upgrade all
-php shell.php pkg upgrade users     # Upgrade specific
+php mpm.php pkg upgrade           # Upgrade all
+php mpm.php pkg upgrade users     # Upgrade specific
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/upgrade&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/upgrade/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/upgrade&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/upgrade/users&quot;
 </code></pre>
 <p><strong>Output:</strong></p>
 <pre><code>Will upgrade users from 1.0.0 to 1.1.0
@@ -2008,10 +2003,10 @@ Successfully upgraded 1 package(s): users
 <p>Refresh repository cache (fetch latest package database).</p>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg update
+php mpm.php pkg update
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/update&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/update&quot;
 </code></pre>
 <p><strong>Output:</strong></p>
 <pre><code>Repository cache refreshed - 42 packages available
@@ -2025,12 +2020,12 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/update&quot;
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg list
-php shell.php pkg list auth
+php mpm.php pkg list
+php mpm.php pkg list auth
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/list&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/list/auth&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/list&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/list/auth&quot;
 </code></pre>
 <p><strong>Output:</strong></p>
 <pre><code>Installed packages:
@@ -2048,10 +2043,10 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/list/auth&quot;
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg search database
+php mpm.php pkg search database
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/search/database&quot;
 </code></pre>
 <p><strong>Output:</strong></p>
 <pre><code>Found 3 packages:
@@ -2074,10 +2069,10 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
 </ul>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg info users
+php mpm.php pkg info users
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/info/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/info/users&quot;
 </code></pre>
 <p><strong>Output:</strong></p>
 <pre><code>Package: User Management System
@@ -2103,10 +2098,10 @@ Available versions:
 <p>Force remove lock file (for manual recovery).</p>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg unlock
+php mpm.php pkg unlock
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/unlock&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/unlock&quot;
 </code></pre>
 <p><strong>Output:</strong>
 Empty string on success</p>
@@ -2117,20 +2112,20 @@ If a package operation crashes, the lock file may remain. This command removes i
 <p>Show package manager help.</p>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg help
+php mpm.php pkg help
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/help&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/help&quot;
 </code></pre>
 <hr>
 <h3 id="pkg-version">pkg version</h3>
 <p>Show package manager version.</p>
 <p><strong>Examples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg version
+php mpm.php pkg version
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/version&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/version&quot;
 </code></pre>
 <hr>
 <h2 id="response-protocol">Response Protocol</h2>
@@ -2289,12 +2284,12 @@ return function(array $args): string {
 </code></pre>
 <h3 id="argument-processing">Argument Processing</h3>
 <p><strong>HTTP Mode:</strong></p>
-<pre><code>GET /shell.php/KEY/mycommand/action/arg1/arg2
+<pre><code>GET /mpm.php/KEY/mycommand/action/arg1/arg2
                       ↓        ↓      ↓    ↓
                   command   args[0] [1]  [2]
 </code></pre>
 <p><strong>CLI Mode:</strong></p>
-<pre><code class="language-bash">php shell.php mycommand action arg1 arg2
+<pre><code class="language-bash">php mpm.php mycommand action arg1 arg2
                ↓        ↓      ↓    ↓
            command   args[0] [1]  [2]
 </code></pre>
@@ -2359,14 +2354,14 @@ return function(array $args): string {
 <h2 id="architecture">Architecture</h2>
 <h3 id="file-structure">File Structure</h3>
 <pre><code>.
-├── shell.php              # Main executable (2300 lines)
+├── mpm.php              # Main executable (2300 lines)
 ├── .config/               # Configuration (auto-created)
 │   ├── key                # API key
 │   ├── repos.json         # Repository mirrors
 │   ├── packages.json      # Installed packages
 │   └── path.json          # Handler patterns
 ├── .cache/                # Cache (auto-created)
-│   ├── shell.lock         # Lock file
+│   ├── mpm.lock           # Lock file
 │   └── *.zip              # Downloaded packages
 └── app/packages/          # Installed packages
     └── [package]/
@@ -2459,7 +2454,7 @@ cat .config/key
 
 # Regenerate key (delete and run again)
 rm .config/key
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <hr>
 <h3 id="api-key-not-found-cli">&quot;API key not found&quot; (CLI)</h3>
@@ -2467,7 +2462,7 @@ php shell.php ls
 <p><strong>Cause:</strong> <code>.config/key</code> file doesn&#39;t exist</p>
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Initialize shell
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <hr>
 <h3 id="command-not-found">&quot;Command not found&quot;</h3>
@@ -2487,10 +2482,10 @@ ls bin/[command].php
 <p><strong>Cause:</strong> Lock file exists</p>
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Wait for operation to complete, or force unlock
-php shell.php pkg unlock
+php mpm.php pkg unlock
 
 # Or manually remove
-rm .cache/shell.lock
+rm .cache/mpm.lock
 </code></pre>
 <hr>
 <h3 id="package-not-found">&quot;Package not found&quot;</h3>
@@ -2498,10 +2493,10 @@ rm .cache/shell.lock
 <p><strong>Cause:</strong> Package not in repository</p>
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Refresh repository cache
-php shell.php pkg update
+php mpm.php pkg update
 
 # Search for package
-php shell.php pkg search keyword
+php mpm.php pkg search keyword
 </code></pre>
 <hr>
 <h3 id="circular-dependency">&quot;Circular dependency&quot;</h3>
@@ -2515,8 +2510,8 @@ Review package dependencies and remove the cycle. This is a package repository i
 <p><strong>Cause:</strong> Other packages depend on the target package</p>
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Remove dependent packages first
-php shell.php pkg del dependent-package
-php shell.php pkg del target-package
+php mpm.php pkg del dependent-package
+php mpm.php pkg del target-package
 </code></pre>
 <hr>
 <h3 id="permission-errors">Permission Errors</h3>
@@ -2524,7 +2519,7 @@ php shell.php pkg del target-package
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Fix permissions
 chmod 755 .
-chmod 644 shell.php
+chmod 644 mpm.php
 chmod 755 .config
 chmod 644 .config/*
 chmod 755 .cache
@@ -2563,7 +2558,7 @@ EOF
 cd ..
 mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
-php shell.php mypackage
+php mpm.php mypackage
 </code></pre>
 <hr>
 <h2 id="package-structure">Package Structure</h2>
@@ -2678,12 +2673,12 @@ function handleDelete(string $id): string {
 <h3 id="argument-processing-1">Argument Processing</h3>
 <p>Arguments are identical in both HTTP and CLI modes:</p>
 <p><strong>HTTP:</strong></p>
-<pre><code>GET /shell.php/KEY/users/create/alice/alice@example.com
+<pre><code>GET /mpm.php/KEY/users/create/alice/alice@example.com
                     ↓      ↓      ↓         ↓
                 command args[0] args[1]  args[2]
 </code></pre>
 <p><strong>CLI:</strong></p>
-<pre><code class="language-bash">php shell.php users create alice alice@example.com
+<pre><code class="language-bash">php mpm.php users create alice alice@example.com
                ↓      ↓      ↓         ↓
            command args[0] args[1]  args[2]
 </code></pre>
@@ -2695,7 +2690,7 @@ function handleDelete(string $id): string {
 }
 </code></pre>
 <h3 id="file-operations">File Operations</h3>
-<p>Handlers execute in shell.php directory. Use relative paths:</p>
+<p>Handlers execute in mpm.php directory. Use relative paths:</p>
 <pre><code class="language-php">&lt;?php
 return function(array $args): string {
     // Read data file
@@ -2853,10 +2848,10 @@ mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
 
 # Test commands
-php shell.php mypackage
-php shell.php mypackage list
-php shell.php mypackage get 123
-php shell.php mypackage create &quot;Test Item&quot;
+php mpm.php mypackage
+php mpm.php mypackage list
+php mpm.php mypackage get 123
+php mpm.php mypackage create &quot;Test Item&quot;
 </code></pre>
 <h3 id="manual-testing-http">Manual Testing (HTTP)</h3>
 <pre><code class="language-bash"># Start server
@@ -2866,9 +2861,9 @@ php -S localhost:8000
 KEY=$(cat .config/key)
 
 # Test commands
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/get/123&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/get/123&quot;
 </code></pre>
 <h3 id="testing-checklist">Testing Checklist</h3>
 <ul>
@@ -2892,6 +2887,158 @@ unzip -l ../mypackage-1.0.0.zip
 <h3 id="calculate-checksum">Calculate Checksum</h3>
 <pre><code class="language-bash">sha256sum mypackage-1.0.0.zip
 # Output: abc123def456...  mypackage-1.0.0.zip
+</code></pre>
+<h3 id="automated-build-scripts">Automated Build Scripts</h3>
+<p>For reusable packaging, create shell scripts that automate the build process. This is especially useful for packaging third-party assets like icons, fonts, or JavaScript libraries.</p>
+<p><strong>Basic structure:</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;mypackage&quot;
+DES=&quot;Package description&quot;
+VER=&quot;1.0.0&quot;
+
+URL=&quot;https://example.com/source.zip&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+# Download and extract source
+wget -q &quot;$URL&quot; -O src.zip
+unzip -q src.zip
+
+# Restructure for your format
+mkdir -p &quot;assets/category/${PKG}&quot;
+mv source-files/* &quot;assets/category/${PKG}/&quot;
+
+# Create package zip
+zip -rq &quot;$OUT&quot; assets
+
+# Calculate metadata
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+# Move to repository
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+# Update database.json
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; \
+   --arg name &quot;$PKG&quot; \
+   --arg desc &quot;$DES&quot; \
+   --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; \
+   --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; \
+   --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name,
+       description: $desc,
+       author: &quot;mpm-bot&quot;,
+       license: &quot;MIT&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>Example: Icon package (heroicons)</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;heroicons&quot;
+DES=&quot;A set of free MIT-licensed high-quality SVG icons for UI development.&quot;
+VER=&quot;2.2.0&quot;
+
+URL=&quot;https://github.com/tailwindlabs/heroicons/archive/refs/tags/v${VER}.zip&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+wget -q &quot;$URL&quot; -O src.zip
+unzip -q src.zip
+
+mkdir -p &quot;assets/icons/${PKG}&quot;
+mv &quot;heroicons-${VER}/src/&quot;* &quot;assets/icons/${PKG}/&quot;
+
+zip -rq &quot;$OUT&quot; assets
+
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; --arg name &quot;$PKG&quot; --arg desc &quot;$DES&quot; --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name, description: $desc, author: &quot;mpm-bot&quot;, license: &quot;MIT&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>Example: JavaScript library (htmx)</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;htmx&quot;
+DES=&quot;High power tools for HTML.&quot;
+VER=&quot;2.0.4&quot;
+
+URL=&quot;https://unpkg.com/htmx.org@${VER}/dist/htmx.min.js&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+mkdir -p &quot;assets/js&quot;
+wget -q &quot;$URL&quot; -O &quot;assets/js/htmx.min.js&quot;
+
+zip -rq &quot;$OUT&quot; assets
+
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; --arg name &quot;$PKG&quot; --arg desc &quot;$DES&quot; --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name, description: $desc, author: &quot;mpm-bot&quot;, license: &quot;BSD-2-Clause&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>Repository structure:</strong></p>
+<pre><code>mpm-repo/
+├── scripts/
+│   ├── heroicons.sh
+│   ├── htmx.sh
+│   ├── alpinejs.sh
+│   └── ...
+└── main/
+    ├── database.json
+    ├── heroicons-2.2.0.zip
+    ├── htmx-2.0.4.zip
+    └── ...
+</code></pre>
+<p><strong>Build all packages:</strong></p>
+<pre><code class="language-bash">for script in scripts/*.sh; do ./$script; done
 </code></pre>
 <h3 id="repository-databasejson">Repository database.json</h3>
 <pre><code class="language-json">{
@@ -2917,6 +3064,7 @@ unzip -l ../mypackage-1.0.0.zip
   }
 }
 </code></pre>
+<p>Files are tracked locally during extraction for clean uninstallation.</p>
 <h3 id="github-hosting">GitHub Hosting</h3>
 <pre><code class="language-bash"># Create repository structure
 mkdir -p my-packages/main
@@ -3098,32 +3246,32 @@ return function(array $args): string {
 <hr>
 <h2 id="نصب">نصب</h2>
 <h3 id="نصب-سریع">نصب سریع</h3>
-<pre><code class="language-bash"># دانلود shell.php
-wget https://raw.githubusercontent.com/mehrnet/mpm/main/shell.php
+<pre><code class="language-bash"># دانلود mpm.php
+wget https://raw.githubusercontent.com/mehrnet/mpm/main/mpm.php
 
 # تعیین دسترسی ها
-chmod 644 shell.php
+chmod 644 mpm.php
 
 # تست نصب
-php shell.php echo &quot;Hello, World!&quot;
+php mpm.php echo &quot;Hello, World!&quot;
 </code></pre>
 <h3 id="نصب-دستی">نصب دستی</h3>
 <ol>
-<li>فایل <code>shell.php</code> را از مخزن دانلود کنید</li>
+<li>فایل <code>mpm.php</code> را از مخزن دانلود کنید</li>
 <li>آن را در ریشه پروژه یا دایرکتوری سرور وب قرار دهید</li>
-<li>اطمینان حاصل کنید که PHP 8.1+ نصب است</li>
+<li>اطمینان حاصل کنید که PHP 7.0+ نصب است</li>
 <li>تایید کنید که افزونه <code>ZipArchive</code> فعال است (برای مدیریت بسته)</li>
 </ol>
 <h3 id="الزامات">الزامات</h3>
 <ul>
-<li><strong>PHP</strong>: نسخه 8.1 یا بالاتر</li>
+<li><strong>PHP</strong>: نسخه 7.0 یا بالاتر</li>
 <li><strong>افزونه ها</strong>: <code>ZipArchive</code> (برای مدیریت بسته)</li>
 <li><strong>دسترسی ها</strong>: دسترسی خواندن/نوشتن به دایرکتوری پروژه</li>
 </ul>
 <h2 id="اولین-اجرا">اولین اجرا</h2>
 <p>در اولین اجرا، MPM به طور خودکار فایل های پیکربندی را تولید می کند:</p>
 <pre><code class="language-bash"># هر فرمندی را برای مقدار دهی اولیه اجرا کنید
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <p>این فایل های زیر را ایجاد می کند:</p>
 <pre><code>.config/
@@ -3143,16 +3291,11 @@ cat .config/key
 <p>برای سفارشی کردن مخازن بسته، <code>.config/repos.json</code> را ویرایش کنید:</p>
 <pre><code class="language-json">{
   &quot;main&quot;: [
-    &quot;https://repo.example.com&quot;,
-    &quot;https://mirror1.example.com&quot;,
-    &quot;https://mirror2.example.com&quot;
-  ],
-  &quot;extra&quot;: [
-    &quot;https://extra-repo.example.com&quot;
+    &quot;https://raw.githubusercontent.com/mehrnet/mpm-repo/refs/heads/main/main&quot;
   ]
 }
 </code></pre>
-<p>آینه ها به ترتیب درصورت شکست امتحال می شوند بدون تاخیر عقب نشینی.</p>
+<p>هر ورودی یک URL کامل به پوشه مخزن است که شامل <code>database.json</code> و فایل‌های ZIP بسته می‌باشد. آینه‌ها به ترتیب در صورت شکست امتحان می‌شوند.</p>
 <h3 id="الگوهای-کننده-فرماند">الگوهای کننده فرماند</h3>
 <p>برای سفارشی کردن محلی جستجوی shell برای فرماندهای سفارشی، <code>.config/path.json</code> را ویرایش کنید:</p>
 <pre><code class="language-json">[
@@ -3166,7 +3309,7 @@ cat .config/key
 <p>برای محیط های مختلف، می توانید:</p>
 <ol>
 <li><p><strong>دایرکتوری های پیکربندی مختلف استفاده کنید:</strong></p>
-<pre><code class="language-php">// اصلاح ثابت ها در shell.php (توصیه نشده است)
+<pre><code class="language-php">// اصلاح ثابت ها در mpm.php (توصیه نشده است)
 const DIR_CONFIG = &#39;.config&#39;;
 </code></pre>
 </li>
@@ -3175,28 +3318,28 @@ const DIR_CONFIG = &#39;.config&#39;;
 </code></pre>
 </li>
 <li><p><strong>متغیرهای محیطی:</strong>
- دسترسی از طریق <code>php shell.php env list</code></p>
+ دسترسی از طریق <code>php mpm.php env list</code></p>
 </li>
 </ol>
 <h2 id="شروع-کار">شروع کار</h2>
 <h3 id="حالت-cli-توصیه-برای-توسعه">حالت CLI (توصیه برای توسعه)</h3>
 <pre><code class="language-bash"># نمایش فهرست فایل ها
-php shell.php ls
+php mpm.php ls
 
 # خواندن محتویات فایل
-php shell.php cat shell.php | head -20
+php mpm.php cat mpm.php | head -20
 
 # ایجاد دایرکتوری
-php shell.php mkdir tmp
+php mpm.php mkdir tmp
 
 # کپی فایل ها
-php shell.php cp shell.php shell.backup.php
+php mpm.php cp mpm.php shell.backup.php
 
 # مدیریت بسته ها
-php shell.php pkg search database
-php shell.php pkg add users
-php shell.php pkg list
-php shell.php pkg upgrade
+php mpm.php pkg search database
+php mpm.php pkg add users
+php mpm.php pkg list
+php mpm.php pkg upgrade
 </code></pre>
 <h3 id="حالت-http-تولید">حالت HTTP (تولید)</h3>
 <ol>
@@ -3210,14 +3353,14 @@ php shell.php pkg upgrade
 </li>
 <li><p><strong>فرماند ها را اجرا کنید:</strong></p>
 <pre><code class="language-bash"># نمایش فهرست فایل ها
-curl &quot;http://localhost:8000/shell.php/$KEY/ls&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/ls&quot;
 
 # خواندن فایل
-curl &quot;http://localhost:8000/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/cat/README.md&quot;
 
 # مدیریت بسته ها
-curl &quot;http://localhost:8000/shell.php/$KEY/pkg/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/pkg/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/pkg/add/users&quot;
 </code></pre>
 </li>
 </ol>
@@ -3228,15 +3371,15 @@ curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
     listen 80;
     server_name your-domain.com;
     root /var/www/shell;
-    index shell.php;
+    index mpm.php;
 
     location / {
-        try_files $uri $uri/ /shell.php$is_args$args;
+        try_files $uri $uri/ /mpm.php$is_args$args;
     }
 
     location ~ \.php$ {
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
-        fastcgi_index shell.php;
+        fastcgi_index mpm.php;
         include fastcgi_params;
     }
 }
@@ -3245,7 +3388,7 @@ curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
 <pre><code class="language-apache">RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ shell.php/$1 [L,QSA]
+RewriteRule ^(.*)$ mpm.php/$1 [L,QSA]
 </code></pre>
 <h2 id="توسعه-بسته">توسعه بسته</h2>
 <h3 id="ایجاد-بسته">ایجاد بسته</h3>
@@ -3353,13 +3496,13 @@ mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
 
 # تست فرماند ها
-php shell.php mypackage list
-php shell.php mypackage create item-name
+php mpm.php mypackage list
+php mpm.php mypackage create item-name
 </code></pre>
 <p><strong>حالت HTTP:</strong></p>
 <pre><code class="language-bash">KEY=$(cat .config/key)
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/create/item-name&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/create/item-name&quot;
 </code></pre>
 <h3 id="بهترین-عملکردها">بهترین عملکردها</h3>
 <ol>
@@ -3486,8 +3629,8 @@ git push -u origin main
 php -S localhost:8000
 
 # فرماند ها را تست کنید
-php shell.php pkg list
-curl &quot;http://localhost:8000/shell.php/$(cat .config/key)/pkg/list&quot;
+php mpm.php pkg list
+curl &quot;http://localhost:8000/mpm.php/$(cat .config/key)/pkg/list&quot;
 </code></pre>
 <h3 id="stagingتولید">Staging/تولید</h3>
 <ol>
@@ -3496,7 +3639,7 @@ curl &quot;http://localhost:8000/shell.php/$(cat .config/key)/pkg/list&quot;
 <li><p><strong>HTTPS فعال کنید</strong> برای امنیت کلید API</p>
 </li>
 <li><p><strong>دسترسی های محدود تعیین کنید:</strong></p>
-<pre><code class="language-bash">chmod 644 shell.php
+<pre><code class="language-bash">chmod 644 mpm.php
 chmod 700 .config
 chmod 600 .config/key
 </code></pre>
@@ -3515,7 +3658,7 @@ chmod 600 .config/key
 RUN docker-php-ext-install zip
 
 # کپی shell
-COPY shell.php /var/www/html/
+COPY mpm.php /var/www/html/
 
 # تعیین دسترسی ها
 RUN chown -R www-data:www-data /var/www/html
@@ -3545,7 +3688,7 @@ chown www-data:www-data .config/key
 <p><strong>خطاهای &quot;اجازه رد شد&quot;:</strong></p>
 <pre><code class="language-bash"># رفع دسترسی ها
 chmod 755 .
-chmod 644 shell.php
+chmod 644 mpm.php
 chmod -R 755 .config
 </code></pre>
 <p><strong>&quot;ZipArchive پیدا نشد&quot;:</strong></p>
@@ -3555,11 +3698,11 @@ sudo yum install php-zip       # CentOS/RHEL
 </code></pre>
 <p><strong>&quot;کلید API پیدا نشد&quot; (حالت CLI):</strong></p>
 <pre><code class="language-bash"># تولید کلید به صورت دستی
-php shell.php ls  # این .config/key را ایجاد می کند
+php mpm.php ls  # این .config/key را ایجاد می کند
 </code></pre>
 <p><strong>مسائل فایل قفل:</strong></p>
 <pre><code class="language-bash"># اگر گیر کرد قفل اجباری باز کنید
-php shell.php pkg unlock
+php mpm.php pkg unlock
 </code></pre>
 <h1 id="راهنمای-مرجع-استفاده">راهنمای مرجع استفاده</h1>
 <p>مرجع فرماند کامل و مستندات API برای MPM - مدیریت بسته های Mehr.</p>
@@ -3567,24 +3710,24 @@ php shell.php pkg unlock
 <h2 id="فرمت-های-درخواست">فرمت های درخواست</h2>
 <h3 id="حالت-http">حالت HTTP</h3>
 <p><strong>فرمت:</strong></p>
-<pre><code>GET /shell.php/API_KEY/COMMAND/ARG0/ARG1/ARG2/...
+<pre><code>GET /mpm.php/API_KEY/COMMAND/ARG0/ARG1/ARG2/...
 </code></pre>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># دریافت کلید API
 KEY=$(cat .config/key)
 
 # نمایش فهرست فایل ها
-curl &quot;http://localhost/shell.php/$KEY/ls&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls&quot;
 
 # خواندن فایل
-curl &quot;http://localhost/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cat/README.md&quot;
 
 # نمایش متن با آرگومان های متعدد
-curl &quot;http://localhost/shell.php/$KEY/echo/hello/world&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello/world&quot;
 
 # مدیریت بسته ها
-curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/search/database&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users&quot;
 </code></pre>
 <p><strong>پاسخ:</strong></p>
 <ul>
@@ -3593,21 +3736,21 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
 </ul>
 <h3 id="حالت-cli">حالت CLI</h3>
 <p><strong>فرمت:</strong></p>
-<pre><code class="language-bash">php shell.php COMMAND ARG0 ARG1 ARG2 ...
+<pre><code class="language-bash">php mpm.php COMMAND ARG0 ARG1 ARG2 ...
 </code></pre>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># نمایش فهرست فایل ها
-php shell.php ls
+php mpm.php ls
 
 # خواندن فایل
-php shell.php cat README.md
+php mpm.php cat README.md
 
 # نمایش متن با آرگومان های متعدد
-php shell.php echo hello world
+php mpm.php echo hello world
 
 # مدیریت بسته ها
-php shell.php pkg search database
-php shell.php pkg add users
+php mpm.php pkg search database
+php mpm.php pkg add users
 </code></pre>
 <p><strong>پاسخ:</strong></p>
 <ul>
@@ -3624,13 +3767,13 @@ php shell.php pkg add users
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php ls
-php shell.php ls app
-php shell.php ls app/packages
+php mpm.php ls
+php mpm.php ls app
+php mpm.php ls app/packages
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/ls&quot;
-curl &quot;http://localhost/shell.php/$KEY/ls/app&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls/app&quot;
 </code></pre>
 <p><strong>خروجی:</strong>
 نام فایل های جدا شده با فاصله (بدون <code>.</code> و <code>..</code>)</p>
@@ -3649,11 +3792,11 @@ curl &quot;http://localhost/shell.php/$KEY/ls/app&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php cat README.md
-php shell.php cat .config/key
+php mpm.php cat README.md
+php mpm.php cat .config/key
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cat/README.md&quot;
 </code></pre>
 <p><strong>خروجی:</strong>
 محتویات فایل (حفظ قالب بندی و خطوط جدید)</p>
@@ -3672,11 +3815,11 @@ curl &quot;http://localhost/shell.php/$KEY/cat/README.md&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php rm temp.txt
-php shell.php rm logs/old.log
+php mpm.php rm temp.txt
+php mpm.php rm logs/old.log
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/rm/temp.txt&quot;
+curl &quot;http://localhost/mpm.php/$KEY/rm/temp.txt&quot;
 </code></pre>
 <p><strong>خروجی:</strong>
 رشته خالی در صورت موفقیت (رفتار POSIX)</p>
@@ -3695,11 +3838,11 @@ curl &quot;http://localhost/shell.php/$KEY/rm/temp.txt&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php mkdir uploads
-php shell.php mkdir app/data/cache
+php mpm.php mkdir uploads
+php mpm.php mkdir app/data/cache
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/mkdir/uploads&quot;
+curl &quot;http://localhost/mpm.php/$KEY/mkdir/uploads&quot;
 </code></pre>
 <p><strong>خروجی:</strong>
 رشته خالی در صورت موفقیت</p>
@@ -3718,11 +3861,11 @@ curl &quot;http://localhost/shell.php/$KEY/mkdir/uploads&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php cp config.json config.backup.json
-php shell.php cp README.md docs/README.md
+php mpm.php cp config.json config.backup.json
+php mpm.php cp README.md docs/README.md
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/cp/config.json/config.backup.json&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cp/config.json/config.backup.json&quot;
 </code></pre>
 <p><strong>خروجی:</strong>
 رشته خالی در صورت موفقیت</p>
@@ -3741,12 +3884,12 @@ curl &quot;http://localhost/shell.php/$KEY/cp/config.json/config.backup.json&quo
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php echo hello
-php shell.php echo hello world &quot;from shell&quot;
+php mpm.php echo hello
+php mpm.php echo hello world &quot;from shell&quot;
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/echo/hello&quot;
-curl &quot;http://localhost/shell.php/$KEY/echo/hello/world&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello/world&quot;
 </code></pre>
 <p><strong>خروجی:</strong>
 آرگومان های جدا شده با فاصله</p>
@@ -3760,13 +3903,13 @@ curl &quot;http://localhost/shell.php/$KEY/echo/hello/world&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php env list
-php shell.php env get PATH
-php shell.php env get HOME
+php mpm.php env list
+php mpm.php env get PATH
+php mpm.php env get HOME
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/env/list&quot;
-curl &quot;http://localhost/shell.php/$KEY/env/get/PATH&quot;
+curl &quot;http://localhost/mpm.php/$KEY/env/list&quot;
+curl &quot;http://localhost/mpm.php/$KEY/env/get/PATH&quot;
 </code></pre>
 <p><strong>خروجی:</strong></p>
 <ul>
@@ -3788,12 +3931,12 @@ curl &quot;http://localhost/shell.php/$KEY/env/get/PATH&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg add users
-php shell.php pkg add users auth database
+php mpm.php pkg add users
+php mpm.php pkg add users auth database
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users/auth&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users/auth&quot;
 </code></pre>
 <p><strong>فرایند:</strong></p>
 <ol>
@@ -3833,10 +3976,10 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/add/users/auth&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg del users
+php mpm.php pkg del users
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/del/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/del/users&quot;
 </code></pre>
 <p><strong>خروجی:</strong></p>
 <pre><code>بسته حذف شد: users (نسخه 1.0.0) - 15 فایل حذف شد، 3 پوشه خالی حذف شد
@@ -3856,12 +3999,12 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/del/users&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg upgrade           # ارتقای تمام
-php shell.php pkg upgrade users     # ارتقای خاص
+php mpm.php pkg upgrade           # ارتقای تمام
+php mpm.php pkg upgrade users     # ارتقای خاص
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/upgrade&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/upgrade/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/upgrade&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/upgrade/users&quot;
 </code></pre>
 <p><strong>خروجی:</strong></p>
 <pre><code>ارتقای users از 1.0.0 به 1.1.0
@@ -3881,10 +4024,10 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/upgrade/users&quot;
 <p>تازه کردن کش مخزن (بازیابی پایگاه داده بسته های جدید).</p>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg update
+php mpm.php pkg update
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/update&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/update&quot;
 </code></pre>
 <p><strong>خروجی:</strong></p>
 <pre><code>کش مخزن تازه شد - 42 بسته دردسترس
@@ -3898,12 +4041,12 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/update&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg list
-php shell.php pkg list auth
+php mpm.php pkg list
+php mpm.php pkg list auth
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/list&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/list/auth&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/list&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/list/auth&quot;
 </code></pre>
 <p><strong>خروجی:</strong></p>
 <pre><code>بسته های نصب شده:
@@ -3921,10 +4064,10 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/list/auth&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg search database
+php mpm.php pkg search database
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/search/database&quot;
 </code></pre>
 <p><strong>خروجی:</strong></p>
 <pre><code>3 بسته پیدا شد:
@@ -3947,10 +4090,10 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
 </ul>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg info users
+php mpm.php pkg info users
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/info/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/info/users&quot;
 </code></pre>
 <p><strong>خروجی:</strong></p>
 <pre><code>بسته: سیستم مدیریت کاربر
@@ -3976,20 +4119,20 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/info/users&quot;
 <p>نمایش کمک مدیریت بسته.</p>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg help
+php mpm.php pkg help
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/help&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/help&quot;
 </code></pre>
 <hr>
 <h3 id="pkg-version-1">pkg version</h3>
 <p>نمایش نسخه مدیریت بسته.</p>
 <p><strong>مثال ها:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg version
+php mpm.php pkg version
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/version&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/version&quot;
 </code></pre>
 <hr>
 <h2 id="پروتکل-پاسخ">پروتکل پاسخ</h2>
@@ -4148,12 +4291,12 @@ return function(array $args): string {
 </code></pre>
 <h3 id="پردازش-آرگومان">پردازش آرگومان</h3>
 <p><strong>حالت HTTP:</strong></p>
-<pre><code>GET /shell.php/KEY/mycommand/action/arg1/arg2
+<pre><code>GET /mpm.php/KEY/mycommand/action/arg1/arg2
                        ↓        ↓      ↓    ↓
                    فرمند   args[0] [1]  [2]
 </code></pre>
 <p><strong>حالت CLI:</strong></p>
-<pre><code class="language-bash">php shell.php mycommand action arg1 arg2
+<pre><code class="language-bash">php mpm.php mycommand action arg1 arg2
                 ↓        ↓      ↓    ↓
             فرمند   args[0] [1]  [2]
 </code></pre>
@@ -4218,14 +4361,14 @@ return function(array $args): string {
 <h2 id="معماری">معماری</h2>
 <h3 id="ساختار-فایل">ساختار فایل</h3>
 <pre><code>.
-├── shell.php              # اجرایی اصلی (2300 سطر)
+├── mpm.php              # اجرایی اصلی (2300 سطر)
 ├── .config/               # پیکربندی (ایجاد خودکار)
 │   ├── key                # کلید API
 │   ├── repos.json         # آینه های مخزن
 │   ├── packages.json      # بسته های نصب شده
 │   └── path.json          # الگوهای کننده
 ├── .cache/                # کش (ایجاد خودکار)
-│   ├── shell.lock         # فایل قفل
+│   ├── mpm.lock           # فایل قفل
 │   └── *.zip              # بسته های دانلود شده
 └── app/packages/          # بسته های نصب شده
     └── [package]/
@@ -4318,7 +4461,7 @@ cat .config/key
 
 # تولید مجدد کلید (حذف و دوباره اجرا کنید)
 rm .config/key
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <hr>
 <h3 id="کلید-api-پیدا-نشد-cli">&quot;کلید API پیدا نشد&quot; (CLI)</h3>
@@ -4326,7 +4469,7 @@ php shell.php ls
 <p><strong>علت:</strong> فایل <code>.config/key</code> وجود ندارد</p>
 <p><strong>حل:</strong></p>
 <pre><code class="language-bash"># مقدار دهی اولیه shell
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <hr>
 <h3 id="فرمند-پیدا-نشد">&quot;فرمند پیدا نشد&quot;</h3>
@@ -4346,10 +4489,10 @@ ls bin/[command].php
 <p><strong>علت:</strong> فایل قفل وجود دارد</p>
 <p><strong>حل:</strong></p>
 <pre><code class="language-bash"># منتظر تکمیل عملیات یا قفل اجباری باز کنید
-php shell.php pkg unlock
+php mpm.php pkg unlock
 
 # یا به صورت دستی حذف کنید
-rm .cache/shell.lock
+rm .cache/mpm.lock
 </code></pre>
 <hr>
 <h3 id="بسته-پیدا-نشد">&quot;بسته پیدا نشد&quot;</h3>
@@ -4357,10 +4500,10 @@ rm .cache/shell.lock
 <p><strong>علت:</strong> بسته در مخزن نیست</p>
 <p><strong>حل:</strong></p>
 <pre><code class="language-bash"># تازه کردن کش مخزن
-php shell.php pkg update
+php mpm.php pkg update
 
 # جستجوی بسته
-php shell.php pkg search keyword
+php mpm.php pkg search keyword
 </code></pre>
 <hr>
 <h3 id="وابستگی-دایره-ای">&quot;وابستگی دایره ای&quot;</h3>
@@ -4374,8 +4517,8 @@ php shell.php pkg search keyword
 <p><strong>علت:</strong> بسته های دیگر به بسته هدف وابسته اند</p>
 <p><strong>حل:</strong></p>
 <pre><code class="language-bash"># اولا بسته های وابسته را حذف کنید
-php shell.php pkg del dependent-package
-php shell.php pkg del target-package
+php mpm.php pkg del dependent-package
+php mpm.php pkg del target-package
 </code></pre>
 <hr>
 <h3 id="خطاهای-اجازه">خطاهای اجازه</h3>
@@ -4383,7 +4526,7 @@ php shell.php pkg del target-package
 <p><strong>حل:</strong></p>
 <pre><code class="language-bash"># رفع اجازه ها
 chmod 755 .
-chmod 644 shell.php
+chmod 644 mpm.php
 chmod 755 .config
 chmod 644 .config/*
 chmod 755 .cache
@@ -4422,7 +4565,7 @@ EOF
 cd ..
 mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
-php shell.php mypackage
+php mpm.php mypackage
 </code></pre>
 <hr>
 <h2 id="ساختار-بسته">ساختار بسته</h2>
@@ -4537,12 +4680,12 @@ function handleDelete(string $id): string {
 <h3 id="پردازش-آرگومان-1">پردازش آرگومان</h3>
 <p>آرگومان ها در هر دو حالت HTTP و CLI یکسان اند:</p>
 <p><strong>HTTP:</strong></p>
-<pre><code>GET /shell.php/KEY/users/create/alice/alice@example.com
+<pre><code>GET /mpm.php/KEY/users/create/alice/alice@example.com
                     ↓      ↓      ↓         ↓
                 فرمند args[0] args[1]  args[2]
 </code></pre>
 <p><strong>CLI:</strong></p>
-<pre><code class="language-bash">php shell.php users create alice alice@example.com
+<pre><code class="language-bash">php mpm.php users create alice alice@example.com
                ↓      ↓      ↓         ↓
            فرمند args[0] args[1]  args[2]
 </code></pre>
@@ -4554,7 +4697,7 @@ function handleDelete(string $id): string {
 }
 </code></pre>
 <h3 id="عملیات-فایل">عملیات فایل</h3>
-<p>کننده ها در دایرکتوری shell.php اجرا می شوند. از مسیرهای نسبی استفاده کنید:</p>
+<p>کننده ها در دایرکتوری mpm.php اجرا می شوند. از مسیرهای نسبی استفاده کنید:</p>
 <pre><code class="language-php">&lt;?php
 return function(array $args): string {
     // خواندن فایل داده
@@ -4712,10 +4855,10 @@ mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
 
 # تست فرماند ها
-php shell.php mypackage
-php shell.php mypackage list
-php shell.php mypackage get 123
-php shell.php mypackage create &quot;Test Item&quot;
+php mpm.php mypackage
+php mpm.php mypackage list
+php mpm.php mypackage get 123
+php mpm.php mypackage create &quot;Test Item&quot;
 </code></pre>
 <h3 id="تست-دستی-http">تست دستی (HTTP)</h3>
 <pre><code class="language-bash"># شروع سرور
@@ -4725,9 +4868,9 @@ php -S localhost:8000
 KEY=$(cat .config/key)
 
 # تست فرماند ها
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/get/123&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/get/123&quot;
 </code></pre>
 <h3 id="چک-لیست-تست">چک لیست تست</h3>
 <ul>
@@ -4751,6 +4894,158 @@ unzip -l ../mypackage-1.0.0.zip
 <h3 id="محاسبه-checksum">محاسبه Checksum</h3>
 <pre><code class="language-bash">sha256sum mypackage-1.0.0.zip
 # Output: abc123def456...  mypackage-1.0.0.zip
+</code></pre>
+<h3 id="اسکریپتهای-ساخت-خودکار">اسکریپت‌های ساخت خودکار</h3>
+<p>برای بسته‌بندی قابل استفاده مجدد، اسکریپت‌های shell ایجاد کنید که فرآیند ساخت را خودکار می‌کنند. این به ویژه برای بسته‌بندی دارایی‌های شخص ثالث مانند آیکون‌ها، فونت‌ها یا کتابخانه‌های JavaScript مفید است.</p>
+<p><strong>ساختار پایه:</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;mypackage&quot;
+DES=&quot;توضیح بسته&quot;
+VER=&quot;1.0.0&quot;
+
+URL=&quot;https://example.com/source.zip&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+# دانلود و استخراج منبع
+wget -q &quot;$URL&quot; -O src.zip
+unzip -q src.zip
+
+# بازسازی ساختار
+mkdir -p &quot;assets/category/${PKG}&quot;
+mv source-files/* &quot;assets/category/${PKG}/&quot;
+
+# ایجاد zip بسته
+zip -rq &quot;$OUT&quot; assets
+
+# محاسبه متادیتا
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+# انتقال به مخزن
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+# بروزرسانی database.json
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; \
+   --arg name &quot;$PKG&quot; \
+   --arg desc &quot;$DES&quot; \
+   --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; \
+   --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; \
+   --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name,
+       description: $desc,
+       author: &quot;mpm-bot&quot;,
+       license: &quot;MIT&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>مثال: بسته آیکون (heroicons)</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;heroicons&quot;
+DES=&quot;مجموعه آیکون‌های SVG رایگان با کیفیت بالا برای توسعه UI.&quot;
+VER=&quot;2.2.0&quot;
+
+URL=&quot;https://github.com/tailwindlabs/heroicons/archive/refs/tags/v${VER}.zip&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+wget -q &quot;$URL&quot; -O src.zip
+unzip -q src.zip
+
+mkdir -p &quot;assets/icons/${PKG}&quot;
+mv &quot;heroicons-${VER}/src/&quot;* &quot;assets/icons/${PKG}/&quot;
+
+zip -rq &quot;$OUT&quot; assets
+
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; --arg name &quot;$PKG&quot; --arg desc &quot;$DES&quot; --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name, description: $desc, author: &quot;mpm-bot&quot;, license: &quot;MIT&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>مثال: کتابخانه JavaScript (htmx)</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;htmx&quot;
+DES=&quot;ابزارهای قدرتمند برای HTML.&quot;
+VER=&quot;2.0.4&quot;
+
+URL=&quot;https://unpkg.com/htmx.org@${VER}/dist/htmx.min.js&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+mkdir -p &quot;assets/js&quot;
+wget -q &quot;$URL&quot; -O &quot;assets/js/htmx.min.js&quot;
+
+zip -rq &quot;$OUT&quot; assets
+
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; --arg name &quot;$PKG&quot; --arg desc &quot;$DES&quot; --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name, description: $desc, author: &quot;mpm-bot&quot;, license: &quot;BSD-2-Clause&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>ساختار مخزن:</strong></p>
+<pre><code>mpm-repo/
+├── scripts/
+│   ├── heroicons.sh
+│   ├── htmx.sh
+│   ├── alpinejs.sh
+│   └── ...
+└── main/
+    ├── database.json
+    ├── heroicons-2.2.0.zip
+    ├── htmx-2.0.4.zip
+    └── ...
+</code></pre>
+<p><strong>ساخت همه بسته‌ها:</strong></p>
+<pre><code class="language-bash">for script in scripts/*.sh; do ./$script; done
 </code></pre>
 <h3 id="databasejson-مخزن">database.json مخزن</h3>
 <pre><code class="language-json">{
@@ -4776,6 +5071,7 @@ unzip -l ../mypackage-1.0.0.zip
   }
 }
 </code></pre>
+<p>فایل‌ها در زمان استخراج به صورت محلی ردیابی می‌شوند تا حذف تمیز انجام شود.</p>
 <h3 id="میزبانی-github">میزبانی GitHub</h3>
 <pre><code class="language-bash"># ساختار مخزن ایجاد کنید
 mkdir -p my-packages/main
@@ -4958,24 +5254,24 @@ return function(array $args): string {
 <h2 id="formats-de-requête">Formats de requête</h2>
 <h3 id="mode-http">Mode HTTP</h3>
 <p><strong>Format:</strong></p>
-<pre><code>GET /shell.php/API_KEY/COMMAND/ARG0/ARG1/ARG2/...
+<pre><code>GET /mpm.php/API_KEY/COMMAND/ARG0/ARG1/ARG2/...
 </code></pre>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># Obtenir la clé API
 KEY=$(cat .config/key)
 
 # Lister les fichiers
-curl &quot;http://localhost/shell.php/$KEY/ls&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls&quot;
 
 # Lire un fichier
-curl &quot;http://localhost/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cat/README.md&quot;
 
 # Afficher du texte avec plusieurs arguments
-curl &quot;http://localhost/shell.php/$KEY/echo/hello/world&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello/world&quot;
 
 # Gestion des paquets
-curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/search/database&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users&quot;
 </code></pre>
 <p><strong>Réponse:</strong></p>
 <ul>
@@ -4984,21 +5280,21 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
 </ul>
 <h3 id="mode-cli">Mode CLI</h3>
 <p><strong>Format:</strong></p>
-<pre><code class="language-bash">php shell.php COMMAND ARG0 ARG1 ARG2 ...
+<pre><code class="language-bash">php mpm.php COMMAND ARG0 ARG1 ARG2 ...
 </code></pre>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># Lister les fichiers
-php shell.php ls
+php mpm.php ls
 
 # Lire un fichier
-php shell.php cat README.md
+php mpm.php cat README.md
 
 # Afficher du texte avec plusieurs arguments
-php shell.php echo hello world
+php mpm.php echo hello world
 
 # Gestion des paquets
-php shell.php pkg search database
-php shell.php pkg add users
+php mpm.php pkg search database
+php mpm.php pkg add users
 </code></pre>
 <p><strong>Réponse:</strong></p>
 <ul>
@@ -5015,13 +5311,13 @@ php shell.php pkg add users
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php ls
-php shell.php ls app
-php shell.php ls app/packages
+php mpm.php ls
+php mpm.php ls app
+php mpm.php ls app/packages
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/ls&quot;
-curl &quot;http://localhost/shell.php/$KEY/ls/app&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls&quot;
+curl &quot;http://localhost/mpm.php/$KEY/ls/app&quot;
 </code></pre>
 <p><strong>Sortie:</strong>
 Noms de fichiers séparés par des espaces (exclut <code>.</code> et <code>..</code>)</p>
@@ -5040,11 +5336,11 @@ Noms de fichiers séparés par des espaces (exclut <code>.</code> et <code>..</c
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php cat README.md
-php shell.php cat .config/key
+php mpm.php cat README.md
+php mpm.php cat .config/key
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cat/README.md&quot;
 </code></pre>
 <p><strong>Sortie:</strong>
 Contenu du fichier (préserve la mise en forme et les sauts de ligne)</p>
@@ -5063,11 +5359,11 @@ Contenu du fichier (préserve la mise en forme et les sauts de ligne)</p>
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php rm temp.txt
-php shell.php rm logs/old.log
+php mpm.php rm temp.txt
+php mpm.php rm logs/old.log
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/rm/temp.txt&quot;
+curl &quot;http://localhost/mpm.php/$KEY/rm/temp.txt&quot;
 </code></pre>
 <p><strong>Sortie:</strong>
 Chaîne vide en cas de succès (comportement POSIX)</p>
@@ -5086,11 +5382,11 @@ Chaîne vide en cas de succès (comportement POSIX)</p>
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php mkdir uploads
-php shell.php mkdir app/data/cache
+php mpm.php mkdir uploads
+php mpm.php mkdir app/data/cache
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/mkdir/uploads&quot;
+curl &quot;http://localhost/mpm.php/$KEY/mkdir/uploads&quot;
 </code></pre>
 <p><strong>Sortie:</strong>
 Chaîne vide en cas de succès</p>
@@ -5109,11 +5405,11 @@ Chaîne vide en cas de succès</p>
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php cp config.json config.backup.json
-php shell.php cp README.md docs/README.md
+php mpm.php cp config.json config.backup.json
+php mpm.php cp README.md docs/README.md
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/cp/config.json/config.backup.json&quot;
+curl &quot;http://localhost/mpm.php/$KEY/cp/config.json/config.backup.json&quot;
 </code></pre>
 <p><strong>Sortie:</strong>
 Chaîne vide en cas de succès</p>
@@ -5132,12 +5428,12 @@ Chaîne vide en cas de succès</p>
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php echo hello
-php shell.php echo hello world &quot;from shell&quot;
+php mpm.php echo hello
+php mpm.php echo hello world &quot;from shell&quot;
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/echo/hello&quot;
-curl &quot;http://localhost/shell.php/$KEY/echo/hello/world&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello&quot;
+curl &quot;http://localhost/mpm.php/$KEY/echo/hello/world&quot;
 </code></pre>
 <p><strong>Sortie:</strong>
 Arguments séparés par des espaces</p>
@@ -5151,13 +5447,13 @@ Arguments séparés par des espaces</p>
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php env list
-php shell.php env get PATH
-php shell.php env get HOME
+php mpm.php env list
+php mpm.php env get PATH
+php mpm.php env get HOME
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/env/list&quot;
-curl &quot;http://localhost/shell.php/$KEY/env/get/PATH&quot;
+curl &quot;http://localhost/mpm.php/$KEY/env/list&quot;
+curl &quot;http://localhost/mpm.php/$KEY/env/get/PATH&quot;
 </code></pre>
 <p><strong>Sortie:</strong></p>
 <ul>
@@ -5179,12 +5475,12 @@ curl &quot;http://localhost/shell.php/$KEY/env/get/PATH&quot;
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg add users
-php shell.php pkg add users auth database
+php mpm.php pkg add users
+php mpm.php pkg add users auth database
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/add/users/auth&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/add/users/auth&quot;
 </code></pre>
 <p><strong>Processus:</strong></p>
 <ol>
@@ -5224,10 +5520,10 @@ Installation réussie de 3 paquet(s): dependency1, dependency2, users
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg del users
+php mpm.php pkg del users
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/del/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/del/users&quot;
 </code></pre>
 <p><strong>Sortie:</strong></p>
 <pre><code>Paquet supprimé: users (version 1.0.0) - 15 fichiers supprimés, 3 répertoires vides supprimés
@@ -5247,12 +5543,12 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/del/users&quot;
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg upgrade           # Mettre à jour tous
-php shell.php pkg upgrade users     # Mettre à jour spécifique
+php mpm.php pkg upgrade           # Mettre à jour tous
+php mpm.php pkg upgrade users     # Mettre à jour spécifique
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/upgrade&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/upgrade/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/upgrade&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/upgrade/users&quot;
 </code></pre>
 <p><strong>Sortie:</strong></p>
 <pre><code>Mise à jour de users de 1.0.0 vers 1.1.0
@@ -5272,10 +5568,10 @@ Mise à jour réussie de 1 paquet(s): users
 <p>Actualiser le cache du référentiel (récupérer la dernière base de données des paquets).</p>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg update
+php mpm.php pkg update
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/update&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/update&quot;
 </code></pre>
 <p><strong>Sortie:</strong></p>
 <pre><code>Cache du référentiel actualisé - 42 paquets disponibles
@@ -5289,12 +5585,12 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/update&quot;
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg list
-php shell.php pkg list auth
+php mpm.php pkg list
+php mpm.php pkg list auth
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/list&quot;
-curl &quot;http://localhost/shell.php/$KEY/pkg/list/auth&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/list&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/list/auth&quot;
 </code></pre>
 <p><strong>Sortie:</strong></p>
 <pre><code>Paquets installés:
@@ -5312,10 +5608,10 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/list/auth&quot;
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg search database
+php mpm.php pkg search database
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/search/database&quot;
 </code></pre>
 <p><strong>Sortie:</strong></p>
 <pre><code>3 paquets trouvés:
@@ -5338,10 +5634,10 @@ curl &quot;http://localhost/shell.php/$KEY/pkg/search/database&quot;
 </ul>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg info users
+php mpm.php pkg info users
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/info/users&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/info/users&quot;
 </code></pre>
 <p><strong>Sortie:</strong></p>
 <pre><code>Paquet: Système de gestion des utilisateurs
@@ -5367,20 +5663,20 @@ Versions disponibles:
 <p>Afficher l&#39;aide du gestionnaire de paquets.</p>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg help
+php mpm.php pkg help
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/help&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/help&quot;
 </code></pre>
 <hr>
 <h3 id="pkg-version-2">pkg version</h3>
 <p>Afficher la version du gestionnaire de paquets.</p>
 <p><strong>Exemples:</strong></p>
 <pre><code class="language-bash"># CLI
-php shell.php pkg version
+php mpm.php pkg version
 
 # HTTP
-curl &quot;http://localhost/shell.php/$KEY/pkg/version&quot;
+curl &quot;http://localhost/mpm.php/$KEY/pkg/version&quot;
 </code></pre>
 <hr>
 <h2 id="protocole-de-réponse">Protocole de réponse</h2>
@@ -5539,12 +5835,12 @@ return function(array $args): string {
 </code></pre>
 <h3 id="traitement-des-arguments">Traitement des arguments</h3>
 <p><strong>Mode HTTP:</strong></p>
-<pre><code>GET /shell.php/KEY/mycommand/action/arg1/arg2
+<pre><code>GET /mpm.php/KEY/mycommand/action/arg1/arg2
                        ↓        ↓      ↓    ↓
                    command   args[0] [1]  [2]
 </code></pre>
 <p><strong>Mode CLI:</strong></p>
-<pre><code class="language-bash">php shell.php mycommand action arg1 arg2
+<pre><code class="language-bash">php mpm.php mycommand action arg1 arg2
                 ↓        ↓      ↓    ↓
             command   args[0] [1]  [2]
 </code></pre>
@@ -5609,14 +5905,14 @@ return function(array $args): string {
 <h2 id="architecture-1">Architecture</h2>
 <h3 id="structure-des-fichiers">Structure des fichiers</h3>
 <pre><code>.
-├── shell.php              # Exécutable principal (2300 lignes)
+├── mpm.php              # Exécutable principal (2300 lignes)
 ├── .config/               # Configuration (création automatique)
 │   ├── key                # Clé API
 │   ├── repos.json         # Miroirs du référentiel
 │   ├── packages.json      # Paquets installés
 │   └── path.json          # Modèles de gestionnaire
 ├── .cache/                # Cache (création automatique)
-│   ├── shell.lock         # Fichier de verrou
+│   ├── mpm.lock           # Fichier de verrou
 │   └── *.zip              # Paquets téléchargés
 └── app/packages/          # Paquets installés
     └── [package]/
@@ -5709,7 +6005,7 @@ cat .config/key
 
 # Régénérer la clé (supprimer et réexécuter)
 rm .config/key
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <hr>
 <h3 id="clé-api-non-trouvée-cli">&quot;Clé API non trouvée&quot; (CLI)</h3>
@@ -5717,7 +6013,7 @@ php shell.php ls
 <p><strong>Cause:</strong> Le fichier <code>.config/key</code> n&#39;existe pas</p>
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Initialiser le shell
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <hr>
 <h3 id="commande-non-trouvée">&quot;Commande non trouvée&quot;</h3>
@@ -5737,10 +6033,10 @@ ls bin/[command].php
 <p><strong>Cause:</strong> Le fichier de verrou existe</p>
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Attendre que l&#39;opération se termine, ou forcer le déverrouillage
-php shell.php pkg unlock
+php mpm.php pkg unlock
 
 # Ou supprimer manuellement
-rm .cache/shell.lock
+rm .cache/mpm.lock
 </code></pre>
 <hr>
 <h3 id="paquet-non-trouvé">&quot;Paquet non trouvé&quot;</h3>
@@ -5748,10 +6044,10 @@ rm .cache/shell.lock
 <p><strong>Cause:</strong> Paquet non dans le référentiel</p>
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Actualiser le cache du référentiel
-php shell.php pkg update
+php mpm.php pkg update
 
 # Rechercher le paquet
-php shell.php pkg search keyword
+php mpm.php pkg search keyword
 </code></pre>
 <hr>
 <h3 id="dépendance-circulaire">&quot;Dépendance circulaire&quot;</h3>
@@ -5765,8 +6061,8 @@ Examinez les dépendances des paquets et supprimez le cycle. C&#39;est un probl�
 <p><strong>Cause:</strong> D&#39;autres paquets dépendent du paquet cible</p>
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Supprimer d&#39;abord les paquets dépendants
-php shell.php pkg del dependent-package
-php shell.php pkg del target-package
+php mpm.php pkg del dependent-package
+php mpm.php pkg del target-package
 </code></pre>
 <hr>
 <h3 id="erreurs-de-permission">Erreurs de permission</h3>
@@ -5774,7 +6070,7 @@ php shell.php pkg del target-package
 <p><strong>Solution:</strong></p>
 <pre><code class="language-bash"># Corriger les permissions
 chmod 755 .
-chmod 644 shell.php
+chmod 644 mpm.php
 chmod 755 .config
 chmod 644 .config/*
 chmod 755 .cache
@@ -5785,32 +6081,32 @@ chmod 755 .cache
 <hr>
 <h2 id="installation-1">Installation</h2>
 <h3 id="installation-rapide">Installation rapide</h3>
-<pre><code class="language-bash"># Télécharger shell.php
-wget https://raw.githubusercontent.com/mehrnet/mpm/main/shell.php
+<pre><code class="language-bash"># Télécharger mpm.php
+wget https://raw.githubusercontent.com/mehrnet/mpm/main/mpm.php
 
 # Définir les permissions
-chmod 644 shell.php
+chmod 644 mpm.php
 
 # Tester l&#39;installation
-php shell.php echo &quot;Hello, World!&quot;
+php mpm.php echo &quot;Hello, World!&quot;
 </code></pre>
 <h3 id="installation-manuelle">Installation manuelle</h3>
 <ol>
-<li>Téléchargez <code>shell.php</code> depuis le référentiel</li>
+<li>Téléchargez <code>mpm.php</code> depuis le référentiel</li>
 <li>Placez-le à la racine de votre projet ou dans le répertoire du serveur web</li>
-<li>Assurez-vous que PHP 8.1+ est installé</li>
+<li>Assurez-vous que PHP 7.0+ est installé</li>
 <li>Vérifiez que l&#39;extension <code>ZipArchive</code> est activée (pour la gestion des paquets)</li>
 </ol>
 <h3 id="exigences">Exigences</h3>
 <ul>
-<li><strong>PHP</strong>: 8.1 ou supérieur</li>
+<li><strong>PHP</strong>: 7.0 ou supérieur</li>
 <li><strong>Extensions</strong>: <code>ZipArchive</code> (pour la gestion des paquets)</li>
 <li><strong>Permissions</strong>: Accès en lecture/écriture au répertoire du projet</li>
 </ul>
 <h2 id="première-exécution">Première exécution</h2>
 <p>À la première exécution, MPM génère automatiquement les fichiers de configuration:</p>
 <pre><code class="language-bash"># Exécutez n&#39;importe quelle commande pour initialiser
-php shell.php ls
+php mpm.php ls
 </code></pre>
 <p>Cela crée:</p>
 <pre><code>.config/
@@ -5830,16 +6126,11 @@ cat .config/key
 <p>Modifiez <code>.config/repos.json</code> pour personnaliser les référentiels de paquets:</p>
 <pre><code class="language-json">{
   &quot;main&quot;: [
-    &quot;https://repo.example.com&quot;,
-    &quot;https://mirror1.example.com&quot;,
-    &quot;https://mirror2.example.com&quot;
-  ],
-  &quot;extra&quot;: [
-    &quot;https://extra-repo.example.com&quot;
+    &quot;https://raw.githubusercontent.com/mehrnet/mpm-repo/refs/heads/main/main&quot;
   ]
 }
 </code></pre>
-<p>Les miroirs sont essayés séquentiellement en cas d&#39;échec sans délai de recul.</p>
+<p>Chaque entrée est une URL complète vers un répertoire de dépôt contenant <code>database.json</code> et les fichiers ZIP des paquets. Les miroirs sont essayés séquentiellement en cas d&#39;échec.</p>
 <h3 id="modèles-de-gestionnaire-de-commandes">Modèles de gestionnaire de commandes</h3>
 <p>Modifiez <code>.config/path.json</code> pour personnaliser où le shell recherche les commandes personnalisées:</p>
 <pre><code class="language-json">[
@@ -5853,7 +6144,7 @@ cat .config/key
 <p>Pour différents environnements, vous pouvez:</p>
 <ol>
 <li><p><strong>Utiliser des répertoires de configuration différents:</strong></p>
-<pre><code class="language-php">// Modifier les constantes dans shell.php (non recommandé)
+<pre><code class="language-php">// Modifier les constantes dans mpm.php (non recommandé)
 const DIR_CONFIG = &#39;.config&#39;;
 </code></pre>
 </li>
@@ -5862,28 +6153,28 @@ const DIR_CONFIG = &#39;.config&#39;;
 </code></pre>
 </li>
 <li><p><strong>Variables d&#39;environnement:</strong>
- Accédez via <code>php shell.php env list</code></p>
+ Accédez via <code>php mpm.php env list</code></p>
 </li>
 </ol>
 <h2 id="commencer">Commencer</h2>
 <h3 id="mode-cli-recommandé-pour-le-développement">Mode CLI (Recommandé pour le développement)</h3>
 <pre><code class="language-bash"># Lister les fichiers
-php shell.php ls
+php mpm.php ls
 
 # Lire le contenu des fichiers
-php shell.php cat shell.php | head -20
+php mpm.php cat mpm.php | head -20
 
 # Créer un répertoire
-php shell.php mkdir tmp
+php mpm.php mkdir tmp
 
 # Copier des fichiers
-php shell.php cp shell.php shell.backup.php
+php mpm.php cp mpm.php shell.backup.php
 
 # Gestion des paquets
-php shell.php pkg search database
-php shell.php pkg add users
-php shell.php pkg list
-php shell.php pkg upgrade
+php mpm.php pkg search database
+php mpm.php pkg add users
+php mpm.php pkg list
+php mpm.php pkg upgrade
 </code></pre>
 <h3 id="mode-http-production">Mode HTTP (Production)</h3>
 <ol>
@@ -5897,14 +6188,14 @@ php shell.php pkg upgrade
 </li>
 <li><p><strong>Exécutez les commandes:</strong></p>
 <pre><code class="language-bash"># Lister les fichiers
-curl &quot;http://localhost:8000/shell.php/$KEY/ls&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/ls&quot;
 
 # Lire un fichier
-curl &quot;http://localhost:8000/shell.php/$KEY/cat/README.md&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/cat/README.md&quot;
 
 # Gestion des paquets
-curl &quot;http://localhost:8000/shell.php/$KEY/pkg/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/pkg/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/pkg/add/users&quot;
 </code></pre>
 </li>
 </ol>
@@ -5915,15 +6206,15 @@ curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
     listen 80;
     server_name your-domain.com;
     root /var/www/shell;
-    index shell.php;
+    index mpm.php;
 
     location / {
-        try_files $uri $uri/ /shell.php$is_args$args;
+        try_files $uri $uri/ /mpm.php$is_args$args;
     }
 
     location ~ \.php$ {
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
-        fastcgi_index shell.php;
+        fastcgi_index mpm.php;
         include fastcgi_params;
     }
 }
@@ -5932,7 +6223,7 @@ curl &quot;http://localhost:8000/shell.php/$KEY/pkg/add/users&quot;
 <pre><code class="language-apache">RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ shell.php/$1 [L,QSA]
+RewriteRule ^(.*)$ mpm.php/$1 [L,QSA]
 </code></pre>
 <h2 id="développement-de-paquets">Développement de paquets</h2>
 <h3 id="créer-un-paquet">Créer un paquet</h3>
@@ -6040,13 +6331,13 @@ mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
 
 # Tester les commandes
-php shell.php mypackage list
-php shell.php mypackage create item-name
+php mpm.php mypackage list
+php mpm.php mypackage create item-name
 </code></pre>
 <p><strong>Mode HTTP:</strong></p>
 <pre><code class="language-bash">KEY=$(cat .config/key)
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/create/item-name&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/create/item-name&quot;
 </code></pre>
 <h3 id="bonnes-pratiques">Bonnes pratiques</h3>
 <ol>
@@ -6173,8 +6464,8 @@ git push -u origin main
 php -S localhost:8000
 
 # Testez les commandes
-php shell.php pkg list
-curl &quot;http://localhost:8000/shell.php/$(cat .config/key)/pkg/list&quot;
+php mpm.php pkg list
+curl &quot;http://localhost:8000/mpm.php/$(cat .config/key)/pkg/list&quot;
 </code></pre>
 <h3 id="stagingproduction-1">Staging/Production</h3>
 <ol>
@@ -6183,7 +6474,7 @@ curl &quot;http://localhost:8000/shell.php/$(cat .config/key)/pkg/list&quot;
 <li><p><strong>Activez HTTPS</strong> pour la sécurité de la clé API</p>
 </li>
 <li><p><strong>Définissez des permissions restrictives:</strong></p>
-<pre><code class="language-bash">chmod 644 shell.php
+<pre><code class="language-bash">chmod 644 mpm.php
 chmod 700 .config
 chmod 600 .config/key
 </code></pre>
@@ -6202,7 +6493,7 @@ chmod 600 .config/key
 RUN docker-php-ext-install zip
 
 # Copier le shell
-COPY shell.php /var/www/html/
+COPY mpm.php /var/www/html/
 
 # Définir les permissions
 RUN chown -R www-data:www-data /var/www/html
@@ -6232,7 +6523,7 @@ chown www-data:www-data .config/key
 <p><strong>Erreurs &quot;Autorisation refusée&quot;:</strong></p>
 <pre><code class="language-bash"># Corriger les permissions
 chmod 755 .
-chmod 644 shell.php
+chmod 644 mpm.php
 chmod -R 755 .config
 </code></pre>
 <p><strong>&quot;ZipArchive non trouvé&quot;:</strong></p>
@@ -6242,11 +6533,11 @@ sudo yum install php-zip       # CentOS/RHEL
 </code></pre>
 <p><strong>&quot;Clé API non trouvée&quot; (mode CLI):</strong></p>
 <pre><code class="language-bash"># Générer la clé manuellement
-php shell.php ls  # Cela crée .config/key
+php mpm.php ls  # Cela crée .config/key
 </code></pre>
 <p><strong>Problèmes de fichier de verrou:</strong></p>
 <pre><code class="language-bash"># Forcer le déverrouillage s&#39;il est bloqué
-php shell.php pkg unlock
+php mpm.php pkg unlock
 </code></pre>
 <h1 id="guide-de-développement-des-paquets">Guide de développement des paquets</h1>
 <p>Guide complet pour créer, tester et distribuer les paquets MPM (Gestionnaire de paquets Mehr).</p>
@@ -6281,7 +6572,7 @@ EOF
 cd ..
 mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
-php shell.php mypackage
+php mpm.php mypackage
 </code></pre>
 <hr>
 <h2 id="structure-du-paquet">Structure du paquet</h2>
@@ -6396,12 +6687,12 @@ function handleDelete(string $id): string {
 <h3 id="traitement-des-arguments-1">Traitement des arguments</h3>
 <p>Les arguments sont identiques dans les modes HTTP et CLI:</p>
 <p><strong>HTTP:</strong></p>
-<pre><code>GET /shell.php/KEY/users/create/alice/alice@example.com
+<pre><code>GET /mpm.php/KEY/users/create/alice/alice@example.com
                     ↓      ↓      ↓         ↓
                 command args[0] args[1]  args[2]
 </code></pre>
 <p><strong>CLI:</strong></p>
-<pre><code class="language-bash">php shell.php users create alice alice@example.com
+<pre><code class="language-bash">php mpm.php users create alice alice@example.com
                ↓      ↓      ↓         ↓
            command args[0] args[1]  args[2]
 </code></pre>
@@ -6413,7 +6704,7 @@ function handleDelete(string $id): string {
 }
 </code></pre>
 <h3 id="opérations-sur-les-fichiers">Opérations sur les fichiers</h3>
-<p>Les gestionnaires s&#39;exécutent dans le répertoire shell.php. Utilisez les chemins relatifs:</p>
+<p>Les gestionnaires s&#39;exécutent dans le répertoire mpm.php. Utilisez les chemins relatifs:</p>
 <pre><code class="language-php">&lt;?php
 return function(array $args): string {
     // Lire un fichier de données
@@ -6571,10 +6862,10 @@ mkdir -p app/packages/mypackage
 cp -r mypackage/* app/packages/mypackage/
 
 # Tester les commandes
-php shell.php mypackage
-php shell.php mypackage list
-php shell.php mypackage get 123
-php shell.php mypackage create &quot;Test Item&quot;
+php mpm.php mypackage
+php mpm.php mypackage list
+php mpm.php mypackage get 123
+php mpm.php mypackage create &quot;Test Item&quot;
 </code></pre>
 <h3 id="test-manuel-http">Test manuel (HTTP)</h3>
 <pre><code class="language-bash"># Démarrer le serveur
@@ -6584,9 +6875,9 @@ php -S localhost:8000
 KEY=$(cat .config/key)
 
 # Tester les commandes
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/list&quot;
-curl &quot;http://localhost:8000/shell.php/$KEY/mypackage/get/123&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/list&quot;
+curl &quot;http://localhost:8000/mpm.php/$KEY/mypackage/get/123&quot;
 </code></pre>
 <h3 id="checklist-de-test">Checklist de test</h3>
 <ul>
@@ -6610,6 +6901,158 @@ unzip -l ../mypackage-1.0.0.zip
 <h3 id="calcul-du-checksum">Calcul du checksum</h3>
 <pre><code class="language-bash">sha256sum mypackage-1.0.0.zip
 # Output: abc123def456...  mypackage-1.0.0.zip
+</code></pre>
+<h3 id="scripts-de-construction-automatisés">Scripts de construction automatisés</h3>
+<p>Pour un empaquetage réutilisable, créez des scripts shell qui automatisent le processus de construction. Ceci est particulièrement utile pour empaqueter des ressources tierces comme des icônes, des polices ou des bibliothèques JavaScript.</p>
+<p><strong>Structure de base:</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;mypackage&quot;
+DES=&quot;Description du paquet&quot;
+VER=&quot;1.0.0&quot;
+
+URL=&quot;https://example.com/source.zip&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+# Télécharger et extraire la source
+wget -q &quot;$URL&quot; -O src.zip
+unzip -q src.zip
+
+# Restructurer pour votre format
+mkdir -p &quot;assets/category/${PKG}&quot;
+mv source-files/* &quot;assets/category/${PKG}/&quot;
+
+# Créer le zip du paquet
+zip -rq &quot;$OUT&quot; assets
+
+# Calculer les métadonnées
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+# Déplacer vers le référentiel
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+# Mettre à jour database.json
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; \
+   --arg name &quot;$PKG&quot; \
+   --arg desc &quot;$DES&quot; \
+   --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; \
+   --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; \
+   --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name,
+       description: $desc,
+       author: &quot;mpm-bot&quot;,
+       license: &quot;MIT&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>Exemple: Paquet d&#39;icônes (heroicons)</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;heroicons&quot;
+DES=&quot;Un ensemble d&#39;icônes SVG de haute qualité sous licence MIT.&quot;
+VER=&quot;2.2.0&quot;
+
+URL=&quot;https://github.com/tailwindlabs/heroicons/archive/refs/tags/v${VER}.zip&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+wget -q &quot;$URL&quot; -O src.zip
+unzip -q src.zip
+
+mkdir -p &quot;assets/icons/${PKG}&quot;
+mv &quot;heroicons-${VER}/src/&quot;* &quot;assets/icons/${PKG}/&quot;
+
+zip -rq &quot;$OUT&quot; assets
+
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; --arg name &quot;$PKG&quot; --arg desc &quot;$DES&quot; --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name, description: $desc, author: &quot;mpm-bot&quot;, license: &quot;MIT&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>Exemple: Bibliothèque JavaScript (htmx)</strong></p>
+<pre><code class="language-bash">#!/bin/sh
+set -e
+
+PKG=&quot;htmx&quot;
+DES=&quot;Outils puissants pour HTML.&quot;
+VER=&quot;2.0.4&quot;
+
+URL=&quot;https://unpkg.com/htmx.org@${VER}/dist/htmx.min.js&quot;
+OUT=&quot;${PKG}-${VER}.zip&quot;
+TMP=&quot;$(mktemp -d)&quot;
+SCRIPT_DIR=&quot;$(cd &quot;$(dirname &quot;$0&quot;)&quot; &amp;&amp; pwd)&quot;
+
+cd &quot;$TMP&quot;
+mkdir -p &quot;assets/js&quot;
+wget -q &quot;$URL&quot; -O &quot;assets/js/htmx.min.js&quot;
+
+zip -rq &quot;$OUT&quot; assets
+
+CHECKSUM=$(sha256sum &quot;$OUT&quot; | cut -d&#39; &#39; -f1)
+SIZE=$(wc -c &lt; &quot;$OUT&quot; | tr -d &#39; &#39;)
+RELEASED=$(date +%Y-%m-%d)
+
+mv &quot;$OUT&quot; &quot;${SCRIPT_DIR}/../main/&quot;
+
+DB=&quot;${SCRIPT_DIR}/../main/database.json&quot;
+jq --arg id &quot;$PKG&quot; --arg name &quot;$PKG&quot; --arg desc &quot;$DES&quot; --arg ver &quot;$VER&quot; \
+   --arg checksum &quot;sha256:$CHECKSUM&quot; --argjson size &quot;$SIZE&quot; \
+   --arg url &quot;$OUT&quot; --arg released &quot;$RELEASED&quot; \
+   &#39;.packages[$id] = {
+       name: $name, description: $desc, author: &quot;mpm-bot&quot;, license: &quot;BSD-2-Clause&quot;,
+       versions: { ($ver): { version: $ver, dependencies: [], checksum: $checksum, size: $size, download_url: $url, released_at: $released } },
+       latest: $ver
+   }&#39; &quot;$DB&quot; &gt; &quot;${DB}.tmp&quot; &amp;&amp; mv &quot;${DB}.tmp&quot; &quot;$DB&quot;
+
+rm -rf &quot;$TMP&quot;
+echo &quot;[+] Built ${PKG} v${VER}&quot;
+</code></pre>
+<p><strong>Structure du référentiel:</strong></p>
+<pre><code>mpm-repo/
+├── scripts/
+│   ├── heroicons.sh
+│   ├── htmx.sh
+│   ├── alpinejs.sh
+│   └── ...
+└── main/
+    ├── database.json
+    ├── heroicons-2.2.0.zip
+    ├── htmx-2.0.4.zip
+    └── ...
+</code></pre>
+<p><strong>Construire tous les paquets:</strong></p>
+<pre><code class="language-bash">for script in scripts/*.sh; do ./$script; done
 </code></pre>
 <h3 id="databasejson-du-référentiel">database.json du référentiel</h3>
 <pre><code class="language-json">{
@@ -6635,6 +7078,7 @@ unzip -l ../mypackage-1.0.0.zip
   }
 }
 </code></pre>
+<p>Les fichiers sont suivis localement lors de l&#39;extraction pour une désinstallation propre.</p>
 <h3 id="hébergement-github">Hébergement GitHub</h3>
 <pre><code class="language-bash"># Créer la structure du référentiel
 mkdir -p my-packages/main

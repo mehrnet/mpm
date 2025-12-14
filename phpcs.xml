@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ruleset name="MPM">
+    <description>PHP CodeSniffer configuration for MPM - Mehr's Package Manager</description>
+
+    <!-- Use PSR12 standard -->
+    <rule ref="PSR12">
+        <!-- Single-file applications intentionally mix symbol declarations
+             with side effects (request handling logic), so we exclude this
+             PSR1 rule that's inherited by PSR12 -->
+        <exclude name="PSR1.Files.SideEffects"/>
+    </rule>
+
+    <!-- Set line length to 79 characters -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="79"/>
+            <property name="absoluteLineLimit" value="79"/>
+        </properties>
+    </rule>
+</ruleset>

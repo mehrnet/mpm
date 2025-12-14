@@ -1,0 +1,42 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="3 1 18 22"
+  fill="none"
+  aria-hidden="true"
+  shape-rendering="geometricPrecision"
+>
+  <defs>
+    <!-- top: peach -> red-orange -->
+    <linearGradient id="pkg_red_top" x1="3" y1="1" x2="21" y2="11">
+      <stop offset="0" stop-color="#FFD0C8" />
+      <stop offset="1" stop-color="#FF3D00" />
+    </linearGradient>
+
+    <!-- left: red-orange -> deep red-orange -->
+    <linearGradient id="pkg_red_left" x1="3" y1="7" x2="12" y2="23">
+      <stop offset="0" stop-color="#FF5A3D" />
+      <stop offset="1" stop-color="#E63B1F" />
+    </linearGradient>
+
+    <!-- right: deep red-orange -> brick red -->
+    <linearGradient id="pkg_red_right" x1="12" y1="12" x2="21" y2="23">
+      <stop offset="0" stop-color="#E63B1F" />
+      <stop offset="1" stop-color="#7A1B12" />
+    </linearGradient>
+  </defs>
+
+  <polygon
+    points="3,7.3 11.1,12.2 11.1,23 3,18.1"
+    fill="url(#pkg_red_left)"
+  />
+  <polygon
+    points="21,7.3 12.9,12.2 12.9,23 21,18.1"
+    fill="url(#pkg_red_right)"
+  />
+  <polygon
+    points="12,1 20.4,6.2 12,10.8 3.6,6.2"
+    fill="url(#pkg_red_top)"
+  />
+</svg>

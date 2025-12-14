@@ -1,0 +1,8 @@
+
+[ ] add search pop up for mobile
+[ ] add settings for view settings for the navbar and other settings, like users should be able to customize if they want their navigation to have only <h1>, only <h2>, or other customziation features
+
+Clean up gen.sh and make it to prod:
+[ ] we want gen.sh to be better for customization: customize colors, branding, features, i18n optional support
+[ ] make a separate repo for our markdown "docs" generator
+[ ] figure out the best way to turn this into a static website builder with different templates (docs/landing and other web applications)
