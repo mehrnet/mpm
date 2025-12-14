@@ -1,0 +1,4 @@
+[
+    "app/packages/[name]/handler.php",
+    "bin/[name].php"
+]

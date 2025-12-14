@@ -458,17 +458,29 @@ WORKDIR /var/www/html
 
 ### Security Hardening
 
-1. **Restrict API key access:**
-   ```bash
-   chmod 600 .config/key
-   chown www-data:www-data .config/key
-   ```
+MPM automatically applies these security measures on first run:
 
-2. **Use environment-specific keys**
-3. **Enable HTTPS only** in production
-4. **Rate limiting** at web server level
-5. **Monitor failed auth attempts**
-6. **Regular security updates**
+1. **Secure file permissions** - `.config/` set to 0700, files to 0600
+2. **Auto .htaccess** - Blocks web access to all dotfiles (`.config/`, `.cache/`)
+3. **Localhost initialization** - API key only shown via CLI or localhost HTTP
+4. **HTTP security headers** - X-Frame-Options, CSP, X-Content-Type-Options
+5. **CSPRNG key generation** - Uses `random_int()` for cryptographic security
+
+Additional recommendations:
+
+1. **Enable HTTPS only** in production
+2. **Rate limiting** at web server level
+3. **IP allowlisting** for admin-only access
+4. **Monitor failed auth attempts**
+5. **Regular security updates**
+
+For nginx, add this to your server block (since .htaccess doesn't apply):
+
+```nginx
+location ~ /\. {
+    deny all;
+}
+```
 
 ## Troubleshooting
 

@@ -344,9 +344,10 @@ function ensureCompatibility()
 function generateKey(int $length = 64): string
 {
     $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $max = strlen($chars) - 1;
     $key = '';
     for ($i = 0; $i < $length; $i++) {
-        $key .= $chars[mt_rand(0, strlen($chars) - 1)];
+        $key .= $chars[random_int(0, $max)];
     }
     return $key;
 }
@@ -354,6 +355,17 @@ function generateKey(int $length = 64): string
 // ============================================================================
 // Response Helper
 // ============================================================================
+
+/**
+ * Send common HTTP security headers
+ */
+function sendSecurityHeaders()
+{
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: DENY');
+    header('Referrer-Policy: no-referrer');
+    header("Content-Security-Policy: default-src 'none'; frame-ancestors 'none'");
+}
 
 /**
  * Send error response and abort request
@@ -365,6 +377,8 @@ function generateKey(int $length = 64): string
 function abort(string $message, int $statusCode = 400)
 {
     http_response_code($statusCode);
+    sendSecurityHeaders();
+    header('Content-Type: text/plain; charset=utf-8');
     echo $message;
     exit(1);
 }
@@ -386,6 +400,7 @@ function ensureParentDir(string $filePath)
 
 /**
  * Ensure FILE_KEY file exists (first run)
+ * For security, HTTP initialization only allowed from localhost
  */
 function ensureKeyFile()
 {
@@ -396,6 +411,15 @@ function ensureKeyFile()
 
         // Show different output based on mode
         if (!isCli()) {
+            // Security: only show key via HTTP from localhost
+            $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '';
+            if ($remoteAddr !== '127.0.0.1' && $remoteAddr !== '::1') {
+                http_response_code(403);
+                sendSecurityHeaders();
+                header('Content-Type: text/plain; charset=utf-8');
+                echo "MPM not initialized. Run 'php mpm.php' from CLI first.";
+                exit(1);
+            }
             renderWelcome($key, checkCompatibility());
             exit(0);
         } else {
@@ -782,6 +806,17 @@ function validatePath(string $path)
  * @return string Response content
  * @throws RuntimeException On command not found or execution error
  */
+/**
+ * Validate command name to prevent path traversal attacks
+ * Only allows alphanumeric characters, underscores, and hyphens
+ */
+function validateCommandName(string $command): void
+{
+    if (!preg_match('/^[a-zA-Z0-9_-]+$/', $command)) {
+        throw new \RuntimeException('Invalid command name', 400);
+    }
+}
+
 function executeCommand(string $command, array $args): string
 {
     // Check if built-in command
@@ -789,6 +824,9 @@ function executeCommand(string $command, array $args): string
         $handler = BUILTIN_COMMANDS[$command];
         return $handler($args);
     }
+
+    // Validate command name before loading external handler
+    validateCommandName($command);
 
     // Load external package handler
     return loadExternalPackageHandler($command, $args);
@@ -861,6 +899,7 @@ function loadPathPatterns(): array
 function sendResponse(string $content, int $statusCode = 200)
 {
     http_response_code($statusCode);
+    sendSecurityHeaders();
     header('Content-Type: text/plain; charset=utf-8');
     echo $content;
 }
@@ -1287,15 +1326,22 @@ function pkgExtract(string $zipFile, string $packageName): array
     for ($i = 0; $i < $zip->numFiles; $i++) {
         $filename = $zip->getNameIndex($i);
 
-        // Security: prevent directory traversal
-        if (strpos($filename, '..') !== false) {
+        // Normalize to forward slashes (handle Windows-style paths)
+        $normalized = str_replace('\\', '/', $filename);
+
+        // Security: prevent directory traversal and absolute paths
+        if (
+            $normalized === '' ||
+            $normalized[0] === '/' ||
+            strpos($normalized, '..') !== false
+        ) {
             $zip->close();
-            $msg = "Security: directory traversal detected";
+            $msg = "Security: invalid path in archive";
             throw new \RuntimeException($msg, 400);
         }
 
         // Target path is relative to project root
-        $targetPath = './' . $filename;
+        $targetPath = './' . $normalized;
 
         // Skip directories
         if (substr($filename, -1) === '/') {

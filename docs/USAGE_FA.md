@@ -504,6 +504,27 @@ curl "http://localhost/mpm.php/$KEY/pkg/info/users"
 
 ---
 
+### pkg unlock
+
+حذف اجباری فایل قفل (برای بازیابی دستی).
+
+**مثال ها:**
+```bash
+# CLI
+php mpm.php pkg unlock
+
+# HTTP
+curl "http://localhost/mpm.php/$KEY/pkg/unlock"
+```
+
+**خروجی:**
+رشته خالی در صورت موفقیت
+
+**زمان استفاده:**
+اگر یک عملیات بسته خراب شود، فایل قفل ممکن است باقی بماند. این فرمان آن را حذف می‌کند.
+
+---
+
 ### pkg help
 
 نمایش کمک مدیریت بسته.

@@ -504,6 +504,27 @@ Versions disponibles:
 
 ---
 
+### pkg unlock
+
+Supprimer le fichier de verrouillage de force (pour récupération manuelle).
+
+**Exemples:**
+```bash
+# CLI
+php mpm.php pkg unlock
+
+# HTTP
+curl "http://localhost/mpm.php/$KEY/pkg/unlock"
+```
+
+**Sortie:**
+Chaîne vide en cas de succès
+
+**Quand utiliser:**
+Si une opération de paquet plante, le fichier de verrouillage peut rester. Cette commande le supprime.
+
+---
+
 ### pkg help
 
 Afficher l'aide du gestionnaire de paquets.

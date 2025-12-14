@@ -458,17 +458,29 @@ WORKDIR /var/www/html
 
 ### Renforcement de la sécurité
 
-1. **Restreindre l'accès à la clé API:**
-    ```bash
-    chmod 600 .config/key
-    chown www-data:www-data .config/key
-    ```
+MPM applique automatiquement ces mesures de sécurité au premier lancement:
 
-2. **Utiliser des clés spécifiques à l'environnement**
-3. **Activer HTTPS uniquement** en production
-4. **Limitation du taux** au niveau du serveur web
-5. **Surveiller les tentatives d'authentification échouées**
-6. **Mises à jour de sécurité régulières**
+1. **Permissions de fichiers sécurisées** - `.config/` défini sur 0700, fichiers sur 0600
+2. **.htaccess automatique** - Bloque l'accès web à tous les fichiers cachés
+3. **Initialisation localhost** - Clé API affichée uniquement via CLI ou localhost HTTP
+4. **En-têtes de sécurité HTTP** - X-Frame-Options, CSP, X-Content-Type-Options
+5. **Génération de clé CSPRNG** - Utilise `random_int()` pour la sécurité cryptographique
+
+Recommandations supplémentaires:
+
+1. **Activer HTTPS uniquement** en production
+2. **Limitation du taux** au niveau du serveur web
+3. **Liste blanche d'IP** pour l'accès admin uniquement
+4. **Surveiller les tentatives d'authentification échouées**
+5. **Mises à jour de sécurité régulières**
+
+Pour nginx, ajoutez ceci à votre bloc serveur:
+
+```nginx
+location ~ /\. {
+    deny all;
+}
+```
 
 ## Dépannage
 

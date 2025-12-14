@@ -134,10 +134,15 @@ The package manager features:
 
 ## Security Features
 
-- **API Key Authentication** - 64-character random key with timing-safe comparison
+- **API Key Authentication** - 64-character cryptographically secure key with timing-safe comparison
 - **Path Validation** - Prevents directory traversal and absolute path access
+- **Command Validation** - Only alphanumeric command names allowed
+- **HTTP Security Headers** - X-Content-Type-Options, X-Frame-Options, CSP, Referrer-Policy
+- **Auto .htaccess** - Blocks access to hidden files (.config/, .cache/)
+- **Secure Permissions** - Config files set to 0600, directories to 0700
 - **Checksum Verification** - SHA256 validation for all package downloads
 - **Safe Extraction** - Conflict resolution with file renaming
+- **Localhost Init** - First-run key only shown via CLI or localhost
 
 ## Requirements
 
@@ -149,11 +154,12 @@ The package manager features:
 Auto-generated on first run:
 
 ```
-.config/
-├── key           # API key (64 hex chars)
+.config/          # Mode 0700 (owner only)
+├── key           # API key (64 chars, mode 0600)
 ├── repos.json    # Repository mirrors
 ├── packages.json # Installed packages
 └── path.json     # Command handler patterns
+.htaccess         # Auto-generated, blocks dotfiles
 ```
 
 ## Contributing
@@ -167,7 +173,7 @@ MIT License - see [LICENSE](LICENSE) for details
 ## Links
 
 - **GitHub Repository**: [mehrnet/mpm](https://github.com/mehrnet/mpm)
-- **Package Repository**: [mehrnet/mpm-packages](https://github.com/mehrnet/mpm-packages)
+- **Package Repository**: [mehrnet/mpm-repo](https://github.com/mehrnet/mpm-repo)
 - **Documentation**: [Installation](docs/INSTALL.md) | [Usage](docs/USAGE.md) | [Packages](docs/PACKAGES.md)
 
 ---
